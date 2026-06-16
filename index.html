@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天衡 · 九維命理交叉推演</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Cinzel:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1a1410; --paper:#f0e8d6; --gold:#b08542; --gold-bright:#d9b66a;
+    --cinnabar:#9c3a2e; --jade:#3f6b5a; --shadow:rgba(0,0,0,.4);
+    --panel:#221a13; --panel-line:#3a2c1d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{background:#0d0a07;color:var(--paper);
+    font-family:"Noto Serif TC","Songti TC","STSong",serif;line-height:1.7}
+  body{max-width:560px;margin:0 auto;padding:0 0 60px;overflow-x:hidden}
+
+  /* hero */
+  .hero{position:relative;padding:56px 24px 40px;text-align:center;
+    background:radial-gradient(120% 80% at 50% 0%,#2a1f15 0%,#0d0a07 70%);
+    border-bottom:1px solid var(--panel-line)}
+  .hero::before{content:"";position:absolute;inset:0;opacity:.06;
+    background-image:repeating-linear-gradient(45deg,#fff 0 1px,transparent 1px 14px);
+    pointer-events:none}
+  .sigil{font-size:13px;letter-spacing:.5em;color:var(--gold);margin-bottom:18px;
+    padding-left:.5em;opacity:.85;animation:sigilFade 1.4s ease both}
+  .title{font-size:48px;font-weight:900;letter-spacing:.18em;color:var(--paper);
+    padding-left:.18em;position:relative;display:inline-block;
+    background:linear-gradient(180deg,#f4e6c2 0%,#d9b66a 45%,#b08542 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    animation:titleGlow 5s ease-in-out infinite, titleRise 1.2s ease both}
+  .title::after{content:"";position:absolute;left:50%;top:55%;width:160%;height:160%;
+    transform:translate(-50%,-50%);pointer-events:none;
+    background:radial-gradient(closest-side,rgba(217,182,106,.28),transparent 70%);
+    animation:titleGlow 5s ease-in-out infinite;z-index:-1}
+  @keyframes titleGlow{0%,100%{filter:drop-shadow(0 0 14px rgba(217,182,106,.25))}
+    50%{filter:drop-shadow(0 0 26px rgba(217,182,106,.5))}}
+  @keyframes titleRise{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+  @keyframes sigilFade{from{opacity:0;letter-spacing:.9em}to{opacity:.85;letter-spacing:.5em}}
+  .subtitle{margin-top:14px;font-size:14px;color:#a99877;letter-spacing:.22em;
+    padding-left:.22em;animation:sigilFade 1.6s ease .2s both}
+  .stars{position:absolute;top:0;left:0;right:0;height:100%;pointer-events:none;z-index:0}
+  .star{position:absolute;border-radius:50%;opacity:0;animation:tw 4s infinite}
+  .star.sm{width:2px;height:2px;background:var(--gold-bright)}
+  .star.lg{width:3px;height:3px;background:#fff;
+    box-shadow:0 0 6px 1px rgba(217,182,106,.7)}
+  @keyframes tw{0%,100%{opacity:0;transform:scale(.6)}50%{opacity:.9;transform:scale(1)}}
+
+  /* form */
+  .form{padding:34px 24px 8px}
+  .field{margin-bottom:24px;animation:fieldIn .7s ease both}
+  .field:nth-child(1){animation-delay:.05s}
+  .field:nth-child(2){animation-delay:.12s}
+  .field:nth-child(3){animation-delay:.19s}
+  .field:nth-child(4){animation-delay:.26s}
+  @keyframes fieldIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .label{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gold);
+    letter-spacing:.18em;margin-bottom:9px;padding-left:.18em}
+  .label::before{content:"";width:5px;height:5px;background:var(--gold-bright);
+    transform:rotate(45deg);box-shadow:0 0 6px var(--gold-bright);flex:none}
+  input,select{width:100%;background:var(--panel);border:1px solid var(--panel-line);
+    color:var(--paper);padding:14px;font-size:16px;border-radius:4px;
+    font-family:inherit;letter-spacing:.05em;transition:.3s}
+  input::placeholder{color:#7a6a4d}
+  input:focus,select:focus{outline:none;border-color:var(--gold);background:#2a2014;
+    box-shadow:0 0 0 1px var(--gold),0 0 18px rgba(217,182,106,.28)}
+  .row{display:flex;gap:12px}
+  .row>div{flex:1}
+  .sex{display:flex;gap:12px}
+  .sex label{flex:1;text-align:center;padding:12px;background:var(--panel);
+    border:1px solid var(--panel-line);border-radius:3px;cursor:pointer;
+    font-size:15px;letter-spacing:.1em}
+  .sex input{display:none}
+  .sex input:checked+span{color:var(--gold-bright)}
+  .sex label:has(input:checked){border-color:var(--gold);background:#2c2114;
+    box-shadow:0 0 16px rgba(217,182,106,.22),inset 0 0 12px rgba(217,182,106,.08)}
+
+  .cta{position:relative;width:100%;margin-top:18px;padding:18px;
+    background:linear-gradient(135deg,#a83a2e,#7a2a20);
+    color:var(--paper);border:1px solid var(--gold);font-size:18px;font-weight:700;
+    letter-spacing:.42em;border-radius:4px;cursor:pointer;font-family:inherit;
+    padding-left:.42em;overflow:hidden;
+    box-shadow:0 6px 24px rgba(156,58,46,.35),inset 0 0 18px rgba(217,182,106,.12);
+    transition:.2s}
+  .cta::before{content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,240,200,.35),transparent);
+    transform:skewX(-20deg);animation:sweep 3.6s ease-in-out infinite}
+  @keyframes sweep{0%{left:-60%}55%,100%{left:130%}}
+  .cta:active{transform:scale(.985);box-shadow:0 3px 14px rgba(156,58,46,.4)}
+  .cta:disabled{opacity:.5}
+
+  /* result */
+  .result{padding:8px 20px 0;display:none}
+  .result.show{display:block;animation:rise .6s ease}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  .verdict{margin:24px 0 30px;padding:26px 22px;text-align:center;
+    background:radial-gradient(120% 100% at 50% 0%,#2a1f15,#160f09);
+    border:1px solid var(--gold);border-radius:4px;position:relative}
+  .verdict .score-ring{width:118px;height:118px;margin:0 auto 14px;position:relative}
+  .verdict .score-num{position:absolute;inset:0;display:flex;align-items:center;
+    justify-content:center;flex-direction:column}
+  .verdict .score-num b{font-size:42px;color:var(--gold-bright);line-height:1}
+  .verdict .score-num small{font-size:11px;color:#a99877;letter-spacing:.2em;margin-top:4px}
+  .verdict .gua{font-size:24px;color:var(--paper);letter-spacing:.3em;margin:6px 0 4px;
+    padding-left:.3em}
+  .verdict .gua-en{font-size:12px;color:var(--jade);letter-spacing:.2em}
+  .verdict .oneliner{margin-top:14px;font-size:15px;color:#d8cbb0;line-height:1.9}
+
+  /* task cards */
+  .tasks-head{display:flex;align-items:center;gap:12px;margin:30px 0 16px}
+  .tasks-head .ln{flex:1;height:1px;background:var(--panel-line)}
+  .tasks-head span{font-size:13px;color:var(--gold);letter-spacing:.3em;padding-left:.3em}
+
+  .card{border:1px solid var(--panel-line);border-radius:4px;margin-bottom:12px;
+    overflow:hidden;background:#160f09}
+  .card-h{display:flex;align-items:center;gap:14px;padding:15px 16px;cursor:pointer}
+  .card-h .no{font-size:12px;color:var(--gold);min-width:24px;letter-spacing:.1em}
+  .card-h .nm{font-size:16px;flex:1;letter-spacing:.12em}
+  .card-h .mini{font-size:13px;color:var(--gold-bright);letter-spacing:.1em}
+  .card-h .arr{color:#6a5740;transition:.3s;font-size:12px}
+  .card.open .arr{transform:rotate(90deg)}
+  .card-b{max-height:0;overflow:hidden;transition:max-height .4s ease}
+  .card.open .card-b{max-height:600px}
+  .card-b-in{padding:4px 16px 18px;font-size:14px;color:#c9bca2;line-height:1.95;
+    border-top:1px solid var(--panel-line)}
+  .card-b-in .tag{display:inline-block;font-size:12px;color:var(--jade);
+    border:1px solid var(--jade);border-radius:2px;padding:1px 8px;margin:8px 6px 4px 0;
+    letter-spacing:.08em}
+  .bar{height:5px;background:var(--panel-line);border-radius:3px;margin:10px 0 4px;overflow:hidden}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-bright))}
+
+  .cross{margin:26px 0;padding:22px 18px;border:1px solid var(--gold);border-radius:4px;
+    background:#1a130c}
+  .cross h4{font-size:14px;color:var(--gold);letter-spacing:.25em;margin-bottom:14px;
+    padding-left:.25em}
+  .cross p{font-size:14px;color:#cabda3;line-height:2;margin-bottom:10px;color:#cabda3}
+  .cross .em{color:var(--gold-bright)}
+
+  .foot{text-align:center;padding:30px 24px 0;font-size:12px;color:#6a5740;
+    letter-spacing:.1em;line-height:2}
+  .foot .line{font-size:11px;color:var(--cinnabar);margin-top:14px}
+  .lock{margin-top:22px;padding:18px;border:1px dashed var(--gold);border-radius:4px;
+    text-align:center}
+  .lock b{color:var(--gold-bright);font-size:15px;letter-spacing:.15em}
+  .lock p{font-size:13px;color:#a99877;margin-top:8px;line-height:1.9}
+  .lock a{display:inline-block;margin-top:14px;color:var(--paper);
+    background:#06c755;padding:11px 26px;border-radius:24px;text-decoration:none;
+    font-size:14px;letter-spacing:.1em}
+  @media(prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms!important;animation-iteration-count:1!important}
+    .cta::before{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="stars" id="stars"></div>
+  <div class="sigil">天 ◇ 衡 ◇ 命 ◇ 盤</div>
+  <h1 class="title">天衡</h1>
+  <p class="subtitle">九 維 命 理 交 叉 推 演</p>
+</header>
+
+<section class="form" id="form">
+  <div class="field">
+    <label class="label">姓名</label>
+    <input id="name" type="text" placeholder="請輸入中文全名" maxlength="6">
+  </div>
+  <div class="field">
+    <label class="label">性別</label>
+    <div class="sex">
+      <label><input type="radio" name="sex" value="男" checked><span>乾 · 男</span></label>
+      <label><input type="radio" name="sex" value="女"><span>坤 · 女</span></label>
+    </div>
+  </div>
+  <div class="field">
+    <label class="label">國曆出生日期</label>
+    <div class="row">
+      <div><input id="y" type="number" placeholder="年" min="1920" max="2025"></div>
+      <div><input id="m" type="number" placeholder="月" min="1" max="12"></div>
+      <div><input id="d" type="number" placeholder="日" min="1" max="31"></div>
+    </div>
+  </div>
+  <div class="field">
+    <label class="label">出生時辰</label>
+    <select id="h">
+      <option value="-1">未知 / 不詳</option>
+      <option value="0">子時 23-01</option><option value="1">丑時 01-03</option>
+      <option value="2">寅時 03-05</option><option value="3">卯時 05-07</option>
+      <option value="4">辰時 07-09</option><option value="5">巳時 09-11</option>
+      <option value="6">午時 11-13</option><option value="7">未時 13-15</option>
+      <option value="8">申時 15-17</option><option value="9">酉時 17-19</option>
+      <option value="10">戌時 19-21</option><option value="11">亥時 21-23</option>
+    </select>
+  </div>
+  <button class="cta" id="go">啟 盤 推 演</button>
+</section>
+
+<section class="result" id="result"></section>
+
+<script>
+/* ===== 天衡 · 九維命理交叉推演 核心引擎 (純前端固定資料表 + 規則計算) ===== */
+
+const GAN=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+const ZHI=["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+const GAN_WX={甲:"木",乙:"木",丙:"火",丁:"火",戊:"土",己:"土",庚:"金",辛:"金",壬:"水",癸:"水"};
+const GAN_YY={甲:"陽",乙:"陰",丙:"陽",丁:"陰",戊:"陽",己:"陰",庚:"陽",辛:"陰",壬:"陽",癸:"陰"};
+const ZHI_WX={子:"水",丑:"土",寅:"木",卯:"木",辰:"土",巳:"火",午:"火",未:"土",申:"金",酉:"金",戌:"土",亥:"水"};
+const SHENGXIAO=["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","豬"];
+const SX_TRAIT={
+  鼠:"機靈善謀，財路多元",牛:"勤穩耐勞，根基厚實",虎:"剛猛果決，領袖之氣",
+  兔:"溫和細膩，人緣通達",龍:"志高運盛，貴人相隨",蛇:"深思慎行，謀定後動",
+  馬:"奔放熱忱，行動力強",羊:"柔韌有恆，藝術天分",猴:"聰穎多變，應變過人",
+  雞:"勤勉精明，條理分明",狗:"忠義可靠，守成有道",豬:"寬厚有福，衣食無虞"};
+
+/* 五行生剋 */
+const SHENG={木:"火",火:"土",土:"金",金:"水",水:"木"};
+const KE={木:"土",土:"水",水:"火",火:"金",金:"木"};
+
+/* 八字四柱 — 以1900庚子年為基準的干支推算 */
+function lunarApproxGanzhi(y,m,d,hIdx){
+  // 年柱：立春簡化以國曆2/4分界
+  let yy=y; if(m<2||(m===2&&d<4)) yy=y-1;
+  const yGanIdx=(yy-4)%10, yZhiIdx=(yy-4)%12;
+  const yGan=GAN[(yGanIdx+10)%10], yZhi=ZHI[(yZhiIdx+12)%12];
+  // 月柱：以節氣近似（國曆月份對應地支，寅月起正月）
+  const mZhiMap=[12,1,2,3,4,5,6,7,8,9,10,11]; // 1月→丑近似
+  let mZhiIdx=( (m%12) +1)%12;
+  const monthZhiOrder=[2,3,4,5,6,7,8,9,10,11,0,1]; // 寅卯辰...
+  mZhiIdx=monthZhiOrder[(m-1+12)%12];
+  // 五虎遁求月干
+  const wuhu={甲:2,己:2,乙:4,庚:4,丙:6,辛:6,丁:8,壬:8,戊:0,癸:0};
+  const mGanIdx=(wuhu[yGan]+ ((mZhiIdx-2+12)%12) )%10;
+  const mGan=GAN[(mGanIdx+10)%10], mZhi=ZHI[mZhiIdx];
+  // 日柱：以儒略日數推干支
+  const a=Math.floor((14-m)/12), yj=y+4800-a, mj=m+12*a-3;
+  let jdn=d+Math.floor((153*mj+2)/5)+365*yj+Math.floor(yj/4)-Math.floor(yj/100)+Math.floor(yj/400)-32045;
+  const dGanIdx=(jdn+9)%10, dZhiIdx=(jdn+1)%12;
+  const dGan=GAN[(dGanIdx+10)%10], dZhi=ZHI[(dZhiIdx+12)%12];
+  // 時柱：五鼠遁
+  let hh=hIdx; if(hh<0) hh=-1;
+  let hGan="—",hZhi="—";
+  if(hh>=0){
+    const wushu={甲:0,己:0,乙:2,庚:2,丙:4,辛:4,丁:6,壬:6,戊:8,癸:8};
+    const hGanIdx=(wushu[dGan]+hh)%10;
+    hGan=GAN[hGanIdx]; hZhi=ZHI[hh];
+  }
+  return {yGan,yZhi,mGan,mZhi,dGan,dZhi,hGan,hZhi,yearForSx:yy};
+}
+
+/* 姓名學筆畫（康熙簡化常用字表，未收錄者以Unicode近似） */
+const STROKES={ /* 常見姓氏與字 部分樣本，未列出者用估算 */
+ "王":4,"李":7,"張":11,"陳":16,"林":8,"黃":12,"劉":15,"吳":7,"蔡":17,"楊":13,
+ "許":11,"鄭":19,"謝":17,"郭":15,"洪":10,"曾":12,"廖":14,"賴":16,"徐":10,"周":8,
+ "葉":15,"蘇":22,"莊":13,"江":7,"呂":7,"何":7,"羅":20,"高":10,"潘":16,"簡":18,
+ "朱":6,"鍾":17,"游":13,"彭":12,"詹":13,"胡":11,"施":9,"沈":8,"余":7,"盧":16,
+ "梁":11,"趙":14,"顏":18,"柯":9,"翁":10,"魏":18,"孫":10,"戴":18,"范":11,"方":4,
+ "宋":7,"鄧":19,"杜":7,"侯":9,"曹":11,"溫":14,"薛":19,"丁":2,"馬":10,"董":15,
+ "美":9,"明":8,"華":14,"志":7,"成":7,"豐":18,"嘉":14,"恩":10,"宇":6,"婷":12,
+ "雅":12,"安":6,"家":10,"佳":8,"育":10,"心":4,"如":6,"芳":10,"麗":19,"君":7,
+ "文":4,"國":11,"建":9,"國":11,"偉":11,"強":11,"傑":12,"昱":9,"廷":7,"睿":14,
+ "晴":12,"妍":7,"妤":7,"晨":11,"恬":10,"涵":12,"語":14,"璦":18,"昕":8,"芯":10
+};
+function strokeOf(ch){
+  if(STROKES[ch]!=null) return STROKES[ch];
+  // 估算：以Unicode區段粗略折算（僅作演示，正式版接康熙全字庫）
+  const c=ch.charCodeAt(0);
+  let s=((c%17)+5); return s;
+}
+
+/* 五格剖象（天地人外總）→ 81靈動吉凶 */
+const LUCK81={ /* 吉:3 半吉:2 凶:1 樣本表 */
+ 1:3,3:3,5:3,6:3,7:3,8:3,11:3,13:3,15:3,16:3,17:3,18:3,21:3,23:3,24:3,25:3,
+ 29:3,31:3,32:3,33:3,35:3,37:3,38:2,39:3,41:3,45:3,47:3,48:3,52:3,57:3,61:3,
+ 63:3,65:3,67:3,68:3,81:3,
+ 2:1,4:1,9:1,10:1,12:1,14:1,19:1,20:1,22:1,26:2,27:2,28:1,30:2,34:1,36:1,
+ 40:2,42:2,43:2,44:1,46:1,49:2,50:2,51:2,53:1,54:1,55:2,56:1,58:2,59:1,60:1
+};
+function luck81(n){ let k=((n-1)%80)+1; return LUCK81[k]||2; }
+function luckText(v){return v===3?"大吉":v===2?"半吉":"待補";}
+
+/* 五行屬性統計 */
+function wuxingTally(ganzhi,nameWx){
+  const t={木:0,火:0,土:0,金:0,水:0};
+  [ganzhi.yGan,ganzhi.mGan,ganzhi.dGan].forEach(g=>t[GAN_WX[g]]++);
+  if(ganzhi.hGan!=="—") t[GAN_WX[ganzhi.hGan]]++;
+  [ganzhi.yZhi,ganzhi.mZhi,ganzhi.dZhi].forEach(z=>t[ZHI_WX[z]]+=0.6);
+  if(ganzhi.hZhi!=="—") t[ZHI_WX[ganzhi.hZhi]]+=0.6;
+  nameWx.forEach(w=>{if(t[w]!=null)t[w]+=0.8});
+  return t;
+}
+/* 由筆畫尾數定字之五行 */
+function strokeWx(n){const r=n%10; if(r===1||r===2)return"木";if(r===3||r===4)return"火";
+  if(r===5||r===6)return"土";if(r===7||r===8)return"金";return"水";}
+
+/* 字形象徵 / 字義會意 — 部首意象表 */
+const RADICAL_HINT=[
+ {k:["木","林","森","松","柏","桂","梓","楓"],wx:"木",sym:"草木向陽，主成長與仁德"},
+ {k:["火","炎","煒","燁","炘","煜","焱","烜"],wx:"火",sym:"光明熾盛，主熱忱與禮義"},
+ {k:["土","坤","培","堯","城","垚","圭","坊"],wx:"土",sym:"厚土載物，主誠信與根基"},
+ {k:["金","鑫","鈞","鋒","銘","鈺","鋐","錡"],wx:"金",sym:"金石鏗鏘，主義氣與決斷"},
+ {k:["水","沐","涵","泓","澤","淵","洋","清"],wx:"水",sym:"水潤萬物，主智慧與通達"},
+ {k:["王","玉","瑜","瑋","璇","琳","珮","瑩"],wx:"土",sym:"美玉之質，主貴氣與才華"},
+ {k:["女","婷","嫻","媛","姿","娟","妍"],wx:"火",sym:"柔中帶慧，主溫雅與情緣"},
+ {k:["心","忄","志","忠","恩","慧","愷"],wx:"火",sym:"心性內斂，主情義與思辨"},
+ {k:["日","明","昕","晴","昭","晨","昱","晟"],wx:"火",sym:"日照中天，主光耀與聲名"},
+ {k:["文","彥","彬","彪","彰","章"],wx:"水",sym:"文采斐然，主學識與口碑"}
+];
+function charSymbol(ch){
+  for(const r of RADICAL_HINT){ if(r.k.some(x=>ch.includes(x)||x===ch)) return r; }
+  return {wx:strokeWx(strokeOf(ch)),sym:"字象中正，主平穩務實"};
+}
+
+/* 聲音韻律 — 以注音聲調近似（取字尾音律平仄） */
+const TONE_FEEL={平:"音律和緩，人緣寬厚",仄:"音律鏗鏘，氣勢挺拔",混:"平仄相生，剛柔並濟"};
+
+/* 紫微 — 簡化命宮（依時辰與月份定命宮十二宮位之主星象徵） */
+const ZIWEI_STAR=["紫微·尊貴","天機·智巧","太陽·光明","武曲·財帛","天同·福德",
+ "廉貞·變動","天府·穩重","太陰·柔潤","貪狼·多才","巨門·口才","天相·輔佐","天梁·蔭庇",
+ "七殺·剛烈","破軍·開創"];
+function ziweiSimplified(m,hIdx){
+  const base=(m + (hIdx<0?0:hIdx))%ZIWEI_STAR.length;
+  return ZIWEI_STAR[base];
+}
+
+/* 星盤 — 簡化太陽星座 */
+function sunSign(m,d){
+  const z=[["摩羯",1,20],["水瓶",2,19],["雙魚",3,20],["牡羊",4,20],["金牛",5,21],
+   ["雙子",6,21],["巨蟹",7,22],["獅子",8,23],["處女",9,23],["天秤",10,23],
+   ["天蠍",11,22],["射手",12,21],["摩羯",12,31]];
+  for(const[s,mm,dd]of z){ if(m<mm||(m===mm&&d<=dd)) return s; }
+  return "摩羯";
+}
+const SIGN_TRAIT={摩羯:"務實堅毅，晚運漸盛",水瓶:"獨立創新，思想超前",雙魚:"敏感多情，直覺靈通",
+ 牡羊:"衝勁十足，先機在握",金牛:"穩健聚財，重視安穩",雙子:"靈活善言，多方發展",
+ 巨蟹:"重情顧家，內守有福",獅子:"自信大器，舞台運強",處女:"細膩精準，務實謹慎",
+ 天秤:"和諧協調，貴人緣佳",天蠍:"深沉專注，爆發力強",射手:"樂觀好奇，行運遼闊"};
+
+/* 八卦定調 */
+const GUA=[
+ {n:"乾 · 天行健",en:"CREATIVE",lo:"剛健中正，自強不息，宜進取開創"},
+ {n:"兌 · 澤上悅",en:"JOYOUS",lo:"和悅通達，言談聚緣，宜廣結人脈"},
+ {n:"離 · 火明麗",en:"CLINGING",lo:"文明光照，聲名漸顯，宜展露才華"},
+ {n:"震 · 雷奮動",en:"AROUSING",lo:"動中求進，魄力過人，宜把握時機"},
+ {n:"巽 · 風順入",en:"GENTLE",lo:"柔順漸進，謀定後動，宜溫和滲透"},
+ {n:"坎 · 水流險",en:"ABYSMAL",lo:"歷險increase智，沉潛蓄力，宜守正待時"},
+ {n:"艮 · 山篤實",en:"KEEPING STILL",lo:"穩重厚實，知止有定，宜固本培基"},
+ {n:"坤 · 地厚載",en:"RECEPTIVE",lo:"柔厚包容，承載有德，宜以柔克剛"}
+];
+
+/* ====== 推演主流程 ====== */
+function divine(name,sex,y,m,d,hIdx){
+  const gz=lunarApproxGanzhi(y,m,d,hIdx);
+  const sx=SHENGXIAO[((gz.yearForSx-4)%12+12)%12];
+  // 姓名拆字
+  const chars=[...name];
+  const surname=chars[0]||"王";
+  const strokesArr=chars.map(strokeOf);
+  const total=strokesArr.reduce((a,b)=>a+b,0);
+  // 五格（單姓近似）
+  const tian=(strokesArr[0]||0)+1;
+  const ren=(strokesArr[0]||0)+(strokesArr[1]||0);
+  const di=(strokesArr[1]||0)+(strokesArr[2]||strokesArr[1]||0);
+  const wai=Math.max(1,total-ren+1);
+  const grids=[["天格",tian],["人格",ren],["地格",di],["外格",wai],["總格",total]];
+  // 字象 / 字義
+  const symbols=chars.map(c=>({c,...charSymbol(c)}));
+  const nameWx=symbols.map(s=>s.wx);
+  // 五行
+  const tally=wuxingTally(gz,nameWx);
+  let weak="木",strong="木",mn=99,mx=-1;
+  for(const k in tally){if(tally[k]<mn){mn=tally[k];weak=k}if(tally[k]>mx){mx=tally[k];strong=k}}
+  // 紫微 / 星盤
+  const zw=ziweiSimplified(m,hIdx);
+  const sign=sunSign(m,d);
+  // 韻律
+  const tone=total%3===0?"平":total%3===1?"仄":"混";
+  // 任務分數
+  const score81=grids.map(g=>luck81(g[1]));
+  const nameScore=Math.round(score81.reduce((a,b)=>a+b,0)/score81.length/3*100);
+  const wxBalance=100-Math.round((mx-mn)/(total||1)*40);
+  const sxScore=70+(sx.charCodeAt(0)%18);
+  // 綜合分
+  const overall=Math.min(98,Math.max(58,Math.round(
+    nameScore*0.3 + wxBalance*0.3 + sxScore*0.2 + (60+(zw.length*3))*0.2 )));
+  const guaIdx=overall%8;
+  return {gz,sx,chars,surname,strokesArr,total,grids,symbols,nameWx,tally,weak,strong,
+    zw,sign,tone,nameScore,wxBalance:Math.max(40,Math.min(96,wxBalance)),
+    overall,gua:GUA[guaIdx]};
+}
+
+/* ====== 渲染 ====== */
+function pct(v){return Math.max(8,Math.min(100,v))+"%"}
+function render(r,info){
+  const G=GUA, t=r.tally;
+  const wxRows=["木","火","土","金","水"].map(k=>
+    `<div style="display:flex;align-items:center;gap:8px;margin:5px 0">
+       <span style="width:20px;color:var(--gold)">${k}</span>
+       <div class="bar" style="flex:1;margin:0"><i style="width:${pct(t[k]/Math.max(...Object.values(t))*100)}"></i></div>
+       <span style="font-size:12px;color:#a99877">${t[k].toFixed(1)}</span></div>`).join("");
+
+  const tasks=[
+    ["一","八字四柱","命局根骨",
+      `<span class="tag">${r.gz.yGan}${r.gz.yZhi}年</span><span class="tag">${r.gz.mGan}${r.gz.mZhi}月</span><span class="tag">${r.gz.dGan}${r.gz.dZhi}日</span><span class="tag">${r.gz.hGan}${r.gz.hZhi}時</span>
+       日主<b style="color:var(--gold-bright)">${r.gz.dGan}（${GAN_WX[r.gz.dGan]}・${GAN_YY[r.gz.dGan]}）</b>，立命之本在此。四柱清而有氣，主一生格局中上，行運起伏隨大運流轉。`],
+    ["二","紫微斗數","命宮主星",
+      `命宮入<b style="color:var(--gold-bright)">${r.zw}</b>。此星坐命者，性情與際遇皆受其象牽引，宜順其星性而為，逆則多耗。${hHint(info.hIdx)}`],
+    ["三","姓名學","五格剖象",
+      r.grids.map(g=>`<span class="tag">${g[0]} ${g[1]}・${luckText(luck81(g[1]))}</span>`).join("")+
+      `<div class="bar"><i style="width:${pct(r.nameScore)}"></i></div>姓名靈動得分 <b style="color:var(--gold-bright)">${r.nameScore}</b>。人格為一生主運，地格主前運根基，總格定中晚成敗。`],
+    ["四","生肖","本命屬相",
+      `屬<b style="color:var(--gold-bright)">${r.sx}</b>。${SX_TRAIT[r.sx]}。生肖定先天性情底色，與八字日主相互呼應方為全貌。`],
+    ["五","星盤","太陽星座",
+      `太陽落<b style="color:var(--gold-bright)">${r.sign}座</b>。${SIGN_TRAIT[r.sign]||"星性中和，內外兼修"}。西洋星盤映照外顯性格與際遇節奏，與東方命盤交織成完整人格。`],
+    ["六","筆畫結構","形勢剛柔",
+      r.chars.map((c,i)=>`<span class="tag">${c} ${r.strokesArr[i]}畫</span>`).join("")+
+      `總筆畫 <b style="color:var(--gold-bright)">${r.total}</b>。筆畫之多寡疏密，定字之氣勢；${r.total>30?"筆畫偏厚，主承載力強、後勁綿長":"筆畫輕靈，主反應敏捷、行事俐落"}。`],
+    ["七","字形象徵","部首意象",
+      r.symbols.map(s=>`<div style="margin:6px 0"><b style="color:var(--gold-bright)">${s.c}</b>　${s.sym}（${s.wx}）</div>`).join("")],
+    ["八","五行屬性","旺衰調候",
+      wxRows+`<div style="margin-top:10px">命盤<b style="color:var(--gold-bright)">${r.strong}</b>旺而<b style="color:var(--cinnabar)">${r.weak}</b>弱。喜用神宜補<b style="color:var(--gold-bright)">${r.weak}</b>，色彩、方位、職業可朝此調候，平衡則運通。</div>`],
+    ["九","字義會意・聲韻","音義交會",
+      `<span class="tag">韻律・${r.tone}聲</span>${TONE_FEEL[r.tone]}。<div style="margin-top:8px">姓名音義並觀，${r.tone==="平"?"呼之溫潤，利人緣與貴氣":r.tone==="仄"?"呼之有力，利威望與決斷":"平仄交錯，剛柔得宜，進退有據"}；字義會意整體<b style="color:var(--gold-bright)">${r.nameScore>72?"清貴":"平穩"}</b>，與命局相生。</div>`]
+  ];
+
+  const cardsHtml=tasks.map(([no,nm,mini,body])=>`
+    <div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-h"><span class="no">${no}</span><span class="nm">${nm}</span>
+        <span class="mini">${mini}</span><span class="arr">▶</span></div>
+      <div class="card-b"><div class="card-b-in">${body}</div></div>
+    </div>`).join("");
+
+  // 交叉推演
+  const crossWx = SHENG[r.weak]===r.strong
+    ? `命中<span class="em">${r.strong}</span>能生<span class="em">${SHENG[r.strong]}</span>，氣機流轉順暢，補強弱項後格局更上一層。`
+    : KE[r.strong]===r.weak
+    ? `命中<span class="em">${r.strong}</span>剋<span class="em">${r.weak}</span>，需留意過旺反傷，調候補${r.weak}為要務。`
+    : `五行各據其位，<span class="em">${r.strong}</span>主、<span class="em">${r.weak}</span>需補，整體可塑性高。`;
+
+  const crossHtml=`
+    <div class="cross">
+      <h4>◈ 九 維 交 叉 推 演</h4>
+      <p>八字日主<span class="em">${r.gz.dGan}（${GAN_WX[r.gz.dGan]}）</span>與生肖<span class="em">${r.sx}</span>性情底色一致，先天根骨${r.overall>78?"扎實":"中正"}；姓名人格靈動${luckText(luck81(r.grids[1][1]))}，與命局<span class="em">${r.nameScore>72?"相生加分":"持平不悖"}</span>。</p>
+      <p>${crossWx}</p>
+      <p>東方命盤之<span class="em">${r.zw}</span>與西洋<span class="em">${r.sign}座</span>交映，外顯與內在<span class="em">${(r.zw.length+r.sign.length)%2?"略有張力，宜內外調和":"方向一致，行事順遂"}</span>；姓名音律屬<span class="em">${r.tone}</span>，加乘整體氣場。</p>
+      <p style="color:var(--gold-bright);border-top:1px solid var(--panel-line);padding-top:12px;margin-top:14px">
+      綜評：九維交叉之下，您屬<b>「${r.gua.n.split(" ")[0]}」</b>格局——${r.gua.lo}。大運重點在<b>補${r.weak}、揚${r.strong}</b>，把握${r.sign==="獅子"||r.sx==="龍"?"舞台與貴人":"穩中求進"}之機，運勢可由${r.overall<75?"平":"佳"}轉盛。</p>
+    </div>`;
+
+  return `
+   <div class="verdict">
+     <div class="score-ring">
+       <svg width="118" height="118" style="transform:rotate(-90deg)">
+         <circle cx="59" cy="59" r="52" fill="none" stroke="#3a2c1d" stroke-width="6"/>
+         <circle cx="59" cy="59" r="52" fill="none" stroke="url(#g)" stroke-width="6"
+           stroke-linecap="round" stroke-dasharray="${2*Math.PI*52}"
+           stroke-dashoffset="${2*Math.PI*52*(1-r.overall/100)}"/>
+         <defs><linearGradient id="g"><stop offset="0" stop-color="#b08542"/>
+           <stop offset="1" stop-color="#d9b66a"/></linearGradient></defs>
+       </svg>
+       <div class="score-num"><b>${r.overall}</b><small>命 運 綜 評</small></div>
+     </div>
+     <div class="gua">${r.gua.n.split(" ").slice(1).join(" ")}</div>
+     <div class="gua-en">${r.gua.en}　|　屬${r.sx}・${r.sign}座</div>
+     <div class="oneliner">${r.gua.lo}</div>
+   </div>
+
+   <div class="tasks-head"><div class="ln"></div><span>九 維 詳 解</span><div class="ln"></div></div>
+   ${cardsHtml}
+   ${crossHtml}
+
+   <div class="lock">
+     <b>◇ 流年大運・深度命書 ◇</b>
+     <p>解鎖未來十年逐年運勢、財官姻緣、用神開運方位與改名補運建議。</p>
+     <a href="https://lin.ee/YewRM1L">加入 LINE 領取完整命書</a>
+   </div>
+
+   <div class="foot">
+     天衡 · 九維命理交叉推演<br>
+     本推演融合八字・紫微・姓名・生肖・星盤・字形・五行・音韻八方參數<br>
+     <span class="line">※ 命理為趨吉避凶之參考，吉凶由心，運勢在己 ※</span><br>
+     三寶爸 · 以AI承載千年命學
+   </div>`;
+}
+function hHint(h){return h<0?"（時辰不詳，命宮以月份近似定盤，建議補上出生時辰可更精準。）":"";}
+
+/* 星點 */
+(function(){const w=document.getElementById('stars');for(let i=0;i<32;i++){const s=document.createElement('div');s.className='star '+(Math.random()>.75?'lg':'sm');s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.animationDelay=Math.random()*4+'s';s.style.animationDuration=(3+Math.random()*3)+'s';w.appendChild(s);}})();
+
+document.getElementById('go').addEventListener('click',()=>{
+  const name=document.getElementById('name').value.trim();
+  const sex=document.querySelector('[name=sex]:checked').value;
+  const y=+document.getElementById('y').value, m=+document.getElementById('m').value, d=+document.getElementById('d').value;
+  const hIdx=+document.getElementById('h').value;
+  if(!name){alert('請輸入姓名');return;}
+  if(!y||!m||!d||y<1920||m<1||m>12||d<1||d>31){alert('請輸入正確的出生年月日');return;}
+  const r=divine(name,sex,y,m,d,hIdx);
+  const res=document.getElementById('result');
+  res.innerHTML=render(r,{hIdx});
+  res.classList.add('show');
+  res.scrollIntoView({behavior:'smooth'});
+});
+</script>
+</body>
+</html>
