@@ -17,12 +17,14 @@
   html{background:#06060d}
   body{color:var(--paper);font-family:"Noto Serif TC","Songti TC","STSong",serif;line-height:1.7;
     max-width:560px;margin:0 auto;padding:0 0 60px;overflow-x:hidden;position:relative;
-    background-color:#06060d;
-    background-image:linear-gradient(180deg,rgba(6,6,13,.10) 0%,rgba(6,6,13,.30) 42%,rgba(6,6,13,.72) 88%,rgba(6,6,13,.95) 100%),url('BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png');
-    background-repeat:no-repeat,no-repeat;
-    background-position:center top,center top;
-    background-size:100% auto,100% auto;
-    background-attachment:scroll,scroll}
+    background:transparent}
+  /* 固定鋪滿視窗的背景層 */
+  #bgLayer{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;
+    background:url('BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png') center center / cover no-repeat #06060d}
+  #bgVeil{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;
+    background:linear-gradient(180deg,rgba(6,6,13,.15) 0%,rgba(6,6,13,.30) 45%,rgba(6,6,13,.55) 100%)}
+  /* 所有實際內容都包在這層，確保疊在背景上方 */
+  #app{position:relative;z-index:1}
 
   /* hero */
   .hero{position:relative;padding:62px 24px 30px;text-align:center}
@@ -33,7 +35,8 @@
     padding-left:.16em;position:relative;display:inline-block;
     background:linear-gradient(180deg,#fbf0d0 0%,#e7c479 42%,#b08542 100%);
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-    animation:titleGlow 5s ease-in-out infinite, titleRise 1.2s ease both}
+    animation:titleGlow 5s ease-in-out infinite, titleRise 1.2s ease both;
+    z-index:1}
   .title::after{content:"";position:absolute;left:50%;top:55%;width:170%;height:170%;
     transform:translate(-50%,-50%);pointer-events:none;
     background:radial-gradient(closest-side,rgba(217,182,106,.32),transparent 70%);
@@ -212,6 +215,9 @@
 </style>
 </head>
 <body>
+<div id="bgLayer"></div>
+<div id="bgVeil"></div>
+<div id="app">
 <header class="hero">
   <div class="sigil">天 ◇ 衡 ◇ 命 ◇ 盤</div>
   <h1 class="title">天衡</h1>
@@ -259,6 +265,7 @@
 </section>
 
 <section class="result" id="result"></section>
+</div>
 
 <script>
 /* ===== 天衡 · 九維命理交叉推演 核心引擎 (純前端固定資料表 + 規則計算) ===== */
