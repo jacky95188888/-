@@ -208,6 +208,20 @@
   .lock a{display:inline-block;margin-top:14px;color:#fff;
     background:#06c755;padding:11px 26px;border-radius:24px;text-decoration:none;
     font-size:14px;letter-spacing:.1em}
+
+  /* 分享 / 回饋區 */
+  .share-box{margin-top:18px;padding:20px 18px;border:1px solid var(--panel-line);border-radius:6px;
+    text-align:center;background:linear-gradient(160deg,rgba(34,26,40,.82),rgba(15,11,22,.85));
+    backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  .share-h{font-size:13px;color:var(--gold-bright);letter-spacing:.15em;margin-bottom:14px}
+  .share-btns{display:flex;gap:10px}
+  .sbtn{flex:1;padding:13px 8px;border-radius:6px;font-size:14px;letter-spacing:.06em;
+    cursor:pointer;font-family:inherit;text-decoration:none;text-align:center;
+    border:1px solid var(--gold);transition:.2s;display:flex;align-items:center;justify-content:center}
+  .sbtn.share{background:linear-gradient(135deg,#a83a2e,#7a2a20);color:var(--paper)}
+  .sbtn.fb{background:rgba(20,16,28,.6);color:var(--gold-bright)}
+  .sbtn:active{transform:scale(.97)}
+  .share-tip{font-size:12px;color:#cdb98e;letter-spacing:.08em;margin-top:12px;line-height:1.7}
   @media(prefers-reduced-motion:reduce){
     *{animation-duration:.01ms!important;animation-iteration-count:1!important}
     .cta::before{display:none}
@@ -596,8 +610,17 @@ function render(r,info){
 
    <div class="lock">
      <b>◇ 流年大運・深度命書 ◇</b>
-     <p>解鎖未來十年逐年運勢、財官姻緣、用神開運方位與改名補運建議。</p>
+     <p>解鎖未來十年逐年運勢、財官姻緣、用神開運方位與改名補運建議。<br>想知道更多，或對天衡有任何建議，都歡迎加三寶爸 LINE 跟我說。</p>
      <a href="https://lin.ee/YewRM1L">加入 LINE 領取完整命書</a>
+   </div>
+
+   <div class="share-box">
+     <div class="share-h">◈ 覺得有意思？分享給朋友算算看 ◈</div>
+     <div class="share-btns">
+       <button class="sbtn share" onclick="shareResult('${r.gua.n.split(" ")[0]}',${r.overall})">📤 分享天衡</button>
+       <a class="sbtn fb" href="https://forms.gle/6EAaHGuw7mNhN9dH8" target="_blank" rel="noopener">⭐ 給我回饋</a>
+     </div>
+     <div class="share-tip">你的分享，是三寶爸繼續做下去的動力 🙏</div>
    </div>
 
    <div class="foot">
@@ -650,6 +673,31 @@ document.getElementById('dailyEntry').addEventListener('click',()=>{
   </div>`;
   box.scrollIntoView({behavior:'smooth'});
 });
+
+/* ===== 分享功能：手機原生分享面板 ===== */
+function shareResult(gua, score){
+  const url='https://jacky95188888.github.io/-/';
+  const text=`我在「天衡」算了命，命運綜評 ${score} 分，是「${gua}」格局！✨\n八字・紫微・姓名・星盤九維交叉推演，你也來算算看 👇\n${url}`;
+  if(navigator.share){
+    navigator.share({title:'天衡 · 九維命理交叉推演', text:text, url:url})
+      .catch(()=>{});
+  }else{
+    // 不支援原生分享時，複製到剪貼簿
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(text).then(()=>{
+        alert('已複製分享文字！貼到 LINE 或 IG 限動就能分享給朋友 😊');
+      }).catch(()=>{ fallbackCopy(text); });
+    }else{ fallbackCopy(text); }
+  }
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); alert('已複製分享文字！貼到 LINE 或 IG 就能分享 😊'); }
+  catch(e){ alert('請手動複製此網址分享：https://jacky95188888.github.io/-/'); }
+  document.body.removeChild(ta);
+}
 
 document.getElementById('go').addEventListener('click',()=>{
   const name=document.getElementById('name').value.trim();
