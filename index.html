@@ -386,7 +386,7 @@ const LUCK81={
  40:2,42:2,43:2,44:1,46:1,49:2,50:2,51:2,53:1,54:1,55:2,56:1,58:2,59:1,60:1
 };
 function luck81(n){ let k=((n-1)%80)+1; return LUCK81[k]||2; }
-function luckText(v){return v===3?"大吉":v===2?"半吉":"待補";}
+function luckText(v){return v===3?"大吉":v===2?"半吉":v===1?"凶":"待補";}
 
 function wuxingTally(ganzhi,nameWx){
   const t={木:0,火:0,土:0,金:0,水:0};
