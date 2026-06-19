@@ -280,7 +280,7 @@
     <label class="label">出生時辰</label>
     <select id="h">
       <option value="-1">未知 / 不詳</option>
-      <option value="0">子時 23-01</option><option value="1">丑時 01-03</option>
+      <option value="0">早子 00-01</option><option value="99">晚子 23-24</option>
       <option value="2">寅時 03-05</option><option value="3">卯時 05-07</option>
       <option value="4">辰時 07-09</option><option value="5">巳時 09-11</option>
       <option value="6">午時 11-13</option><option value="7">未時 13-15</option>
@@ -315,7 +315,10 @@ const KE={木:"土",土:"水",水:"火",火:"金",金:"木"};
 
 /* 八字四柱 — 以1900庚子年為基準的干支推算 */
 function lunarApproxGanzhi(y,m,d,hIdx){
-  let yy=y; if(m<2||(m===2&&d<4)) yy=y-1;
+  let lateZi=false;
+if(hIdx===99){ lateZi=true; hIdx=0; d=d+1; }
+let yy=y; if(m<2||(m===2&&d<4)) yy=y-1;
+
   const yGanIdx=(yy-4)%10, yZhiIdx=(yy-4)%12;
   const yGan=GAN[(yGanIdx+10)%10], yZhi=ZHI[(yZhiIdx+12)%12];
   const monthZhiOrder=[2,3,4,5,6,7,8,9,10,11,0,1];
