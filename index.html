@@ -229,6 +229,19 @@
 </style>
 </head>
 <body>
+  <div style="text-align:center;color:#888;font-size:13px;padding:12px;">
+  👁️ 累計瀏覽 <span id="viewNum">—</span> 次
+</div>
+<script>
+(async()=>{
+  try{
+    const r=await fetch("https://expert-council.rhtm9y855y.workers.dev/views",{method:"POST"});
+    const d=await r.json();
+    document.getElementById("viewNum").textContent=d.views.toLocaleString();
+  }catch(e){document.getElementById("viewNum").textContent="—";}
+})();
+</script>
+
 <div id="bgLayer"></div>
 <div id="bgVeil"></div>
 <div id="app">
