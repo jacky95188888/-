@@ -519,7 +519,21 @@ function ziweiReal(sex,y,m,d,hIdx){
     let g = (sex==="女"||sex==="坤"||sex==="坤·女") ? "女" : "男";
     let hh = hIdx;
     if(hh===99) hh=0;
-    if(hh<0||h
+    if(hh<0||hh>11) hh=6;
+    const dateStr = y+"-"+m+"-"+d;
+    const astrolabe = iztro.astro.bySolar(dateStr, hh, g, true, "zh-TW");
+    const soul = astrolabe.palace("命宮");
+    let stars = soul.majorStars.filter(s=>s.type==="major").map(s=>s.name);
+    if(stars.length===0){
+      const opp = astrolabe.palace("遷移");
+      if(opp) stars = opp.majorStars.filter(s=>s.type==="major").map(s=>s.name);
+    }
+    if(stars.length===0) return "命宮無主星";
+    return stars.join("·");
+  }catch(e){
+    return ziweiSimplified(m,hIdx);
+  }
+}
 
 function sunSign(m,d){
   const z=[["摩羯",1,20],["水瓶",2,19],["雙魚",3,20],["牡羊",4,20],["金牛",5,21],
