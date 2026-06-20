@@ -561,8 +561,7 @@ function divine(name,sex,y,m,d,hIdx){
   const tally=wuxingTally(gz,nameWx);
   let weak="木",strong="木",mn=99,mx=-1;
   for(const k in tally){if(tally[k]<mn){mn=tally[k];weak=k}if(tally[k]>mx){mx=tally[k];strong=k}}
-  const zw=ziweiReal(sex,y,m,d,hIdx);
-
+  const zw=ziweiSimplified(m,hIdx);
   const sign=sunSign(m,d);
   const tone=total%3===0?"平":total%3===1?"仄":"混";
   const score81=grids.map(g=>luck81(g[1]));
