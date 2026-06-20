@@ -229,6 +229,7 @@
 </style>
 </head>
 <body>
+  <script src="https://cdn.jsdelivr.net/npm/iztro/dist/iztro.min.js"></script>
   <div style="text-align:center;color:#888;font-size:13px;padding:12px;">
   👁️ 累計瀏覽 <span id="viewNum">—</span> 次
 </div>
@@ -510,6 +511,14 @@ function ziweiSimplified(m,hIdx){
   const base=(m + (hIdx<0?0:hIdx))%ZIWEI_STAR.length;
   return ZIWEI_STAR[base];
 }
+/* 用 iztro 排真盤取命宮主星 */
+function ziweiReal(sex,y,m,d,hIdx){
+  try{
+    if(typeof iztro==="undefined") return ziweiSimplified(m,hIdx);
+    let g = (sex==="女"||sex==="坤"||sex==="坤·女") ? "女" : "男";
+    let hh = hIdx;
+    if(hh===99) hh=0;
+    if(hh<0||h
 
 function sunSign(m,d){
   const z=[["摩羯",1,20],["水瓶",2,19],["雙魚",3,20],["牡羊",4,20],["金牛",5,21],
