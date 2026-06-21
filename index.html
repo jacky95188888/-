@@ -558,6 +558,59 @@ const GUA=[
  {n:"艮 · 山篤實",en:"KEEPING STILL",lo:"穩重厚實，知止有定，宜固本培基"},
  {n:"坤 · 地厚載",en:"RECEPTIVE",lo:"柔厚包容，承載有德，宜以柔克剛"}
 ];
+/* ===== 大運 + 流年 ===== */
+function calcDaYun(gz, y, m, d, hIdx, sex){
+  const male = !(sex==="女"||sex==="坤"||sex==="坤·女");
+  let hh=hIdx;
+  let dd=d;
+  if(hIdx===99){ hh=0; dd=d+1; }
+  if(hh<0) hh=-1;
+  const tz=8;
+  const bornHour=(hh>=0)?(hh*2):12;
+  const birthJDE=_jdeFromYMD(y,m,dd)+(bornHour-tz)/24.0;
+
+  const yangYear=(GAN.indexOf(gz.yGan)%2===0);
+  const forward=(yangYear&&male)||(!yangYear&&!male);
+
+  let terms=[];
+  for(let yr=y-1; yr<=y+1; yr++)
+    for(const j of _JIE) terms.push({jde:_solarTermJDE(yr,j.deg)});
+  terms.sort((a,b)=>a.jde-b.jde);
+
+  let targetJDE;
+  if(forward){
+    const nx=terms.find(t=>t.jde>birthJDE);
+    targetJDE=nx?nx.jde:terms[terms.length-1].jde;
+  }else{
+    const pv=terms.filter(t=>t.jde<birthJDE);
+    targetJDE=pv.length?pv[pv.length-1].jde:terms[0].jde;
+  }
+  const startAgeF=Math.abs(targetJDE-birthJDE)/3;
+  const startAge=Math.floor(startAgeF);
+  const startMonth=Math.round((startAgeF-startAge)*12);
+
+  let gi=GAN.indexOf(gz.mGan), zi=ZHI.indexOf(gz.mZhi);
+  const list=[];
+  for(let s=0;s<10;s++){
+    if(forward){gi=(gi+1)%10; zi=(zi+1)%12;}
+    else       {gi=(gi+9)%10; zi=(zi+11)%12;}
+    const a0=startAge+s*10;
+    list.push({gz:GAN[gi]+ZHI[zi], startAge:a0, startYear:y+a0});
+  }
+  const curAge=new Date().getFullYear()-y;
+  let cur=-1;
+  for(let i=0;i<list.length;i++)
+    if(curAge>=list[i].startAge&&curAge<list[i].startAge+10){cur=i;break;}
+
+  let ln=[];
+  const nowY=new Date().getFullYear();
+  for(let k=0;k<6;k++){
+    const yr=nowY+k;
+    const g=((yr-4)%10+10)%10, z=((yr-4)%12+12)%12;
+    ln.push({year:yr, gz:GAN[g]+ZHI[z]});
+  }
+  return {dir:forward?'順':'逆', startAge, startMonth, list, cur, ln};
+}
 
 function divine(name,sex,y,m,d,hIdx){
   const gz=lunarApproxGanzhi(y,m,d,hIdx);
@@ -589,7 +642,8 @@ function divine(name,sex,y,m,d,hIdx){
   const guaIdx=overall%8;
   return {gz,sx,chars,surname,strokesArr,total,grids,symbols,nameWx,tally,weak,strong,
     zw,sign,tone,nameScore,wxBalance:Math.max(40,Math.min(96,wxBalance)),
-    overall,gua:GUA[guaIdx]};
+       overall,gua:GUA[guaIdx],dayun:calcDaYun(gz,y,m,d,hIdx,sex)};
+
 }
 
 /* ===== 每日運勢演算（純前端） ===== */
