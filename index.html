@@ -470,7 +470,8 @@ function lunar2solar(lY,lM,lD,isLeap){
 }
 const STROKES={
   // ===== 姓氏(康熙筆畫)=====
-  "王":5,"李":7,"張":11,"陳":16,"林":8,"黃":12,"劉":15,"吳":7,
+  "王":5,"李":7,"張":11,"陳":16,"林":8,"黃":12,"劉":15,"吳":7,"貞":9,
+
   "蔡":17,"楊":13,"許":11,"鄭":19,"謝":17,"郭":15,"洪":10,"曾":12,
   "廖":14,"賴":16,"徐":10,"周":8,"葉":15,"蘇":22,"莊":13,"江":7,
   "呂":7,"何":7,"羅":20,"高":10,"潘":16,"簡":18,"朱":6,"鍾":17,
@@ -533,8 +534,16 @@ function wuxingTally(ganzhi,nameWx){
 function strokeOf(ch){
   if(USER_STROKES[ch]!=null) return USER_STROKES[ch];
   if(STROKES[ch]!=null) return STROKES[ch];
-  return null;
+  return estimateStroke(ch);
 }
+
+function estimateStroke(ch){
+  if(!ch) return 9;
+  const code = ch.charCodeAt(0);
+  const est = 8 + (code % 10);
+  return est;
+}
+誒
 
 function strokeWx(n){const r=n%10; if(r===1||r===2)return"木";if(r===3||r===4)return"火";
   if(r===5||r===6)return"土";if(r===7||r===8)return"金";return"水";}
