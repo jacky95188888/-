@@ -751,10 +751,9 @@ function divine(name,sex,y,m,d,hIdx){
   const sxScore=70+(sx.charCodeAt(0)%18);
   const overall=Math.min(98,Math.max(58,Math.round(
     nameScore*0.3 + wxBalance*0.3 + sxScore*0.2 + (60+(zw.length*3))*0.2 )));
-  const guaIdx=overall%8;
-  return {gz,sx,chars,surname,strokesArr,total,grids,symbols,nameWx,tally,weak,strong,
+    return {gz,sx,chars,surname,strokesArr,total,grids,symbols,nameWx,tally,weak,strong,
     zw,sign,tone,nameScore,wxBalance:Math.max(40,Math.min(96,wxBalance)),
-       overall,gua:GUA[guaIdx],dayun:calcDaYun(gz,y,m,d,hIdx,sex)};
+    overall,gua:GUA.getByYear(y,sex),dayun:calcDaYun(gz,y,m,d,hIdx,sex)};
 
 }
 
