@@ -743,7 +743,11 @@ function render(r,info){
     ["八","五行屬性","旺衰調候",
       wxRows+`<div style="margin-top:10px">命盤<b style="color:var(--gold-bright)">${r.strong}</b>旺而<b style="color:var(--cinnabar)">${r.weak}</b>弱。喜用神宜補<b style="color:var(--gold-bright)">${r.weak}</b>，色彩、方位、職業可朝此調候，平衡則運通。</div>`],
     ["九","字義會意・聲韻","音義交會",
-      `<span class="tag">韻律・${r.tone}聲</span>${TONE_FEEL[r.tone]}。<div style="margin-top:8px">姓名音義並觀，${r.tone==="平"?"呼之溫潤，利人緣與貴氣":r.tone==="仄"?"呼之有力，利威望與決斷":"平仄交錯，剛柔得宜，進退有據"}；字義會意整體<b style="color:var(--gold-bright)">${r.nameScore>72?"清貴":"平穩"}</b>，與命局相生。</div>`]
+              `<span class="tag">韻律・${r.tone}聲</span>${TONE_FEEL[r.tone]}。<div style="margin-top:8px">姓名音義並觀，${r.tone==="平"?"呼之溫潤，利人緣與貴氣":r.tone==="仄"?"呼之有力，利威望與決斷":"平仄交錯，剛柔得宜，進退有據"}；字義會意整體<b style="color:var(--gold-bright)">${r.nameScore>72?"清貴":"平穩"}</b>，與命局相生。</div>`],
+
+      ["十","大運流年","運勢走向",
+      `<div style="font-size:12px;color:var(--gold);margin-bottom:6px">${r.dayun.dir}排・${r.dayun.startAge}歲${r.dayun.startMonth>0?r.dayun.startMonth+'月':''}起運</div><div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:4px">`+r.dayun.list.map((p,i)=>`<div style="flex:0 0 auto;min-width:50px;text-align:center;padding:6px 3px;border:1px solid rgba(176,133,66,${i===r.dayun.cur?'.9':'.25'});border-radius:7px;background:rgba(176,133,66,${i===r.dayun.cur?'.15':'.02'})"><div style="color:#e9d5a8;font-size:15px;font-weight:600">${p.gz}</div><div style="color:#8a7c5a;font-size:10px;margin-top:2px">${p.startAge}歲</div><div style="color:#8a7c5a;font-size:10px">${p.startYear}</div></div>`).join('')+`</div><div style="font-size:12px;color:var(--gold);margin:8px 0 6px">流年</div><div style="display:flex;gap:5px;overflow-x:auto">`+r.dayun.ln.map((L,i)=>`<div style="flex:0 0 auto;min-width:48px;text-align:center;padding:6px 3px;border:1px solid rgba(176,133,66,${i===0?'.9':'.25'});border-radius:7px;background:rgba(176,133,66,${i===0?'.15':'.02'})"><div style="color:#8a7c5a;font-size:10px">${L.year}</div><div style="color:#e9d5a8;font-size:14px;font-weight:600;margin-top:2px">${L.gz}</div></div>`).join('')+`</div>`],
+
   ];
 
   const cardsHtml=tasks.map(([no,nm,mini,body])=>`
