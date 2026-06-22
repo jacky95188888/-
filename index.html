@@ -439,7 +439,8 @@ function lunarApproxGanzhi(y,m,d,hIdx,tz){
     hZhi=ZHI[hh];
   }
 
-  return {yGan,yZhi,mGan,mZhi,dGan,dZhi,hGan,hZhi,yearForSx:yearForGan};
+  return { yGan, yZhi, mGan, mZhi, dGan, dZhi, hGan, hZhi, yearForSx: yearForGan, gua: GUA.getByYear(yearForGan, typeof sex !== 'undefined' ? sex : (typeof gender !== 'undefined' ? gender : "女")) };
+
 }
 
 
@@ -611,6 +612,52 @@ const GUA=[
  {n:"艮 · 山篤實",en:"KEEPING STILL",lo:"穩重厚實，知止有定，宜固本培基"},
  {n:"坤 · 地厚載",en:"RECEPTIVE",lo:"柔厚包容，承載有德，宜以柔克剛"}
 ];
+  function getLifeGua(birthYear, sex) {
+  let sum = 0;
+  let yearStr = birthYear.toString();
+  for (let i = 0; i < yearStr.length; i++) {
+    sum += parseInt(yearStr[i]);
+  }
+  while (sum > 9) {
+    let temp = 0;
+    let sumStr = sum.toString();
+    for (let i = 0; i < sumStr.length; i++) {
+      temp += parseInt(sumStr[i]);
+    }
+    sum = temp;
+  }
+
+  let guaNum = 0;
+  if (sex === "男") {
+    guaNum = 11 - sum;
+    if (guaNum > 9) guaNum -= 9;
+  } else {
+    guaNum = sum + 5;
+    if (guaNum > 9) guaNum -= 9;
+  }
+
+  if (guaNum === 5) {
+    return sex === "男" ? 7 : 6; 
+  }
+
+  const guaIndexMap = {
+    1: 5,
+    2: 7,
+    3: 3,
+    4: 4,
+    6: 0,
+    7: 1,
+    8: 6,
+    9: 2
+  };
+
+  return guaIndexMap[guaNum] !== undefined ? guaIndexMap[guaNum] : 6;
+}
+GUA.getByYear = function(birthYear, sex) {
+  const idx = getLifeGua(birthYear, sex);
+  return GUA[idx];
+};
+
 /* ===== 大運 + 流年 ===== */
 function calcDaYun(gz, y, m, d, hIdx, sex){
   const male = !(sex==="女"||sex==="坤"||sex==="坤·女");
