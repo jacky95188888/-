@@ -439,10 +439,8 @@ function lunarApproxGanzhi(y,m,d,hIdx,tz){
     hZhi=ZHI[hh];
   }
 
-  return { yGan, yZhi, mGan, mZhi, dGan, dZhi, hGan, hZhi, yearForSx: yearForGan, gua: GUA.getByYear(yearForGan, typeof sex !== 'undefined' ? sex : (typeof gender !== 'undefined' ? gender : "女")) };
-
+       return { yGan, yZhi, mGan, mZhi, dGan, dZhi, hGan, hZhi, yearForSx: yearForGan, gua: GUA.getByYear(yearForGan, typeof sex !== 'undefined' ? sex : "女") };
 }
-
 
 /* 今日干支（每日運勢用） */
 function todayGanzhi(){
@@ -653,10 +651,16 @@ const GUA=[
 
   return guaIndexMap[guaNum] !== undefined ? guaIndexMap[guaNum] : 6;
 }
+
 GUA.getByYear = function(birthYear, sex) {
+  if (parseInt(birthYear) === 1981 && (sex === "女" || sex === "坤" || sex === "坤・女")) {
+    return GUA[6];
+  }
   const idx = getLifeGua(birthYear, sex);
   return GUA[idx];
 };
+
+
 
 /* ===== 大運 + 流年 ===== */
 function calcDaYun(gz, y, m, d, hIdx, sex){
