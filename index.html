@@ -1048,5 +1048,34 @@ document.getElementById('go').addEventListener('click',()=>{
   res.scrollIntoView({behavior:'smooth'});
 });
 </script>
+  <!-- ===== 天衡瀏覽人數統計 開始 ===== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCxKCj8wnBYAfHIv93yug162RaWrPC3Pyk",
+    authDomain: "jacky-1fdd1.firebaseapp.com",
+    databaseURL: "https://jacky-1fdd1-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "jacky-1fdd1",
+    storageBucket: "jacky-1fdd1.firebasestorage.app",
+    messagingSenderId: "520720595730",
+    appId: "1:520720595730:web:867795fa5e58b08606d1cb"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // 取得今天日期字串，例如 2026-06-24
+  const today = new Date().toISOString().slice(0, 10);
+
+  // 累加「總瀏覽數」
+  runTransaction(ref(db, 'stats/total'), (n) => (n || 0) + 1);
+
+  // 累加「今天的瀏覽數」
+  runTransaction(ref(db, 'stats/daily/' + today), (n) => (n || 0) + 1);
+</script>
+<!-- ===== 天衡瀏覽人數統計 結束 ===== -->
+
 </body>
 </html>
