@@ -116,8 +116,10 @@
 
   async function load(){
     try{
-      const snap = await get(ref(db, 'stats'));
-      const data = snap.val() || {};
+          const totalSnap = await get(ref(db, 'stats/total'));
+      const dailySnap = await get(ref(db, 'stats/daily'));
+      const data = { total: totalSnap.val() || 0, daily: dailySnap.val() || {} };
+
       const total = data.total || 0;
       const daily = data.daily || {};
 
