@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天衡 · 瀏覽統計後台</title>
+<style>
+  :root{
+    --bg:#14201c;
+    --paper:#1d2e28;
+    --line:#2c4239;
+    --gold:#c9a84a;
+    --gold-soft:#e0c878;
+    --text:#f0ebdc;
+    --sub:#9fb3a6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    font-family:-apple-system,"PingFang TC","Noto Sans TC",sans-serif;
+    background:
+      radial-gradient(130% 60% at 50% 0%,rgba(201,168,74,.12),transparent 55%),
+      var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    padding:28px 20px 60px;
+  }
+  header{text-align:center;margin-bottom:30px;}
+  .eyebrow{font-size:12px;letter-spacing:4px;color:var(--gold);opacity:.8;font-weight:700;}
+  h1{font-size:26px;font-weight:800;margin-top:8px;letter-spacing:1px;}
+  .sub{font-size:13px;color:var(--sub);margin-top:6px;}
+
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:26px;}
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:20px 18px;
+  }
+  .card.wide{grid-column:1 / -1;}
+  .card .label{font-size:13px;color:var(--sub);margin-bottom:8px;}
+  .card .num{
+    font-size:40px;font-weight:800;letter-spacing:1px;
+    color:var(--gold-soft);
+    font-variant-numeric:tabular-nums;
+  }
+  .card .num small{font-size:15px;color:var(--sub);font-weight:500;margin-left:4px;}
+
+  .chart-wrap{
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:18px;padding:20px 16px 14px;
+  }
+  .chart-title{font-size:14px;color:var(--sub);margin-bottom:16px;padding-left:4px;}
+  .bars{display:flex;align-items:flex-end;gap:5px;height:160px;}
+  .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;}
+  .bar{
+    width:100%;border-radius:5px 5px 0 0;
+    background:linear-gradient(180deg,var(--gold),#a8862e);
+    min-height:3px;transition:height .5s ease;
+    position:relative;
+  }
+  .bar .v{
+    position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+    font-size:10px;color:var(--gold-soft);font-weight:700;
+  }
+  .bar-label{font-size:9px;color:var(--sub);white-space:nowrap;}
+
+  .state{text-align:center;color:var(--sub);font-size:14px;padding:40px 0;}
+  .refresh{
+    display:block;margin:26px auto 0;
+    background:transparent;border:1px solid var(--gold);
+    color:var(--gold);font-size:14px;font-weight:700;
+    padding:11px 26px;border-radius:12px;cursor:pointer;
+  }
+  .refresh:active{transform:scale(.97);}
+  .foot{text-align:center;font-size:11px;color:#5c7065;margin-top:30px;}
+</style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">TIAN HENG · ADMIN</div>
+    <h1>天衡 瀏覽統計</h1>
+    <div class="sub" id="updated">讀取中…</div>
+  </header>
+
+  <div id="content">
+    <div class="state">正在連線資料庫…</div>
+  </div>
+
+  <button class="refresh" onclick="location.reload()">重新整理</button>
+  <div class="foot">三寶爸的後台 · 只有你看得到</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCxKCj8wnBYAfHIv93yug162RaWrPC3Pyk",
+    authDomain: "jacky-1fdd1.firebaseapp.com",
+    databaseURL: "https://jacky-1fdd1-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "jacky-1fdd1",
+    storageBucket: "jacky-1fdd1.firebasestorage.app",
+    messagingSenderId: "520720595730",
+    appId: "1:520720595730:web:867795fa5e58b08606d1cb"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const content = document.getElementById('content');
+  const updated = document.getElementById('updated');
+
+  function dayStr(offset){
+    const d = new Date();
+    d.setDate(d.getDate() + offset);
+    return d.toISOString().slice(0,10);
+  }
+
+  async function load(){
+    try{
+      const snap = await get(ref(db, 'stats'));
+      const data = snap.val() || {};
+      const total = data.total || 0;
+      const daily = data.daily || {};
+
+      const today = dayStr(0);
+      const todayCount = daily[today] || 0;
+
+      // 近 7 天加總
+      let week = 0;
+      for(let i=0;i<7;i++){ week += (daily[dayStr(-i)] || 0); }
+
+      // 近 14 天趨勢
+      const days = [];
+      let max = 1;
+      for(let i=13;i>=0;i--){
+        const ds = dayStr(-i);
+        const v = daily[ds] || 0;
+        if(v>max) max=v;
+        days.push({ ds, v, label:(ds.slice(5)) });
+      }
+
+      const bars = days.map(d=>{
+        const h = Math.round((d.v / max) * 100);
+        return `<div class="bar-col">
+          <div class="bar" style="height:${h}%">${d.v>0?`<span class="v">${d.v}</span>`:''}</div>
+          <div class="bar-label">${d.label}</div>
+        </div>`;
+      }).join('');
+
+      content.innerHTML = `
+        <div class="cards">
+          <div class="card wide">
+            <div class="label">累積總瀏覽數</div>
+            <div class="num">${total.toLocaleString()}<small>次</small></div>
+          </div>
+          <div class="card">
+            <div class="label">今天</div>
+            <div class="num">${todayCount}<small>次</small></div>
+          </div>
+          <div class="card">
+            <div class="label">近 7 天</div>
+            <div class="num">${week}<small>次</small></div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">近 14 天每日瀏覽</div>
+          <div class="bars">${bars}</div>
+        </div>`;
+
+      const now = new Date();
+      updated.textContent = '更新於 ' + now.toLocaleString('zh-TW',{hour12:false});
+    }catch(err){
+      content.innerHTML = `<div class="state">連線失敗：${err.message}<br><br>請確認資料庫安全規則已允許讀取。</div>`;
+      updated.textContent = '';
+    }
+  }
+
+  load();
+</script>
+</body>
+</html>
