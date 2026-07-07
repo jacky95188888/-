@@ -315,7 +315,8 @@
   function thAddZonggeNote() {
     if (document.getElementById('th-zongge-note')) return;
     var body = document.body.innerText || '';
-    if (body.indexOf('總格') === -1 || !/總格\s*\d+\s*[·．・]?\s*凶/.test(body)) return;
+    if (!/總格[\s\S]{0,6}凶/.test(document.body.textContent || '')) return;
+
     var target = thFindBlock('總格定中晚成敗');
     if (!target) target = thFindBlock('姓名靈動得分');
     if (!target) return;
