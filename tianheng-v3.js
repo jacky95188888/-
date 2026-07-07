@@ -119,3 +119,234 @@
     document.addEventListener("DOMContentLoaded",function(){init();showPdpaModal();});
   }else{ init();showPdpaModal(); }
 })();
+/* ============================================================
+   天衡 v3 增強包（2026-07-07）
+   內容：① 一鍵分享個人化結果 ② 明日運勢預告＋加入主畫面提示
+        ③ 總格「凶」信任說明
+   安裝方式：整段貼到 tianheng-v3.js 的「最後面」（只加不改）
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var TH_URL = 'https://jacky95188888.github.io/-/';
+
+  /* ---------- 共用小工具 ---------- */
+
+  // 站內風格 Toast（不用 alert，iframe 也能跑）
+  function thToast(msg) {
+    try {
+      var t = document.createElement('div');
+      t.textContent = msg;
+      t.style.cssText =
+        'position:fixed;left:50%;bottom:12%;transform:translateX(-50%);' +
+        'background:rgba(20,16,30,.95);color:#e8d9a8;border:1px solid #c9a24b;' +
+        'padding:10px 18px;border-radius:24px;font-size:15px;z-index:99999;' +
+        'box-shadow:0 4px 18px rgba(0,0,0,.6);max-width:80%;text-align:center;' +
+        'transition:opacity .4s;opacity:1;pointer-events:none;';
+      document.body.appendChild(t);
+      setTimeout(function () { t.style.opacity = '0'; }, 1800);
+      setTimeout(function () { t.remove(); }, 2300);
+    } catch (e) {}
+  }
+
+  // 找出「包含某文字、且最深層」的區塊
+  function thFindBlock(keyword) {
+    var els = document.querySelectorAll('div,p,section,span');
+    var best = null;
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (el.textContent && el.textContent.indexOf(keyword) !== -1) {
+        if (!best || el.textContent.length <= best.textContent.length) best = el;
+      }
+    }
+    return best;
+  }
+
+  // 複製文字（clipboard API + 舊法備援）
+  function thCopy(text, okMsg) {
+    function fallback() {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;top:-999px;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        thToast(okMsg);
+      } catch (e) { thToast('複製失敗，請截圖分享'); }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { thToast(okMsg); }, fallback);
+    } else { fallback(); }
+  }
+
+  /* ---------- ① 分享功能 Phase 1：一鍵分享個人化結果 ---------- */
+
+  function thBuildShareText() {
+    var body = document.body.innerText || '';
+    var parts = [];
+
+    // 綜評分數，例：86 命運綜評
+    var m = body.match(/(\d{2,3})[\s\n]*命\s*運\s*綜\s*評/);
+    var score = m ? m[1] : '';
+
+    // 卦名，例：「山 篤 實」（取分數區塊到英文卦名之間的中文）
+    var hexName = '';
+    var hm = body.match(/命\s*運\s*綜\s*評[\s\S]{0,40}?[·．・]?\s*([\u4e00-\u9fa5][\u4e00-\u9fa5\s]{1,10}[\u4e00-\u9fa5])\s*\n\s*[A-Z]/);
+    if (hm) hexName = hm[1].replace(/\s+/g, '');
+
+    // 生肖，例：屬牛
+    var zm = body.match(/屬([\u4e00-\u9fa5])[。・，\s]/);
+    var zodiac = zm ? zm[1] : '';
+
+    // 星座：只認 12 星座名稱，避免誤抓「太陽星座」等標題
+    var sm = body.match(/(白羊|牡羊|金牛|雙子|巨蟹|獅子|處女|天秤|天蠍|射手|魔羯|摩羯|水瓶|雙魚)座/);
+    var star = sm ? sm[1] + '座' : '';
+
+    // 喜用神，例：喜用神宜補火
+    var em = body.match(/喜用神宜補([\u4e00-\u9fa5])/);
+    var elem = em ? em[1] : '';
+
+    var line1 = '我在「天衡・九維命理」測出';
+    if (score) line1 += ' ' + score + ' 分';
+    if (hexName) line1 += '「' + hexName + '」';
+    var line2 = '';
+    if (zodiac || star) line2 = '屬' + zodiac + (star ? '・' + star : '');
+    if (elem) line2 += (line2 ? '，' : '') + '喜用神補' + elem + ' 🔥';
+
+    parts.push(line1);
+    if (line2) parts.push(line2);
+    parts.push('你也來免費算算看 👉 ' + TH_URL);
+    parts.push('（三寶爸用一支手機打造・永久免費）');
+    return parts.join('\n');
+  }
+
+  function thHookShare() {
+    var btns = document.querySelectorAll('button,a,div');
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i];
+      if (b.dataset && b.dataset.thShare) continue;
+      var t = (b.textContent || '').replace(/\s+/g, '');
+      // 只鎖定按鈕本體（文字短的那顆），避免抓到外層容器
+      if (t.indexOf('分享天衡') !== -1 && t.length <= 8) {
+        var clone = b.cloneNode(true);        // 移除舊監聽，避免重複觸發
+        clone.dataset.thShare = '1';
+        b.parentNode.replaceChild(clone, b);
+        clone.addEventListener('click', function (ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          var text = thBuildShareText();
+          if (navigator.share) {
+            navigator.share({ text: text }).catch(function () {
+              thCopy(text, '已複製，貼上就能分享 ✅');
+            });
+          } else {
+            thCopy(text, '已複製，貼上就能分享 ✅');
+          }
+        });
+      }
+    }
+  }
+
+  /* ---------- ② 明日運勢預告 ＋ 加入主畫面提示 ---------- */
+
+  var TH_STEMS = '甲乙丙丁戊己庚辛壬癸';
+  var TH_BRANCH = '子丑寅卯辰巳午未申酉戌亥';
+  var TH_STEM_ELEM = { 甲: '木', 乙: '木', 丙: '火', 丁: '火', 戊: '土', 己: '土', 庚: '金', 辛: '金', 壬: '水', 癸: '水' };
+
+  // 錨點：2026-07-07 為 壬午（六十甲子第 19 位，索引 18）
+  function thGanzhiOf(dateObj) {
+    var anchor = new Date(2026, 6, 7);           // 本地時區 7/7 零點
+    anchor.setHours(0, 0, 0, 0);
+    var d = new Date(dateObj.getTime());
+    d.setHours(0, 0, 0, 0);
+    var diff = Math.round((d - anchor) / 86400000);
+    var idx = ((18 + diff) % 60 + 60) % 60;
+    var stem = TH_STEMS[idx % 10];
+    var branch = TH_BRANCH[idx % 12];
+    return stem + branch + '（' + TH_STEM_ELEM[stem] + '）';
+  }
+
+  function thAddTomorrowTeaser() {
+    // 今日運勢彈窗載入後，在「凶時」區塊下方加預告（只加一次）
+    if (document.getElementById('th-tomorrow')) return;
+    var anchorEl = thFindBlock('凶時');
+    if (!anchorEl) return;
+    var modal = anchorEl.closest('div');
+    // 往上找到彈窗容器（包含「今日干支」的那層）
+    var p = anchorEl;
+    for (var i = 0; i < 8 && p; i++) {
+      if (p.textContent.indexOf('今日干支') !== -1) { modal = p; break; }
+      p = p.parentElement;
+    }
+    if (!modal) return;
+
+    var tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    var gz = thGanzhiOf(tomorrow);
+
+    var box = document.createElement('div');
+    box.id = 'th-tomorrow';
+    box.style.cssText =
+      'margin:16px 12px 8px;padding:12px 14px;border:1px dashed #c9a24b;' +
+      'border-radius:12px;color:#e8d9a8;font-size:14px;line-height:1.7;text-align:center;';
+    var hint = '';
+    try {
+      if (!localStorage.getItem('th_pwa_hint')) {
+        hint = '<div style="margin-top:8px;font-size:12px;color:#b8a877;">' +
+               '小技巧：Safari 點「分享」→「加入主畫面」，天衡變成 App，每天一鍵看運勢' +
+               ' <span id="th-pwa-x" style="border:1px solid #b8a877;border-radius:50%;padding:0 6px;margin-left:6px;">✕</span></div>';
+      }
+    } catch (e) {}
+    box.innerHTML = '☀️ 明日干支 <b style="color:#f0d78c;">' + gz + '</b>・明天再來，看你的運勢起伏' + hint;
+    modal.appendChild(box);
+
+    var x = document.getElementById('th-pwa-x');
+    if (x) x.addEventListener('click', function (ev) {
+      ev.stopPropagation();
+      try { localStorage.setItem('th_pwa_hint', '1'); } catch (e) {}
+      x.parentElement.remove();
+    });
+  }
+
+  /* ---------- ③ 總格「凶」信任說明 ---------- */
+
+  function thAddZonggeNote() {
+    if (document.getElementById('th-zongge-note')) return;
+    var body = document.body.innerText || '';
+    if (body.indexOf('總格') === -1 || !/總格\s*\d+\s*[·．・]?\s*凶/.test(body)) return;
+    var target = thFindBlock('總格定中晚成敗');
+    if (!target) target = thFindBlock('姓名靈動得分');
+    if (!target) return;
+    var note = document.createElement('div');
+    note.id = 'th-zongge-note';
+    note.style.cssText = 'margin-top:8px;font-size:12px;color:#b8a877;line-height:1.6;';
+    note.textContent = '※ 單一格之凶，可由其他四格與八字喜用化解，請以綜合得分為準，毋須過慮。';
+    target.appendChild(note);
+  }
+
+  /* ---------- 啟動：結果為動態渲染，用 MutationObserver 盯著 ---------- */
+
+  var thTimer = null;
+  function thRunAll() {
+    try { thHookShare(); } catch (e) {}
+    try { thAddTomorrowTeaser(); } catch (e) {}
+    try { thAddZonggeNote(); } catch (e) {}
+  }
+  function thSchedule() {
+    if (thTimer) clearTimeout(thTimer);
+    thTimer = setTimeout(thRunAll, 400);   // 等渲染完再跑，避免抓到半成品
+  }
+  if (document.body) {
+    new MutationObserver(thSchedule).observe(document.body, { childList: true, subtree: true });
+    thSchedule();
+  } else {
+    document.addEventListener('DOMContentLoaded', function () {
+      new MutationObserver(thSchedule).observe(document.body, { childList: true, subtree: true });
+      thSchedule();
+    });
+  }
+})();
+/* ===================== 增強包結束 ===================== */
+
