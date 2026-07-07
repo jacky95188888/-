@@ -181,44 +181,41 @@
     } else { fallback(); }
   }
 
-  /* ---------- ① 分享功能 Phase 1：一鍵分享個人化結果 ---------- */
+    /* ---------- ① 分享功能 Phase 1：一鍵分享個人化結果（v2 乾淨版） ---------- */
 
   function thBuildShareText() {
     var body = document.body.innerText || '';
     var parts = [];
 
-    // 綜評分數，例：86 命運綜評
     var m = body.match(/(\d{2,3})[\s\n]*命\s*運\s*綜\s*評/);
     var score = m ? m[1] : '';
 
-    // 卦名，例：「山 篤 實」（取分數區塊到英文卦名之間的中文）
     var hexName = '';
     var hm = body.match(/命\s*運\s*綜\s*評[\s\S]{0,40}?[·．・]?\s*([\u4e00-\u9fa5][\u4e00-\u9fa5\s]{1,10}[\u4e00-\u9fa5])\s*\n\s*[A-Z]/);
     if (hm) hexName = hm[1].replace(/\s+/g, '');
 
-    // 生肖，例：屬牛
     var zm = body.match(/屬([\u4e00-\u9fa5])[。・，\s]/);
     var zodiac = zm ? zm[1] : '';
 
-    // 星座：只認 12 星座名稱，避免誤抓「太陽星座」等標題
     var sm = body.match(/(白羊|牡羊|金牛|雙子|巨蟹|獅子|處女|天秤|天蠍|射手|魔羯|摩羯|水瓶|雙魚)座/);
-    var star = sm ? sm[1] + '座' : '';
+    var star = sm ? sm[0] : '';
 
-    // 喜用神，例：喜用神宜補火
     var em = body.match(/喜用神宜補([\u4e00-\u9fa5])/);
     var elem = em ? em[1] : '';
 
-    var line1 = '我在「天衡・九維命理」測出';
-    if (score) line1 += ' ' + score + ' 分';
-    if (hexName) line1 += '「' + hexName + '」';
+    var line1 = '我在「天衡・九維命理」算了命';
+    if (score) line1 += '，命運綜評 ' + score + ' 分';
+    if (hexName) line1 += '，是「' + hexName + '」格局！✨';
+    parts.push(line1);
+
     var line2 = '';
     if (zodiac || star) line2 = '屬' + zodiac + (star ? '・' + star : '');
     if (elem) line2 += (line2 ? '，' : '') + '喜用神補' + elem + ' 🔥';
-
-    parts.push(line1);
     if (line2) parts.push(line2);
-    parts.push('你也來免費算算看 👉 ' + TH_URL);
-    parts.push('（三寶爸用一支手機打造・永久免費）');
+
+    parts.push('八字・紫微・姓名・星盤九維交叉推演，你也來免費算算看 👇');
+    // 注意：文字裡「不放網址」，網址交給 navigator.share 的 url 參數，
+    // 或複製時才另外接在後面，避免 LINE 重複附連結。
     return parts.join('\n');
   }
 
@@ -228,9 +225,8 @@
       var b = btns[i];
       if (b.dataset && b.dataset.thShare) continue;
       var t = (b.textContent || '').replace(/\s+/g, '');
-      // 只鎖定按鈕本體（文字短的那顆），避免抓到外層容器
       if (t.indexOf('分享天衡') !== -1 && t.length <= 8) {
-        var clone = b.cloneNode(true);        // 移除舊監聽，避免重複觸發
+        var clone = b.cloneNode(true);
         clone.dataset.thShare = '1';
         b.parentNode.replaceChild(clone, b);
         clone.addEventListener('click', function (ev) {
@@ -238,11 +234,13 @@
           ev.stopPropagation();
           var text = thBuildShareText();
           if (navigator.share) {
-            navigator.share({ text: text }).catch(function () {
-              thCopy(text, '已複製，貼上就能分享 ✅');
+            // 文字與網址分開傳：LINE / 訊息只會出現一次連結
+            navigator.share({ text: text, url: TH_URL }).catch(function () {
+              thCopy(text + '\n' + TH_URL, '已複製，貼上就能分享 ✅');
             });
           } else {
-            thCopy(text, '已複製，貼上就能分享 ✅');
+            // 不支援原生分享時才把網址接在文字後面複製
+            thCopy(text + '\n' + TH_URL, '已複製，貼上就能分享 ✅');
           }
         });
       }
