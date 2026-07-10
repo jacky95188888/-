@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ACOS CONSOLE · 三寶爸</title>
+<style>
+  :root{
+    --bg:#0a0a0d; --bg2:#12100c; --panel:#15130e; --panel2:#1c1810;
+    --gold:#d4a84b; --gold-hi:#f4d789; --gold-dim:#8a6d2f; --gold-line:#5c4a22;
+    --ink:#e8dcc0; --muted:#9a8a68; --red:#c0392b; --red-dim:#5a1f18;
+    --green:#3fae6b; --green-dim:#1c3d28;
+    --edge:#3a2f18;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(120% 60% at 50% -5%, rgba(212,168,75,.15), transparent 55%),
+      radial-gradient(90% 50% at 50% 100%, rgba(160,110,30,.08), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,"PingFang TC","Helvetica Neue",sans-serif;
+    line-height:1.55; padding:14px 12px 60px; max-width:520px; margin:0 auto;
+    min-height:100vh;
+  }
+  /* 頂端星芒 — 呼吸脈動 */
+  .crest{text-align:center;margin:2px 0 6px;position:relative}
+  .crest .star{font-size:24px;color:var(--gold-hi);display:inline-block;
+    text-shadow:0 0 14px rgba(244,215,137,.8),0 0 30px rgba(212,168,75,.5);
+    animation:breathe 4.5s ease-in-out infinite}
+  @keyframes breathe{
+    0%,100%{opacity:.7;transform:scale(1);
+      text-shadow:0 0 10px rgba(244,215,137,.55),0 0 22px rgba(212,168,75,.35)}
+    50%{opacity:1;transform:scale(1.12);
+      text-shadow:0 0 18px rgba(244,215,137,.95),0 0 40px rgba(212,168,75,.6),0 0 60px rgba(212,168,75,.3)}
+  }
+  /* 頂端光暈 */
+  .crest::after{content:"";position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+    width:180px;height:70px;pointer-events:none;
+    background:radial-gradient(ellipse at center,rgba(212,168,75,.22),transparent 70%);
+    animation:haze 4.5s ease-in-out infinite}
+  @keyframes haze{0%,100%{opacity:.5}50%{opacity:1}}
+  @media (prefers-reduced-motion:reduce){
+    .crest .star,.crest::after,.card,button::after{animation:none!important}
+  }
+  header{display:flex;align-items:center;justify-content:center;gap:12px;margin:2px 0 14px;position:relative}
+  header h1{
+    font-size:22px;margin:0;letter-spacing:3px;font-weight:800;
+    background:linear-gradient(180deg,var(--gold-hi),var(--gold) 55%,var(--gold-dim));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    text-shadow:0 1px 0 rgba(0,0,0,.4);
+  }
+
+  /* 面板 */
+  .card{
+    position:relative;background:linear-gradient(160deg,var(--panel),var(--bg2));
+    border:1.5px solid var(--gold-line);border-radius:12px;
+    padding:16px 15px 17px;margin-bottom:14px;
+    box-shadow:0 0 0 1px rgba(0,0,0,.6) inset,0 6px 22px rgba(0,0,0,.5),
+      0 0 22px rgba(212,168,75,.06);
+    animation:cardglow 6s ease-in-out infinite;
+  }
+  @keyframes cardglow{
+    0%,100%{box-shadow:0 0 0 1px rgba(0,0,0,.6) inset,0 6px 22px rgba(0,0,0,.5),0 0 18px rgba(212,168,75,.05)}
+    50%{box-shadow:0 0 0 1px rgba(0,0,0,.6) inset,0 6px 22px rgba(0,0,0,.5),0 0 30px rgba(212,168,75,.11)}
+  }
+  .card::before{/* 內描金線 */
+    content:"";position:absolute;inset:5px;border:1px solid rgba(212,168,75,.18);
+    border-radius:8px;pointer-events:none;
+  }
+  .card > *{position:relative}
+
+  .head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+  .badge{
+    flex:none;width:30px;height:30px;display:grid;place-items:center;
+    font-size:14px;font-weight:800;color:var(--gold-hi);
+    background:linear-gradient(180deg,#2a2210,#181206);
+    border:1.5px solid var(--gold-line);
+    clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+    text-shadow:0 0 8px rgba(244,215,137,.6);
+  }
+  .head h2{font-size:15px;margin:0;font-weight:800;letter-spacing:1px;color:var(--gold-hi)}
+  .head .en{font-size:10px;letter-spacing:2px;color:var(--muted);font-weight:600;margin-top:1px}
+  p.hint{font-size:12.5px;color:var(--muted);margin:2px 0 12px}
+
+  label{display:block;font-size:11px;font-weight:700;color:var(--gold-dim);
+    letter-spacing:1px;margin:11px 0 5px;text-transform:uppercase}
+  input,textarea{
+    width:100%;font-size:16px;font-family:inherit;color:var(--ink);
+    background:linear-gradient(180deg,#0c0a07,#100d09);
+    border:1.5px solid var(--gold-line);border-radius:9px;
+    padding:11px 12px;outline:none;transition:border-color .15s,box-shadow .15s;
+  }
+  input::placeholder,textarea::placeholder{color:#6b5f47}
+  input:focus,textarea:focus{
+    border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,75,.14),0 0 16px rgba(212,168,75,.12)
+  }
+  textarea{resize:vertical;min-height:66px;line-height:1.5}
+
+  /* 金屬按鈕 */
+  button{
+    width:100%;font-size:15px;font-weight:800;font-family:inherit;letter-spacing:1px;
+    color:#2a1e08;border:1.5px solid var(--gold-dim);border-radius:9px;
+    padding:13px 12px;margin-top:13px;cursor:pointer;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,var(--gold-hi),var(--gold) 45%,var(--gold-dim));
+    box-shadow:0 2px 0 rgba(0,0,0,.4),0 0 16px rgba(212,168,75,.25),
+      0 1px 0 rgba(255,255,255,.4) inset;
+    transition:transform .05s,filter .15s;
+    z-index:0;
+  }
+  button{isolation:isolate}
+  button .en{display:block;font-size:9px;letter-spacing:2px;font-weight:700;opacity:.65;margin-top:1px;position:relative;z-index:1}
+  button > *{position:relative;z-index:1}
+  /* 流光掃過 */
+  button::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
+    background:linear-gradient(105deg,transparent,rgba(255,255,255,.38),transparent);
+    transform:skewX(-18deg);pointer-events:none;mix-blend-mode:screen;
+    animation:sheen 5.5s ease-in-out infinite}
+  button.dark::after{background:linear-gradient(105deg,transparent,rgba(244,215,137,.22),transparent)}
+  @keyframes sheen{
+    0%{left:-60%}18%{left:130%}100%{left:130%}
+  }
+  button:active{transform:translateY(1px);filter:brightness(1.08)}
+  button.dark{
+    color:var(--gold-hi);
+    background:linear-gradient(180deg,#1e1a11,#12100a);
+    border-color:var(--gold-line);
+    box-shadow:0 2px 0 rgba(0,0,0,.5),0 0 12px rgba(212,168,75,.1),
+      0 1px 0 rgba(212,168,75,.15) inset;
+  }
+  .row{display:flex;gap:10px}
+  .row button{margin-top:13px;flex:1}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+  .toolbar button{width:auto;flex:1 1 28%;margin-top:8px;font-size:13px;padding:11px 6px;letter-spacing:0}
+
+  /* 狀態列 */
+  .statusbar{
+    display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);
+    margin:0 4px 14px;padding:8px 12px;border-radius:8px;
+    background:linear-gradient(180deg,rgba(212,168,75,.05),transparent);
+    border:1px solid rgba(212,168,75,.12);
+  }
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none;
+    box-shadow:0 0 8px currentColor}
+  .dot.on{background:var(--green);color:var(--green)}
+  .dot.off{background:var(--red);color:var(--red)}
+
+  /* 輸出 */
+  .out{margin-top:13px;font-size:12.5px;white-space:pre-wrap;word-break:break-word;
+    background:linear-gradient(180deg,#0c0a07,#100d09);
+    border:1px solid var(--gold-line);border-radius:9px;
+    padding:12px;display:none;font-family:"SF Mono",ui-monospace,monospace;
+    line-height:1.55;color:var(--ink)}
+  .out.show{display:block}
+  .out.good{border-color:var(--green-dim);color:#8fe0ab;
+    box-shadow:0 0 14px rgba(63,174,107,.1) inset}
+  .out.bad{border-color:var(--red-dim);color:#e89b90;
+    background:linear-gradient(180deg,#160b09,#120c0a);
+    box-shadow:0 0 14px rgba(192,57,43,.1) inset}
+
+  .savemark{font-size:11px;color:var(--green);margin-left:8px;opacity:0;transition:opacity .2s;letter-spacing:0}
+  .savemark.show{opacity:1}
+  .foot{text-align:center;font-size:11px;color:var(--gold-dim);margin-top:22px;line-height:1.8;letter-spacing:.5px}
+  .divider{height:1px;margin:2px 0 16px;
+    background:linear-gradient(90deg,transparent,var(--gold-line),transparent)}
+</style>
+</head>
+<body>
+<div class="crest"><span class="star">✦</span></div>
+<header><h1>ACOS CONSOLE</h1></header>
+<div class="divider"></div>
+
+<div class="statusbar"><span id="dot" class="dot"></span><span id="statusline">尚未連線 — 先存入通關密碼</span></div>
+
+<!-- 設定 -->
+<div class="card">
+  <div class="head">
+    <div class="badge">⚙</div>
+    <div><h2>連線設定</h2><div class="en">CONNECTION</div></div>
+    <span id="savedMark" class="savemark">已儲存 ✓</span>
+  </div>
+  <p class="hint">密碼只需存一次，之後全用按鈕，不必再打網址。</p>
+  <label>Worker 網址</label>
+  <input id="base" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false"
+    value="https://acos.rhtm9y855y.workers.dev">
+  <label>通關密碼 · Admin Token</label>
+  <input id="token" type="password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="你在 Cloudflare 設定的那串">
+  <div class="row">
+    <button onclick="saveCfg()">儲存密碼<span class="en">SAVE TOKEN</span></button>
+    <button class="dark" onclick="testConn()">測試連線<span class="en">TEST</span></button>
+  </div>
+  <div id="out-cfg" class="out"></div>
+</div>
+
+<!-- 餵數據 -->
+<div class="card">
+  <div class="head"><div class="badge">1</div>
+    <div><h2>餵今天的數據</h2><div class="en">SUBMIT DATA</div></div></div>
+  <p class="hint">把今天各平台的真實數字貼進來，觀察員收檔成情報編號。</p>
+  <textarea id="feedText" placeholder="例：昨天FB三篇互動12/45/8，LINE新好友3，烤豬訂單2條"></textarea>
+  <button onclick="doFeed()">送給觀察員<span class="en">SUBMIT</span></button>
+  <div id="out-feed" class="out"></div>
+</div>
+
+<!-- 開會 -->
+<div class="card">
+  <div class="head"><div class="badge">2</div>
+    <div><h2>開一次決策會議</h2><div class="en">START MEETING</div></div></div>
+  <p class="hint">問一個今天真的要決定的事。六位員工帶著記憶開會，產出決策卡。</p>
+  <textarea id="meetQ" placeholder="例：今天發文主打烤豬還是天衡？"></textarea>
+  <button onclick="doMeeting()">召開會議<span class="en">CONVENE</span></button>
+  <div id="out-meet" class="out"></div>
+</div>
+
+<!-- 拍板 -->
+<div class="card">
+  <div class="head"><div class="badge">3</div>
+    <div><h2>創辦人拍板</h2><div class="en">DECIDE</div></div></div>
+  <p class="hint">會議產出決策卡後，編號會自動帶入。填你的選擇即可。</p>
+  <label>決策編號</label>
+  <input id="decId" autocapitalize="characters" autocorrect="off" placeholder="例：D0001">
+  <label>你的選擇</label>
+  <input id="decChoice" placeholder="例：主打烤豬">
+  <label>理由（可留白）</label>
+  <input id="decReason" placeholder="例：烤豬是現金流最優先">
+  <button onclick="doDecide()">確認拍板<span class="en">CONFIRM</span></button>
+  <div id="out-dec" class="out"></div>
+</div>
+
+<!-- 回填 -->
+<div class="card">
+  <div class="head"><div class="badge">4</div>
+    <div><h2>回填實際結果</h2><div class="en">REPORT RESULT</div></div></div>
+  <p class="hint">這一步系統才會變聰明。把執行後的真實結果填回來。</p>
+  <label>決策編號</label>
+  <input id="resId" autocapitalize="characters" autocorrect="off" placeholder="例：D0001">
+  <label>實際結果</label>
+  <textarea id="resText" placeholder="例：那篇平均互動67，LINE新好友8"></textarea>
+  <button onclick="doResult()">回填並更新記憶<span class="en">UPDATE MEMORY</span></button>
+  <div id="out-res" class="out"></div>
+</div>
+
+<!-- 查看 -->
+<div class="card">
+  <div class="head"><div class="badge">◎</div>
+    <div><h2>查看公司</h2><div class="en">VIEW</div></div></div>
+  <p class="hint">看員工檔案（戰績、信念）或系統狀態。</p>
+  <div class="toolbar">
+    <button class="dark" onclick="viewEmp('scout')">觀察員</button>
+    <button class="dark" onclick="viewEmp('marketing')">行銷官</button>
+    <button class="dark" onclick="viewEmp('product')">產品官</button>
+    <button class="dark" onclick="viewEmp('operations')">營運官</button>
+    <button class="dark" onclick="viewEmp('risk')">風控官</button>
+    <button class="dark" onclick="viewEmp('secretary')">秘書長</button>
+  </div>
+  <button class="dark" onclick="doStatus()" style="margin-top:10px">系統狀態<span class="en">STATUS</span></button>
+  <div id="out-view" class="out"></div>
+</div>
+
+<div class="foot">資料存在你的裝置，不會外傳。<br>忘記密碼可到 Cloudflare → acos → 設定 → 變數與機密 重設。</div>
+
+<script>
+const $ = id => document.getElementById(id);
+function loadCfg(){
+  const b=localStorage.getItem('acos_base'), t=localStorage.getItem('acos_token');
+  if(b)$('base').value=b;
+  if(t){$('token').value=t; markStatus(true,'已連線 — 可以開始操作');}
+  else markStatus(false,'尚未連線 — 先存入通關密碼');
+}
+function saveCfg(){
+  const b=$('base').value.trim().replace(/\/+$/,''), t=$('token').value.trim();
+  if(!b||!t){show('out-cfg','bad','網址和密碼都要填。');return;}
+  localStorage.setItem('acos_base',b); localStorage.setItem('acos_token',t);
+  $('savedMark').classList.add('show'); setTimeout(()=>$('savedMark').classList.remove('show'),1600);
+  show('out-cfg','good','已儲存。現在按「測試連線」確認。');
+}
+function cfg(){return{
+  base:(localStorage.getItem('acos_base')||$('base').value).trim().replace(/\/+$/,''),
+  token:(localStorage.getItem('acos_token')||$('token').value).trim()};}
+function markStatus(on,txt){$('dot').className='dot '+(on?'on':'off');$('statusline').textContent=txt;}
+
+async function call(path,payload,outId){
+  const {base,token}=cfg();
+  if(!token){show(outId,'bad','還沒存密碼。請先到「連線設定」儲存。');return null;}
+  show(outId,'','處理中…');
+  try{
+    const res=await fetch(base+path,{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(Object.assign({t:token},payload||{}))});
+    const data=await res.json();
+    if(data.error){show(outId,'bad',fmt(data));return data;}
+    show(outId,'good',fmt(data));return data;
+  }catch(e){show(outId,'bad','連線失敗：'+e.message+'\n若剛從本機開啟，請改用 GitHub Pages 網址。');return null;}
+}
+function show(id,cls,txt){const el=$(id);el.className='out show'+(cls?(' '+cls):'');el.textContent=txt;}
+function fmt(d){if(d.error)return'⚠ '+d.error;if(d.msg&&Object.keys(d).length<=3)return d.msg;return JSON.stringify(d,null,2);}
+
+function testConn(){call('/status',{},'out-cfg').then(d=>{if(d&&!d.error)markStatus(true,'已連線 — 可以開始操作');});}
+function doStatus(){call('/status',{},'out-view');}
+function doFeed(){const text=$('feedText').value.trim();if(!text){show('out-feed','bad','先填今天的數據。');return;}call('/feed',{text},'out-feed');}
+function doMeeting(){const q=$('meetQ').value.trim();if(!q){show('out-meet','bad','先填要決定的問題。');return;}
+  show('out-meet','','六位員工開會中，約 10–20 秒…');
+  call('/meeting',{q},'out-meet').then(d=>{if(d&&d.id){$('decId').value=d.id;$('resId').value=d.id;}});}
+function doDecide(){const id=$('decId').value.trim(),choice=$('decChoice').value.trim();
+  if(!id||!choice){show('out-dec','bad','決策編號和選擇都要填。');return;}
+  call('/decide',{id,choice,reason:$('decReason').value.trim()},'out-dec');}
+function doResult(){const id=$('resId').value.trim(),result=$('resText').value.trim();
+  if(!id||!result){show('out-res','bad','決策編號和結果都要填。');return;}
+  show('out-res','','秘書長更新記憶中…');call('/result',{id,result},'out-res');}
+function viewEmp(id){call('/employee',{id},'out-view');}
+loadCfg();
+</script>
+</body>
+</html>
