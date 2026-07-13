@@ -602,6 +602,9 @@ function strokeOf(ch){
   if(STROKES[ch]!=null) return STROKES[ch];
   return estimateStroke(ch);
 }
+function isEstimated(ch){
+  return USER_STROKES[ch]==null && STROKES[ch]==null;
+}
 function estimateStroke(ch){
   if(!ch) return 9;
   const code = ch.charCodeAt(0);
@@ -828,17 +831,23 @@ function divine(name,sex,y,m,d,hIdx,ziSchool){
   const chars=[...name];
   const surname=chars[0]||"王";
   const strokesArr=chars.map(strokeOf);
+  const guessed=chars.filter(isEstimated);
   const total=strokesArr.reduce((a,b)=>a+b,0);
+  const isSingleName=chars.length===2;
   const tian=(strokesArr[0]||0)+1;
   const ren=(strokesArr[0]||0)+(strokesArr[1]||0);
-  const di=(strokesArr[1]||0)+(strokesArr[2]||strokesArr[1]||0);
-  const wai=Math.max(1,total-ren+1);
+  const di=isSingleName?(strokesArr[1]||0)+1:(strokesArr[1]||0)+(strokesArr[2]||0);
+  const wai=isSingleName?2:Math.max(2,total-ren+1);
   const grids=[["天格",tian],["人格",ren],["地格",di],["外格",wai],["總格",total]];
   const symbols=chars.map(c=>({c,...charSymbol(c)}));
   const nameWx=symbols.map(s=>s.wx);
   const tally=wuxingTally(gz,nameWx);
   let weak="木",strong="木",mn=99,mx=-1;
   for(const k in tally){if(tally[k]<mn){mn=tally[k];weak=k}if(tally[k]>mx){mx=tally[k];strong=k}}
+  const scarce=weak;
+  const strengthInfo=analyzeStrength(gz);
+  const personality=analyzePersonality(gz,strengthInfo);
+  if(strengthInfo&&strengthInfo.useWx&&strengthInfo.useWx[0]) weak=strengthInfo.useWx[0];
   const zw=ziweiReal(sex,y,m,d,hIdx);
   const sign=sunSign(m,d);
   const tone=total%3===0?"平":total%3===1?"仄":"混";
@@ -848,7 +857,8 @@ function divine(name,sex,y,m,d,hIdx,ziSchool){
   const sxScore=70+(sx.charCodeAt(0)%18);
   const overall=Math.min(98,Math.max(58,Math.round(
     nameScore*0.3 + wxBalance*0.3 + sxScore*0.2 + (60+(zw.length*3))*0.2 )));
-  return {gz,sx,chars,surname,strokesArr,total,grids,symbols,nameWx,tally,weak,strong,
+  return {gz,sx,chars,surname,strokesArr,guessed,total,grids,symbols,nameWx,tally,weak,strong,scarce,
+    strengthInfo,personality,
     zw,sign,tone,nameScore,wxBalance:Math.max(40,Math.min(96,wxBalance)),
     overall,gua:GUA.getByYear(y,sex),dayun:calcDaYun(gz,y,m,d,hIdx,sex)};
 }
@@ -964,7 +974,13 @@ function render(r,info){
        <span style="width:20px;color:var(--gold-bright)">${k}</span>
        <div class="bar" style="flex:1;margin:0"><i style="width:${pct(t[k]/Math.max(...Object.values(t))*100)}"></i></div>
        <span style="font-size:12px;color:#cdb98e">${t[k].toFixed(1)}</span></div>`).join("");
+  const si=r.strengthInfo, ps=r.personality;
   const tasks=[
+    ["總","性格總論","氣性根本",
+      `<span class="tag">日主 ${si.dayGan}·${si.dayWx}</span><span class="tag">月令${si.ling.state}</span><span class="tag">${si.strength}</span>
+       <div style="margin-top:8px">${ps.desc}</div>
+       <div style="margin-top:8px">${ps.graspText}</div>
+       <div style="margin-top:10px;font-size:13px;color:#a99877">日主${si.strength}，取「${si.useGod}」為用，喜用五行：<b style="color:var(--gold-bright)">${si.useWx.join("、")}</b>。全盤幸運色、方位與流年旺弱，皆依此喜用推定。</div>`],
     ["一","八字四柱","命局根骨",
       `<span class="tag">${r.gz.yGan}${r.gz.yZhi}年</span><span class="tag">${r.gz.mGan}${r.gz.mZhi}月</span><span class="tag">${r.gz.dGan}${r.gz.dZhi}日</span><span class="tag">${r.gz.hGan}${r.gz.hZhi}時</span>
        日主<b style="color:var(--gold-bright)">${r.gz.dGan}（${GAN_WX[r.gz.dGan]}・${GAN_YY[r.gz.dGan]}）</b>，立命之本在此。四柱清而有氣，主一生格局中上，行運起伏隨大運流轉。`],
@@ -979,11 +995,12 @@ function render(r,info){
       `太陽落<b style="color:var(--gold-bright)">${r.sign}座</b>。${SIGN_TRAIT[r.sign]||"星性中和，內外兼修"}。西洋星盤映照外顯性格與際遇節奏，與東方命盤交織成完整人格。`],
     ["六","筆畫結構","形勢剛柔",
       r.chars.map((c,i)=>`<span class="tag">${c} ${r.strokesArr[i]}畫</span>`).join("")+
-      `總筆畫 <b style="color:var(--gold-bright)">${r.total}</b>。筆畫之多寡疏密，定字之氣勢；${r.total>30?"筆畫偏厚，主承載力強、後勁綿長":"筆畫輕靈，主反應敏捷、行事俐落"}。`],
+      `總筆畫 <b style="color:var(--gold-bright)">${r.total}</b>。筆畫之多寡疏密，定字之氣勢；${r.total>30?"筆畫偏厚，主承載力強、後勁綿長":"筆畫輕靈，主反應敏捷、行事俐落"}。`+
+      (r.guessed&&r.guessed.length?`<div style="margin-top:8px;font-size:12.5px;color:#c0594a">※ 「${r.guessed.join("、")}」字筆畫為系統估算，可能與康熙標準有出入。加 LINE 告訴三寶爸，優先幫你精算補上。</div>`:"")],
     ["七","字形象徵","部首意象",
       r.symbols.map(s=>`<div style="margin:6px 0"><b style="color:var(--gold-bright)">${s.c}</b>　${s.sym}（${s.wx}）</div>`).join("")],
     ["八","五行屬性","旺衰調候",
-      wxRows+`<div style="margin-top:10px">命盤<b style="color:var(--gold-bright)">${r.strong}</b>旺而<b style="color:var(--cinnabar)">${r.weak}</b>弱。喜用神宜補<b style="color:var(--gold-bright)">${r.weak}</b>，色彩、方位、職業可朝此調候，平衡則運通。${r.tally[r.weak]<0.5?`<br><span style="color:#a99877;font-size:13px">（命中${r.weak}氣極微，更需後天以色彩、配戴、方位主動補強。）</span>`:""}</div>`],
+      wxRows+`<div style="margin-top:10px">命盤<b style="color:var(--gold-bright)">${r.strong}</b>最旺、<b style="color:var(--cinnabar)">${r.scarce}</b>最缺；日主${si.strength}，故取<b style="color:var(--gold-bright)">${r.weak}</b>為喜用神，色彩、方位、職業可朝此調候，平衡則運通。${r.tally[r.weak]<0.5?`<br><span style="color:#a99877;font-size:13px">（命中${r.weak}氣極微，更需後天以色彩、配戴、方位主動補強。）</span>`:""}</div>`],
     ["九","字義會意・聲韻","音義交會",
       `<span class="tag">韻律・${r.tone}聲</span>${TONE_FEEL[r.tone]}。<div style="margin-top:8px">姓名音義並觀，${r.tone==="平"?"呼之溫潤，利人緣與貴氣":r.tone==="仄"?"呼之有力，利威望與決斷":"平仄交錯，剛柔得宜，進退有據"}；字義會意整體<b style="color:var(--gold-bright)">${r.nameScore>72?"清貴":"平穩"}</b>，與命局相生。</div>`],
     ["十","大運流年","運勢走向",
@@ -1090,7 +1107,8 @@ document.getElementById('m').addEventListener('change',updateLeapVisibility);
 document.getElementById('y').addEventListener('input',updateLeapVisibility);
 document.getElementById('dailyEntry').addEventListener('click',()=>{
   const td=todayGanzhi();
-  const df=dailyFortune(td.wx,td.wx,GAN[(td.jdn+9)%10],null);
+  const wxArr=["木","火","土","金","水"];
+  const df=dailyFortune(wxArr[td.jdn%5],td.wx,GAN[(td.jdn+9)%10],null);
   let box=document.getElementById('dailyBox');
   if(!box){box=document.createElement('section');box.id='dailyBox';box.style.padding='0 24px';
     document.querySelector('.form').insertAdjacentElement('beforebegin',box);}
@@ -1148,7 +1166,7 @@ document.getElementById('go').addEventListener('click',()=>{
     const sol=lunar2solar(y,m,d,isLeap);
     y=sol.y; m=sol.m; d=sol.d;
   }
-  if(y<1900||y>2025){alert('請輸入正確的出生年份');return;}
+  if(y<1900||y>new Date().getFullYear()){alert('請輸入正確的出生年份');return;}
   const r=divine(name,sex,y,m,d,hIdx,ziSchool);
   const res=document.getElementById('result');
   res.innerHTML=render(r,{hIdx});
@@ -1182,7 +1200,7 @@ function _cangFav(zhi,weak){var a=ZHI_CANGAN[zhi]||[];for(var i=0;i<a.length;i++
 var WX_SEASON={木:"春（正—三月）",火:"夏（四—六月）",土:"四季土月（三六九臘）",金:"秋（七—九月）",水:"冬（十—臘月）"};
 function slot7Months(weak,yearZhi){var y=ZHI_WX[yearZhi];var r;if(y===weak||SHENG[y]===weak)r=WX_SEASON[y]+"前後氣旺、最能借力";else if(KE[y]===weak)r=WX_SEASON[y]+"前後壓力較顯、宜收斂";else r=WX_SEASON[y]+"前後為全年轉折、宜留意節奏";return "時序上"+r;}
 var SLOT_ACTION={比劫:{yi:"宜獨當一面、結盟靠譜夥伴",ji:"忌合夥糾紛、為人作保"},食傷:{yi:"宜發揮專長、創作與表達",ji:"忌口無遮攔、頂撞上位"},財星:{yi:"宜穩紮經營、置產理財",ji:"忌投機賭性、因財失義"},官殺:{yi:"宜爭取升遷、承擔重任",ji:"忌違規越矩、硬扛內耗"},印星:{yi:"宜進修受證、親近貴人",ji:"忌過度依賴、行動遲緩"}};
-var SLOT_TRIGGER={比劫:"引動比劫，利人際結盟，但防財務分潤",食傷:"引動食傷，利才華變現與名聲",財星:"引動財星，利正財偏財與務實收成",官殺:"引動官殺，利職場名分與地位",印星:"引動印星，利學習、靠山與心境沉澱"};
+var SLOT_TRIGGER={比劫:"引動比劫，利人際結盟,但防財務分潤",食傷:"引動食傷，利才華變現與名聲",財星:"引動財星，利正財偏財與務實收成",官殺:"引動官殺，利職場名分與地位",印星:"引動印星，利學習、靠山與心境沉澱"};
 var WX_ORGAN={木:"肝膽、筋骨與情緒疏泄",火:"心血管、睡眠與精神",土:"脾胃與消化",金:"肺氣、呼吸與皮膚",水:"腎氣、泌尿與精力"};
 function slot10Health(weak,tier){if(tier==="弱")return "健康上"+weak+"受抑，留意"+WX_ORGAN[weak]+"，別恃強熬夜";if(tier==="旺")return "健康上"+weak+"得氣，整體有勁，仍宜作息規律、勿過耗";return "健康平平，維持規律即可，留意"+WX_ORGAN[weak];}
 var ALT_BY_CLASS={比劫:"與其單打獨鬥硬拚，不如鞏固既有人脈、深化信任，等順流年再擴張",食傷:"與其急著表現衝撞，不如把才華沉澱成作品或專業，安靜累積待時而發",財星:"與其冒進求財，不如守穩現金流、精進本業，把基本盤顧牢",官殺:"與其硬扛求表現，不如先把份內做到無可挑剔，建口碑勝過搶功",印星:"正是進修充電的好時機，學習、考證、近貴人，蓄能勝過硬衝"};
@@ -1283,6 +1301,35 @@ if(document.readyState!=="loading")showPdpaModal();
     return html;
   };
 })();
+
+
+/* ---- 6. 引擎升級公告(可關閉,關閉後不再顯示)---- */
+var NOTICE_KEY="tianheng_notice_v2_engine";
+function noticeSeen(){try{return localStorage.getItem(NOTICE_KEY)==="1";}catch(e){return false;}}
+function noticeSetSeen(){try{localStorage.setItem(NOTICE_KEY,"1");}catch(e){}}
+function showEngineNotice(){
+  if(noticeSeen())return;
+  var form=document.querySelector('.form');
+  if(!form||document.getElementById('engineNotice'))return;
+  var box=document.createElement('section');
+  box.id='engineNotice';
+  box.style.cssText='margin:0 24px 4px;padding:18px 16px;border:1px solid var(--gold);border-radius:6px;position:relative;background:linear-gradient(160deg,rgba(34,26,40,.88),rgba(15,11,22,.9));backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)';
+  box.innerHTML='<div style="position:absolute;top:10px;right:14px;color:#a99877;font-size:18px;cursor:pointer;line-height:1" id="noticeClose">✕</div>'
+    +'<div style="font-size:13px;color:var(--gold-bright);letter-spacing:.2em;margin-bottom:10px;text-align:center">◈ 引 擎 升 級 公 告 ◈</div>'
+    +'<div style="font-size:13px;color:#d8cbb0;line-height:1.95">'
+    +'天衡推演引擎全面升級:<br>'
+    +'一、新增<b style="color:var(--gold-bright)">「性格總論」</b>——先論你的氣性為人,再談運勢吉凶。<br>'
+    +'二、喜用神改採正統<b style="color:var(--gold-bright)">日主身強弱</b>判定,幸運色、方位、流年旺弱全面連動。<br>'
+    +'三、修正單名(二字姓名)五格計算。<br>'
+    +'<span style="color:#a99877;font-size:12px">※ 若與先前結果不同,屬引擎升級後的正統判法,非錯誤。覺得準或不準,都歡迎加 LINE 告訴三寶爸。</span></div>';
+  form.insertAdjacentElement('beforebegin',box);
+  document.getElementById('noticeClose').addEventListener('click',function(){
+    noticeSetSeen();
+    if(box.parentNode)box.parentNode.removeChild(box);
+  });
+}
+document.addEventListener("DOMContentLoaded",showEngineNotice);
+if(document.readyState!=="loading")showEngineNotice();
 
 </script>
   <!-- ===== 天衡瀏覽人數統計 開始 ===== -->
