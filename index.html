@@ -1251,8 +1251,7 @@ function buildCrossHtmlV2(r){
   var guaShort=r.gua.n.split(" ")[0];
   return '<div class="cross"><h4>◈ 九 維 交 叉 推 演</h4>'+
     '<p>'+crossDayVsSx(r.gz.dGan,r.sx)+'。</p>'+
-    '<p>'+crossWuxing(r.strong,r.scarce)+'
-
+    '<p>'+crossWuxing(r.strong,r.weak)+'。</p>'+
     '<p>'+crossEastWest(r.zw,r.sign)+'；姓名音律屬<span class="em">'+r.tone+'</span>，加乘整體氣場。</p>'+
     '<p style="color:var(--gold-bright);border-top:1px solid var(--panel-line);padding-top:12px;margin-top:14px">'+crossVerdictV2(guaShort,r.weak,r.strong,r.overall,r.sx,r.sign)+'</p></div>';
 }
@@ -1502,8 +1501,7 @@ if(document.readyState!=="loading")showEngineNotice();
     ctx.textAlign="center";
     ctx.font=fnt(18,400);
     ctx.fillStyle="#a99877";
-    ctx.fillText("最旺 "+r.strong+"　·　最缺 "+r.scarce+"　·　喜用 "+r.weak,CARD_W/2,1178);
-
+    ctx.fillText("最旺 "+r.strong+"　·　喜用 "+r.weak,CARD_W/2,1178);
 
     /* 四柱 */
     ctx.strokeStyle="rgba(176,133,66,.25)"; ctx.lineWidth=1;
