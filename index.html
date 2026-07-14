@@ -1330,6 +1330,245 @@ function showEngineNotice(){
 }
 document.addEventListener("DOMContentLoaded",showEngineNotice);
 if(document.readyState!=="loading")showEngineNotice();
+/* ---- 7. 命盤圖卡（canvas 生成，iOS 長按存圖）---- */
+(function(){
+  var CARD_W=1080, CARD_H=1350;
+  var WX_LIST=["木","火","土","金","水"];
+  var WX_COLOR={木:"#4a8c63",火:"#c2503f",土:"#c9973f",金:"#c9c2b0",水:"#4a6f9c"};
+
+  function goldGrad(ctx,y,h){
+    var g=ctx.createLinearGradient(0,y,0,y+h);
+    g.addColorStop(0,"#fbf0d0"); g.addColorStop(.45,"#e7c479"); g.addColorStop(1,"#b08542");
+    return g;
+  }
+  function fnt(size,weight,serif){
+    var fam = serif!==false
+      ? '"Noto Serif TC","Songti TC","STSong",serif'
+      : '"PingFang TC","Heiti TC",sans-serif';
+    return (weight||400)+" "+size+"px "+fam;
+  }
+  function center(ctx,txt,y,size,fill,ls,weight){
+    ctx.font=fnt(size,weight||400);
+    ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    ctx.fillStyle=fill;
+    if(ls){
+      // 手動字距
+      var chs=String(txt).split(""), tw=0, i;
+      for(i=0;i<chs.length;i++) tw+=ctx.measureText(chs[i]).width+ls;
+      tw-=ls;
+      var x=CARD_W/2-tw/2;
+      ctx.textAlign="left";
+      for(i=0;i<chs.length;i++){
+        ctx.fillText(chs[i],x,y);
+        x+=ctx.measureText(chs[i]).width+ls;
+      }
+      ctx.textAlign="center";
+    }else{
+      ctx.fillText(txt,CARD_W/2,y);
+    }
+  }
+  function roundRect(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+  function wrapLines(ctx,txt,maxW){
+    var chs=String(txt).split(""), lines=[], cur="";
+    for(var i=0;i<chs.length;i++){
+      var t=cur+chs[i];
+      if(ctx.measureText(t).width>maxW && cur){ lines.push(cur); cur=chs[i]; }
+      else cur=t;
+    }
+    if(cur) lines.push(cur);
+    return lines;
+  }
+
+  function drawCard(r){
+    var cv=document.createElement("canvas");
+    cv.width=CARD_W; cv.height=CARD_H;
+    var ctx=cv.getContext("2d");
+
+    /* 背景：深色底 + 光暈 */
+    ctx.fillStyle="#0a0812"; ctx.fillRect(0,0,CARD_W,CARD_H);
+    var rg=ctx.createRadialGradient(CARD_W/2,330,40,CARD_W/2,330,720);
+    rg.addColorStop(0,"rgba(176,133,66,.22)");
+    rg.addColorStop(.55,"rgba(120,90,50,.07)");
+    rg.addColorStop(1,"rgba(10,8,18,0)");
+    ctx.fillStyle=rg; ctx.fillRect(0,0,CARD_W,CARD_H);
+    var rg2=ctx.createRadialGradient(CARD_W/2,CARD_H,60,CARD_W/2,CARD_H,600);
+    rg2.addColorStop(0,"rgba(156,58,46,.14)");
+    rg2.addColorStop(1,"rgba(10,8,18,0)");
+    ctx.fillStyle=rg2; ctx.fillRect(0,0,CARD_W,CARD_H);
+
+    /* 星點 */
+    for(var i=0;i<90;i++){
+      var sx=(i*137.5)%CARD_W, sy=(i*263.7)%CARD_H;
+      var a=0.05+((i*37)%40)/400;
+      ctx.fillStyle="rgba(230,210,160,"+a+")";
+      ctx.beginPath(); ctx.arc(sx,sy,((i%3)===0?1.8:1.1),0,6.2832); ctx.fill();
+    }
+
+    /* 外框雙金線 */
+    ctx.strokeStyle="rgba(176,133,66,.55)"; ctx.lineWidth=2;
+    roundRect(ctx,34,34,CARD_W-68,CARD_H-68,10); ctx.stroke();
+    ctx.strokeStyle="rgba(176,133,66,.22)"; ctx.lineWidth=1;
+    roundRect(ctx,46,46,CARD_W-92,CARD_H-92,7); ctx.stroke();
+
+    /* 標頭 */
+    center(ctx,"天 ◇ 衡 ◇ 命 ◇ 盤",118,24,"rgba(217,182,106,.85)",6);
+    ctx.save();
+    ctx.shadowColor="rgba(217,182,106,.5)"; ctx.shadowBlur=26;
+    center(ctx,"天衡",214,84,goldGrad(ctx,150,80),14,900);
+    ctx.restore();
+    center(ctx,"九 維 命 理 交 叉 推 演",256,20,"#bda880",5);
+
+    /* 分隔菱 */
+    ctx.fillStyle="rgba(176,133,66,.5)";
+    ctx.save(); ctx.translate(CARD_W/2,292); ctx.rotate(Math.PI/4);
+    ctx.fillRect(-5,-5,10,10); ctx.restore();
+    ctx.strokeStyle="rgba(176,133,66,.28)"; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(180,292); ctx.lineTo(CARD_W/2-24,292);
+    ctx.moveTo(CARD_W/2+24,292); ctx.lineTo(CARD_W-180,292); ctx.stroke();
+
+    /* 姓名 */
+    var nm=(r.chars||[]).join("");
+    center(ctx,nm,362,44,"#f0e8d6",10,600);
+
+    /* 綜評環 */
+    var cx=CARD_W/2, cy=520, R=96;
+    ctx.lineWidth=11;
+    ctx.strokeStyle="rgba(176,133,66,.22)";
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,6.2832); ctx.stroke();
+    var ag=ctx.createLinearGradient(cx-R,cy-R,cx+R,cy+R);
+    ag.addColorStop(0,"#b08542"); ag.addColorStop(1,"#f0d89a");
+    ctx.strokeStyle=ag; ctx.lineCap="round";
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+6.2832*(r.overall/100));
+    ctx.stroke(); ctx.lineCap="butt";
+    center(ctx,String(r.overall),538,64,goldGrad(ctx,492,64),0,900);
+    center(ctx,"命 運 綜 評",574,17,"#bda880",4);
+
+    /* 卦 */
+    var guaFull=r.gua.n.split(" ");
+    center(ctx,guaFull[0]+" · "+(guaFull[2]||guaFull[1]||""),672,34,"#f0e8d6",8,600);
+    ctx.font=fnt(18,500,false);
+    center(ctx,r.gua.en,704,18,"#5f9179",5);
+
+    /* 屬相 · 星座 · 身強弱 三格 */
+    var boxes=[
+      ["生肖","屬 "+r.sx],
+      ["星座",r.sign+"座"],
+      ["日主",r.gz.dGan+"・"+(r.strengthInfo?r.strengthInfo.strength:"")]
+    ];
+    var bw=280, gap=22, bx0=(CARD_W-(bw*3+gap*2))/2, by=748, bh=86;
+    for(var b=0;b<3;b++){
+      var bx=bx0+b*(bw+gap);
+      ctx.fillStyle="rgba(20,16,28,.55)";
+      roundRect(ctx,bx,by,bw,bh,8); ctx.fill();
+      ctx.strokeStyle="rgba(176,133,66,.35)"; ctx.lineWidth=1; ctx.stroke();
+      ctx.textAlign="center";
+      ctx.font=fnt(16,400); ctx.fillStyle="#a99877";
+      ctx.fillText(boxes[b][0],bx+bw/2,by+32);
+      ctx.font=fnt(26,600); ctx.fillStyle="#d9b66a";
+      ctx.fillText(boxes[b][1],bx+bw/2,by+68);
+    }
+
+    /* 五行條 */
+    center(ctx,"◈ 五 行 分 佈 ◈",898,19,"#d9b66a",5);
+    var t=r.tally, mx=1;
+    WX_LIST.forEach(function(k){ if(t[k]>mx) mx=t[k]; });
+    var barX=210, barW=560, rowY=940, rowH=44;
+    WX_LIST.forEach(function(k,idx){
+      var y=rowY+idx*rowH;
+      ctx.textAlign="left";
+      ctx.font=fnt(22,600); ctx.fillStyle="#d9b66a";
+      ctx.fillText(k,barX-46,y+8);
+      ctx.fillStyle="rgba(176,133,66,.16)";
+      roundRect(ctx,barX,y-9,barW,16,8); ctx.fill();
+      var w=Math.max(18,barW*(t[k]/mx));
+      var bg=ctx.createLinearGradient(barX,0,barX+w,0);
+      bg.addColorStop(0,WX_COLOR[k]);
+      bg.addColorStop(1,"#e7c479");
+      ctx.fillStyle=bg;
+      roundRect(ctx,barX,y-9,w,16,8); ctx.fill();
+      ctx.font=fnt(18,400,false); ctx.fillStyle="#bda880";
+      ctx.fillText(t[k].toFixed(1),barX+barW+16,y+7);
+    });
+    ctx.textAlign="center";
+    ctx.font=fnt(18,400);
+    ctx.fillStyle="#a99877";
+    ctx.fillText("最旺 "+r.strong+"　·　喜用 "+r.weak,CARD_W/2,1178);
+
+    /* 四柱 */
+    ctx.strokeStyle="rgba(176,133,66,.25)"; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(160,1214); ctx.lineTo(CARD_W-160,1214); ctx.stroke();
+    var pil=[r.gz.yGan+r.gz.yZhi, r.gz.mGan+r.gz.mZhi, r.gz.dGan+r.gz.dZhi,
+             (r.gz.hGan==="—"?"——":r.gz.hGan+r.gz.hZhi)];
+    var lab=["年","月","日","時"];
+    var pw=CARD_W/5, px0=CARD_W/2-pw*1.5;
+    for(var p=0;p<4;p++){
+      var pxx=px0+p*pw;
+      ctx.font=fnt(15,400); ctx.fillStyle="#8a7c5a";
+      ctx.fillText(lab[p],pxx,1256);
+      ctx.font=fnt(30,600); ctx.fillStyle="#e9d5a8";
+      ctx.fillText(pil[p],pxx,1292);
+    }
+
+    /* 底部 */
+    ctx.font=fnt(17,400,false); ctx.fillStyle="#9a8b6d";
+    ctx.fillText("jacky95188888.github.io/-/　·　三寶爸",CARD_W/2,1332);
+
+    return cv;
+  }
+
+  window.tianhengCard=function(r){
+    var wrap=document.getElementById("cardWrap");
+    if(!wrap){
+      wrap=document.createElement("div");
+      wrap.id="cardWrap";
+      wrap.style.cssText="margin:18px 0 0;text-align:center";
+      var sb=document.querySelector(".share-box");
+      if(sb) sb.appendChild(wrap); else document.getElementById("result").appendChild(wrap);
+    }
+    wrap.innerHTML='<div style="font-size:13px;color:#cdb98e;padding:14px 0">◈ 命盤圖卡生成中 ◈</div>';
+    var go=function(){
+      try{
+        var cv=drawCard(r);
+        var url=cv.toDataURL("image/png");
+        wrap.innerHTML=
+          '<img src="'+url+'" style="width:100%;max-width:420px;border-radius:8px;'+
+          'border:1px solid rgba(176,133,66,.45);box-shadow:0 8px 30px rgba(0,0,0,.5)">'+
+          '<div style="font-size:13px;color:#d9b66a;letter-spacing:.08em;line-height:1.9;margin-top:12px">'+
+          '↑ <b>長按圖片 → 儲存到相簿</b><br>'+
+          '<span style="color:#a99877;font-size:12px">存好後就能發限動、傳 LINE 給朋友看</span></div>';
+      }catch(e){
+        wrap.innerHTML='<div style="font-size:13px;color:#c0594a;padding:10px">圖卡生成失敗，請重新啟盤試試</div>';
+      }
+    };
+    if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(go).catch(go);
+    }else{ setTimeout(go,60); }
+  };
+
+  /* 掛按鈕：攔截 render，在分享區塞入「生成圖卡」按鈕 */
+  if(typeof render==="function"){
+    var _pr=render;
+    render=function(r,info){
+      var html=_pr(r,info);
+      window.__thLastR=r;
+      var mark='<div class="share-btns">';
+      var btn='<button class="sbtn share" style="margin-bottom:10px;width:100%" '+
+              'onclick="tianhengCard(window.__thLastR)">🖼 生成命盤圖卡</button>';
+      var i=html.indexOf(mark);
+      if(i>=0) html=html.slice(0,i)+btn+html.slice(i);
+      return html;
+    };
+  }
+})();
 
 </script>
   <!-- ===== 天衡瀏覽人數統計 開始 ===== -->
