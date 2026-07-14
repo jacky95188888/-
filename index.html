@@ -1249,11 +1249,12 @@ function crossEastWest(zw,sign){var h=String(zw).split("·")[0];var dyn=["牡羊
 function crossVerdictV2(g,weak,strong,overall,sx,sign){var t;if(overall>=85)t="底蘊深厚，順勢而為便能水到渠成";else if(overall>=75)t="格局中上，補強弱項可由佳轉盛";else if(overall>=65)t="根基平穩，後天調候得宜則漸入佳境";else t="先天平實，正因如此後天努力的每一分都算數";return "九維交叉之下，您屬「"+g+"」格局——"+(GUA_NAME[g]||"自成一格")+"。大運重點在補"+weak+"、調節過旺的"+strong+"；"+t+"。屬"+sx+"帶"+sign+"座之性，"+((sx.charCodeAt(0)+sign.charCodeAt(0))%2?"宜把握貴人與舞台之機":"宜穩中求進、厚積薄發")+"。";}
 function buildCrossHtmlV2(r){
   var guaShort=r.gua.n.split(" ")[0];
-  return '<div class="cross"><h4>◈ 九 維 交 叉 推 演</h4>'+
+    return '<div class="cross"><h4>◈ 九 維 交 叉 推 演</h4>'+
     '<p>'+crossDayVsSx(r.gz.dGan,r.sx)+'。</p>'+
-    '<p>'+crossWuxing(r.strong,r.weak)+'。</p>'+
+    '<p>'+crossWuxing(r.strong,r.scarce)+'。</p>'+
     '<p>'+crossEastWest(r.zw,r.sign)+'；姓名音律屬<span class="em">'+r.tone+'</span>，加乘整體氣場。</p>'+
     '<p style="color:var(--gold-bright);border-top:1px solid var(--panel-line);padding-top:12px;margin-top:14px">'+crossVerdictV2(guaShort,r.weak,r.strong,r.overall,r.sx,r.sign)+'</p></div>';
+
 }
 
 /* ---- 4. 個資法同意彈窗（localStorage，無痕容錯）---- */
