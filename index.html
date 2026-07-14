@@ -1499,10 +1499,11 @@ if(document.readyState!=="loading")showEngineNotice();
       ctx.font=fnt(18,400,false); ctx.fillStyle="#bda880";
       ctx.fillText(t[k].toFixed(1),barX+barW+16,y+7);
     });
-    ctx.textAlign="center";
+       ctx.textAlign="center";
     ctx.font=fnt(18,400);
     ctx.fillStyle="#a99877";
-    ctx.fillText("最旺 "+r.strong+"　·　喜用 "+r.weak,CARD_W/2,1178);
+    ctx.fillText("最旺 "+r.strong+"　·　最缺 "+r.scarce+"　·　喜用 "+r.weak,CARD_W/2,1178);
+
 
     /* 四柱 */
     ctx.strokeStyle="rgba(176,133,66,.25)"; ctx.lineWidth=1;
