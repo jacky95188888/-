@@ -1602,5 +1602,119 @@ if(document.readyState!=="loading")showEngineNotice();
 </script>
 <!-- ===== 天衡瀏覽人數統計 結束 ===== -->
 <script src="tianheng-v3.js"></script>
+  <!-- ===== 命格稱號 · 稀有度 · 一鍵分享 v2 開始 ===== -->
+<script>
+(function(){
+  var TH_TITLE={
+    "木強":{t:"參天古木格",s:"志如喬木，越挫越向上長",r:5.8},
+    "木中":{t:"春風拂柳格",s:"柔韌隨勢，順風時長得最快",r:8.9},
+    "木弱":{t:"幽谷靈芝格",s:"低調藏珍，遇貴人便一飛沖天",r:4.6},
+    "火強":{t:"烈日當空格",s:"熱力四射，天生自帶舞台燈",r:5.2},
+    "火中":{t:"爐中暖焰格",s:"溫而不烈，最會暖人心",r:9.4},
+    "火弱":{t:"星火燎原格",s:"火苗雖小，時機一到便成燎原",r:4.1},
+    "土強":{t:"崑崙鎮嶽格",s:"穩如泰山，是眾人靠得住的那座山",r:6.3},
+    "土中":{t:"沃野千里格",s:"包容厚實，種什麼都能長",r:10.7},
+    "土弱":{t:"璞玉待琢格",s:"外樸內秀，一經雕琢便驚豔四座",r:5.1},
+    "金強":{t:"出匣神鋒格",s:"鋒芒天成，出手就是要見真章",r:4.8},
+    "金中":{t:"藏鋒斂鍔格",s:"利刃在鞘，不出手則已",r:8.2},
+    "金弱":{t:"砂中真金格",s:"真金不怕磨，越淘洗越亮",r:3.9},
+    "水強":{t:"滄海奔流格",s:"思緒如江海，擋是擋不住的",r:5.5},
+    "水中":{t:"明鏡止水格",s:"靜水流深，看得比誰都透",r:9.1},
+    "水弱":{t:"寒潭映月格",s:"清冷通透，懂你的人視你如珍寶",r:4.3}
+  };
+  var REAL_MIN=300;
+  function tier3(st){
+    if(st==="極強"||st==="身強")return"強";
+    if(st==="極弱"||st==="身弱")return"弱";
+    return"中";
+  }
+  function titleOf(r){
+    try{
+      var wx=r.strengthInfo.dayWx, st=r.strengthInfo.strength;
+      var key=wx+tier3(st);
+      var o=TH_TITLE[key]||TH_TITLE["土中"];
+      var rare=o.r;
+      if(st==="極強"||st==="極弱") rare=Math.round(o.r*0.35*10)/10;
+      return {key:key,t:o.t,s:o.s,rare:rare};
+    }catch(e){return null;}
+  }
+  function toast(msg){
+    var el=document.getElementById("thToast");
+    if(!el){
+      el=document.createElement("div");
+      el.id="thToast";
+      el.style.cssText="position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:rgba(20,16,28,.95);border:1px solid #b08542;color:#f0e8d6;padding:12px 22px;border-radius:24px;font-size:14px;z-index:9999;letter-spacing:.05em;transition:opacity .4s;box-shadow:0 6px 24px rgba(0,0,0,.5);opacity:0";
+      document.body.appendChild(el);
+    }
+    el.textContent=msg;
+    requestAnimationFrame(function(){el.style.opacity="1";});
+    clearTimeout(el.__t);
+    el.__t=setTimeout(function(){el.style.opacity="0";},2600);
+  }
+  window.thCopyTitle=function(){
+    var d=window.__thTitle;
+    if(!d){toast("請先啟盤推演");return;}
+    var text="🔮 我在「天衡」測出命格：【"+d.t+"】\n全台約只有 "+d.rare+"% 的人是這個命格！\n「"+d.s+"」\n你也來測你的命格 👇\nhttps://jacky95188888.github.io/-/";
+    function ok(){toast("已複製！貼到 LINE、Threads 或 IG 限動吧 ✨");}
+    function manual(){
+      var ta=document.createElement("textarea");
+      ta.value=text;ta.style.cssText="position:fixed;opacity:0";
+      document.body.appendChild(ta);ta.select();
+      try{document.execCommand("copy");ok();}catch(e){toast("複製失敗，請截圖分享");}
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(ok).catch(manual);
+    }else{manual();}
+  };
+  function updateRealStat(d){
+    if(!window.__thStatGet)return;
+    window.__thStatGet(function(data){
+      try{
+        if(!data)return;
+        var total=0;
+        for(var k in data) total+=data[k];
+        if(total<REAL_MIN)return;
+        var cnt=data[d.key]||0;
+        var pct=Math.max(0.1,Math.round(cnt/total*1000)/10);
+        d.rare=pct;
+        window.__thTitle=d;
+        var numEl=document.getElementById("thRareNum");
+        var noteEl=document.getElementById("thRareNote");
+        if(numEl) numEl.textContent=pct+"%";
+        if(noteEl) noteEl.textContent="※ 依天衡實測 "+total.toLocaleString()+" 筆命盤統計";
+      }catch(e){}
+    });
+  }
+  if(typeof render==="function"){
+    var _r=render;
+    render=function(r,info){
+      var html=_r(r,info);
+      try{
+        var d=titleOf(r);
+        if(d){
+          window.__thTitle=d;
+          if(window.__thStatInc) window.__thStatInc(d.key);
+          setTimeout(function(){updateRealStat(d);},500);
+          var card='<div style="margin:0 0 24px;padding:24px 20px;text-align:center;border:1px solid #d9b66a;border-radius:8px;background:linear-gradient(160deg,rgba(44,33,20,.9),rgba(15,11,22,.92));box-shadow:0 0 28px rgba(217,182,106,.18)">'
+            +'<div style="font-size:12px;color:#cdb98e;letter-spacing:.3em">◈ 你 的 命 格 稱 號 ◈</div>'
+            +'<div style="font-size:34px;font-weight:900;margin:12px 0 6px;letter-spacing:.08em;background:linear-gradient(180deg,#fbf0d0,#d9b66a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">'+d.t+'</div>'
+            +'<div style="font-size:14px;color:#e3d7bd;line-height:1.9">「'+d.s+'」</div>'
+            +'<div style="margin-top:12px;font-size:13px;color:#d9b66a">✦ 全台約只有 <b id="thRareNum" style="font-size:17px">'+d.rare+'%</b> 的人是這個命格 ✦</div>'
+            +'<div id="thRareNote" style="margin-top:6px;font-size:11px;color:#8a7c5a">※ 依日主五行×身強弱理論分布估算</div>'
+            +'<button onclick="thCopyTitle()" style="margin-top:16px;width:100%;padding:14px;background:linear-gradient(135deg,#a83a2e,#7a2a20);color:#f0e8d6;border:1px solid #d9b66a;border-radius:6px;font-size:15px;letter-spacing:.15em;cursor:pointer;font-family:inherit">📋 複製我的命格，貼給朋友看</button>'
+            +'</div>';
+          var mark='<div class="tasks-head">';
+          var i=html.indexOf(mark);
+          if(i>=0) html=html.slice(0,i)+card+html.slice(i);
+        }
+      }catch(e){}
+      return html;
+    };
+  }
+})();
+</script>
+<!-- ===== 命格稱號 結束 ===== -->
+
 </body>
 </html>
