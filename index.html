@@ -1576,7 +1576,7 @@ if(document.readyState!=="loading")showEngineNotice();
   <!-- ===== 天衡瀏覽人數統計 開始 ===== -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getDatabase, ref, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  import { getDatabase, ref, runTransaction, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCxKCj8wnBYAfHIv93yug162RaWrPC3Pyk",
@@ -1591,6 +1591,18 @@ if(document.readyState!=="loading")showEngineNotice();
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
+  // 命格稱號統計
+  window.__thStatInc = function(key){
+    try{ runTransaction(ref(db, 'stats/titles/' + key), (n) => (n || 0) + 1); }catch(e){}
+  };
+  window.__thStatGet = function(cb){
+    get(ref(db, 'stats/titles')).then(s => cb(s.val() || null)).catch(() => cb(null));
+  };
+  // 病毒漏斗統計
+  window.__thStatInc2 = function(key){
+    try{ runTransaction(ref(db, 'stats/funnel/' + key), (n) => (n || 0) + 1); }catch(e){}
+  };
+
   // 取得今天日期字串，例如 2026-06-24
   const today = new Date().toISOString().slice(0, 10);
 
@@ -1600,6 +1612,7 @@ if(document.readyState!=="loading")showEngineNotice();
   // 累加「今天的瀏覽數」
   runTransaction(ref(db, 'stats/daily/' + today), (n) => (n || 0) + 1);
 </script>
+
 <!-- ===== 天衡瀏覽人數統計 結束 ===== -->
 <script src="tianheng-v3.js"></script>
   <!-- ===== 命格稱號 · 稀有度 · 一鍵分享 v2 開始 ===== -->
