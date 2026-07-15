@@ -1728,6 +1728,31 @@ if(document.readyState!=="loading")showEngineNotice();
 })();
 </script>
 <!-- ===== 命格稱號 結束 ===== -->
+<!-- ===== 病毒漏斗統計 開始 ===== -->
+<script>
+(function(){
+  function inc(key){
+    try{ if(window.__thStatInc2) window.__thStatInc2(key); }catch(e){}
+  }
+  try{
+    if(location.search.indexOf("f=s")>=0){ inc("from_share"); }
+  }catch(e){}
+  document.addEventListener("click",function(e){
+    try{
+      var el=e.target;
+      for(var i=0;i<4 && el;i++){
+        if(el.tagName==="A" && el.href && el.href.indexOf("lin.ee")>=0){ inc("line_click"); break; }
+        if(el.tagName==="BUTTON" && el.getAttribute("onclick") &&
+           el.getAttribute("onclick").indexOf("thCopyTitle")>=0){ inc("share_copy"); break; }
+        if(el.tagName==="BUTTON" && el.getAttribute("onclick") &&
+           el.getAttribute("onclick").indexOf("shareResult")>=0){ inc("share_native"); break; }
+        el=el.parentElement;
+      }
+    }catch(e2){}
+  },true);
+})();
+</script>
+<!-- ===== 病毒漏斗統計 結束 ===== -->
 
 </body>
 </html>
