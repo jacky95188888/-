@@ -1996,6 +1996,63 @@ if(document.readyState!=="loading")showEngineNotice();
       ]);
     }
 
+    /* ========== 六 筆畫結構 / 七 字形象徵 / 九 字義聲韻 ========== */
+    var WX_CHARIMG={
+      木:["生機勃發，主成長與仁厚","如木向陽，性喜舒展、重情義"],
+      火:["光明外顯，主熱忱與禮節","如火之明，性喜表現、重名聲"],
+      土:["厚實穩重，主誠信與根基","如土載物，性喜務實、重承擔"],
+      金:["剛正銳利，主義氣與決斷","如金之堅，性喜原則、重是非"],
+      水:["靈動通達，主智慧與應變","如水之柔，性喜變通、重人和"]
+    };
+    function strokeFeelTxt(n){
+      if(n>=18) return "筆畫繁複，字氣厚重、承載力強";
+      if(n>=12) return "筆畫中庸，字形均衡、內斂有度";
+      if(n>=7) return "筆畫精簡，字氣俐落、行事明快";
+      return "筆畫輕靈，字形疏朗、反應敏捷";
+    }
+    function charImgOne(ch,wx,stroke){
+      var base=WX_CHARIMG[wx]||WX_CHARIMG["土"];
+      var idx=ch.charCodeAt(0)%base.length;
+      return base[idx]+"；"+strokeFeelTxt(stroke);
+    }
+    function zixingExplain(r){
+      var segs=['你名字每個字的字形，各自帶著不同的氣：'];
+      r.symbols.forEach(function(s,i){
+        var stroke=r.strokesArr[i]||9;
+        segs.push('<b style="color:var(--gold-bright)">'+s.c+'</b>（'+s.wx+'）：'+charImgOne(s.c,s.wx,stroke)+'。');
+      });
+      segs.push('字形之氣，會潛移默化影響一個人的氣質與行事風格。你名字的組合，'+
+        (r.symbols.length>=3?'三字各有其性、層次豐富':'字字相承、氣韻連貫')+'，與你的八字命局合看，才是完整的你。');
+      return P(segs);
+    }
+    function bihuaExplain(r){
+      var total=r.total, chars=r.chars, strokes=r.strokesArr;
+      var feel = total>=40?"整體筆畫厚重，字氣沉穩、承載力強，走的是後勁綿長的路線":
+                 total>=25?"整體筆畫勻稱，剛柔得宜、進退有據，行事節奏拿捏得好":
+                 "整體筆畫清簡，反應快、行動俐落，適合明快果決的風格";
+      var variance = Math.max.apply(null,strokes)-Math.min.apply(null,strokes);
+      var vfeel = variance>=10?"而且各字繁簡差異大，代表你個性層次分明、不容易被人一眼看透":
+                  "各字繁簡相近，代表你性格一致、表裡如一、讓人信得過";
+      return P([
+        '你的姓名總筆畫 <b style="color:var(--gold-bright)">'+total+'</b>。'+feel+'。',
+        vfeel+'。',
+        '對你來說：筆畫的形勢反映你天生的行事節奏——'+(total>=40?'你適合慢工出細活、把事情做深做久，別急著求快。':total>=25?'你能快能慢，依情況調整，這份彈性是優勢。':'你適合明快決斷、速戰速決，別讓自己陷在拖泥帶水裡。'),
+        '這是姓名的「形勢」層面，要跟五格靈動、字義音韻合起來看，才是完整的姓名格局。'
+      ]);
+    }
+    var TONE_FEEL_V4={平:"音律和緩，呼之溫潤，利人緣與貴氣",仄:"音律鏗鏘，呼之有力，利威望與決斷",混:"平仄交錯，剛柔得宜，進退有據"};
+    function shengyunExplain(r){
+      var tone=r.tone, ns=r.nameScore;
+      var t=TONE_FEEL_V4[tone]||TONE_FEEL_V4["混"];
+      var q=ns>72?"清貴":"平穩";
+      return P([
+        '你的姓名音律屬「<b style="color:var(--gold-bright)">'+tone+'聲</b>」——'+t+'。',
+        '整體字義會意偏「'+q+'」：'+(ns>72?'名字讀來有質感，容易讓人留下好印象，這在人際與事業上是隱形加分。':'名字樸實好記，給人踏實可靠的感覺，是穩紮穩打型的助力。'),
+        '對你來說：一個人的名字天天被叫、被寫，音與義的能量會長期累積。你的名字'+(ns>72?'偏清貴，適合往需要形象、口碑的方向發展。':'偏平穩，適合靠實力與信用累積，慢慢被看見。'),
+        '音、義、形三者合看，你的姓名與命局大致'+(ns>68?'相生相扶':'平穩相安')+'，是能為你加分的一環。'
+      ]);
+    }
+
     /* ========== 攔截 render ========== */
     var _orig=render;
     render=function(r,info){
@@ -2026,6 +2083,12 @@ if(document.readyState!=="loading")showEngineNotice();
         html=replaceCardBody(html,"生肖", shengxiaoExplain(r,es));
         // 星盤
         html=replaceCardBody(html,"星盤", starExplain(r,es));
+        // 六 筆畫結構
+        html=replaceCardBody(html,"筆畫結構", bihuaExplain(r));
+        // 七 字形象徵
+        html=replaceCardBody(html,"字形象徵", zixingExplain(r));
+        // 九 字義會意・聲韻
+        html=replaceCardBody(html,"字義會意・聲韻", shengyunExplain(r));
 
       }catch(e){ /* 出錯就回原樣,不弄壞頁面 */ }
       return html;
