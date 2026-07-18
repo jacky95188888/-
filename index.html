@@ -1753,6 +1753,329 @@ if(document.readyState!=="loading")showEngineNotice();
 })();
 </script>
 <!-- ===== 病毒漏斗統計 結束 ===== -->
+<!-- ============================================================
+     天衡 v4 補丁（測試用）
+     內容:① 八分項計分 ② 綜評改八塊加權 ③ 九維滿版詳解
+          ④ 八字/生肖/星盤/紫微 砍罐頭
+     安裝:整段貼在 index-test.html 的 </body> 之前
+          （在 tianheng-v3.js 的 <script> 之後）
+     特性:只加不改、攔截 render、可隨時移除復原
+     ============================================================ -->
+<script>
+(function(){
+  "use strict";
+
+  function ready(){
+    // 等主程式與 v3 都load好、render 存在才掛
+    if(typeof render!=="function" || typeof GAN_WX==="undefined" ||
+       typeof ZHI_CANGAN==="undefined" || typeof tenGod!=="function"){
+      setTimeout(ready,100); return;
+    }
+    if(render._v4) return; // 防重複掛載
+
+    /* ========== [A] 十神/五行統計 ========== */
+    function shishenTally(gz){
+      var dayGan=gz.dGan;
+      var tally={比劫:0,食傷:0,財星:0,官殺:0,印星:0};
+      [gz.yGan,gz.mGan,gz.hGan].forEach(function(g){var sg=tenGod(dayGan,g);if(sg)tally[SHISHEN_CLASS[sg]]++;});
+      [gz.yZhi,gz.mZhi,gz.dZhi,gz.hZhi].forEach(function(z){
+        if(z==="—")return;
+        var main=(ZHI_CANGAN[z]||[])[0]; if(!main)return;
+        var sg=tenGod(dayGan,main[0]); if(sg)tally[SHISHEN_CLASS[sg]]+=0.6;
+      });
+      return tally;
+    }
+    function wuxingTallyLocal(gz){
+      var t={木:0,火:0,土:0,金:0,水:0};
+      [gz.yGan,gz.mGan,gz.dGan].forEach(function(g){t[GAN_WX[g]]++;});
+      if(gz.hGan!=="—") t[GAN_WX[gz.hGan]]++;
+      [gz.yZhi,gz.mZhi,gz.dZhi].forEach(function(z){t[ZHI_WX[z]]+=0.6;});
+      if(gz.hZhi!=="—") t[ZHI_WX[gz.hZhi]]+=0.6;
+      return t;
+    }
+    function lvlOf(s){ if(s==="極強"||s==="身強")return"強"; if(s==="身弱"||s==="極弱")return"弱"; return"中"; }
+    function cl(v,lo,hi){return Math.max(lo,Math.min(hi,Math.round(v)));}
+
+    /* ========== [B] 八分項計分 ========== */
+    function score8(r){
+      var gz=r.gz, ss=shishenTally(gz), wx=wuxingTallyLocal(gz);
+      var lvl=lvlOf(r.strengthInfo?r.strengthInfo.strength:"中和");
+      var totalSS=(ss.比劫+ss.食傷+ss.財星+ss.官殺+ss.印星)||1;
+      var sb = lvl==="強"?1 : lvl==="弱"?-1 : 0;
+
+      var career = cl(55 + (ss.官殺/totalSS)*70 + sb*8, 35,95);
+      var wealth = cl(55 + (ss.財星/totalSS)*70 + sb*8, 35,95);
+      var dayGods=(ZHI_CANGAN[gz.dZhi]||[]).map(function(a){return SHISHEN_CLASS[tenGod(gz.dGan,a[0])]||"";});
+      var loveStar=dayGods.filter(function(c){return c==="財星"||c==="官殺";}).length;
+      var love = cl(58 + loveStar*10 + (ss.財星+ss.官殺)/totalSS*25, 40,92);
+      var wxV=[wx.木,wx.火,wx.土,wx.金,wx.水];
+      var wxMax=Math.max.apply(null,wxV), wxMin=Math.min.apply(null,wxV), wxSum=wxV.reduce(function(a,b){return a+b;},0)||1;
+      var balance=1-((wxMax-wxMin)/wxSum);
+      var health = cl(50 + balance*45, 40,95);
+      var social = cl(52 + (ss.印星/totalSS)*45 + (ss.比劫/totalSS)*35, 40,92);
+      var entries=Object.keys(ss).map(function(k){return [k,ss[k]];}).sort(function(a,b){return b[1]-a[1];});
+      var topRatio=entries[0][1]/totalSS;
+      var character = cl(60 + topRatio*40, 50,95);
+      var talent = cl(54 + (ss.食傷/totalSS)*45 + (ss.印星/totalSS)*30, 40,92);
+      // 當前大運:接真實
+      var luck=68;
+      try{
+        var dy=r.dayun;
+        if(dy && dy.list && dy.cur>=0 && dy.list[dy.cur]){
+          var t=tierOf(dy.list[dy.cur].gz, r.weak);
+          luck = t==="旺"?85 : t==="弱"?52 : 68;
+        }
+      }catch(e){}
+
+      var overall=Math.round(career*0.16+wealth*0.16+love*0.12+health*0.12+
+        social*0.12+character*0.12+talent*0.10+luck*0.10);
+
+      return {career:career,wealth:wealth,love:love,health:health,social:social,
+        character:character,talent:talent,luck:luck,overall:overall,
+        ss:ss,wx:wx,lvl:lvl,loveStar:loveStar,balance:Math.round(balance*100)/100,
+        top:entries[0][0],second:entries[1][0]};
+    }
+
+    /* ========== [C] 九維滿版解說(每維4-5段) ========== */
+    function P(arr){ // 段落陣列 → HTML
+      return arr.map(function(s){return '<p style="margin:0 0 10px;line-height:1.95">'+s+'</p>';}).join("");
+    }
+    function tierWord(s){ return s>=75?"相對強勢":s>=60?"穩健中上":"需要後天多用心"; }
+
+    function exCareer(es,gz){
+      var strong=es.lvl==="強", g=es.ss.官殺;
+      return P([
+        '事業運 <b style="color:var(--gold-bright)">'+es.career+'</b> 分。',
+        (g>=1?'你命中「官殺」有力（'+g.toFixed(1)+'）——官殺主事業、責任與職場地位；':'你命中「官殺」偏輕（'+g.toFixed(1)+'）——代表你不是靠職銜壓人、而是靠真本事立足的類型；')+
+        (strong?'加上日主'+gz.dGan+es.lvl+'，扛得起壓力與重任，這是事業往上走的底氣。':'而你日主偏弱，遇到重責易感吃力，事業上更適合穩紮穩打、不硬撐。'),
+        strong?'對你來說：你適合能獨當一面、能扛事的位置，愈有挑戰的任務，愈能逼出你的能耐。':'對你來說：你適合有人帶、分工明確的環境，別急著一個人攬下所有事，借力使力反而走得遠。',
+        strong?'建議：可主動爭取升遷或帶團隊，但別把所有事往自己身上扛，適度授權才不會過勞。':'建議：先把份內做到無可挑剔、用穩定累積口碑；重大挑戰等大運轉旺再出手，事半功倍。',
+        '整體而言，事業是你'+tierWord(es.career)+'的一塊，順著本命特質走最省力。'
+      ]);
+    }
+    function exWealth(es,gz){
+      var strong=es.lvl==="強", f=es.ss.財星;
+      return P([
+        '財運 <b style="color:var(--gold-bright)">'+es.wealth+'</b> 分。',
+        (f>=1.5?'你命中「財星」旺（'+f.toFixed(1)+'）——財星主財富、資源與經營能力；':'你命中「財星」平（'+f.toFixed(1)+'）——財不張揚，多靠穩定累積而非橫財；')+
+        (strong?'日主'+es.lvl+'，擔得起財，賺得到也守得住，這是財運的關鍵。':'但日主偏弱，財多身弱易「財來財去」，理財比賺錢更重要。'),
+        strong?'對你來說：你有能力駕馭較大的金錢與資源，適合經營、投資或掌管財務。':'對你來說：穩定現金流比高風險博取更適合你，把基本盤顧牢就是最好的理財。',
+        strong?'建議：可積極布局正財與偏財，但別因貪快而失義；置產、長期經營最合你。':'建議：量入為出、避免投機與為人作保；先累積本業實力，財自然跟著穩下來。',
+        '整體而言，財是你'+tierWord(es.wealth)+'的一塊，'+(strong?'順勢經營可放大':'守穩勝過搶快')+'。'
+      ]);
+    }
+    function exLove(es,gz){
+      return P([
+        '感情運 <b style="color:var(--gold-bright)">'+es.love+'</b> 分。',
+        (es.loveStar>=1?'你的日支（夫妻宮）藏有異性緣星，感情機會不缺、也重視伴侶；':'你的日支較清，感情上不主動張揚，屬細水長流型；')+
+        '整體異性緣與情感能量'+(es.love>=72?'偏旺':'平穩')+'。',
+        es.love>=72?'對你來說：你在關係裡有魅力也有主見，容易吸引人，但要留意別太強勢。':'對你來說：你重感情但慢熱，真正走進你心裡的人不多，一旦認定就長久。',
+        '建議：'+(es.love>=72?'感情上多給對方空間，別用自己的節奏要求人，關係更順。':'別因慢熱錯過緣分，該表達時真誠表達；穩定經營勝過激情。'),
+        '整體而言，感情是你'+tierWord(es.love)+'的一塊，真誠與節奏拿捏是關鍵。'
+      ]);
+    }
+    function exHealth(es){
+      return P([
+        '健康 <b style="color:var(--gold-bright)">'+es.health+'</b> 分（依五行平衡度 '+es.balance+'）。',
+        (es.balance>=0.7?'你五行分佈相對均勻，先天體質底子不錯，臟腑之氣較為調和；':'你五行有明顯偏枯（某一行過旺或過弱），體質上容易有固定的弱環；')+
+        '這是健康分數的主要依據。',
+        '對你來說：'+(es.balance>=0.7?'只要作息規律，大致能維持穩定，不易大病。':'要特別照顧最弱那一行對應的臟腑，別長期忽略小毛病。'),
+        '建議：多接觸你喜用五行（'+r_weak+'）對應的顏色、方位與活動來補氣；規律作息、勿熬夜是根本。',
+        '整體而言，健康是你'+tierWord(es.health)+'的一塊，平衡與規律最重要。'
+      ]);
+    }
+    var r_weak="水"; // 會在 render 時被真實 r.weak 覆蓋
+    function exSocial(es){
+      return P([
+        '人際貴人 <b style="color:var(--gold-bright)">'+es.social+'</b> 分。',
+        '你命中印星 '+es.ss.印星.toFixed(1)+'、比劫 '+es.ss.比劫.toFixed(1)+'——印星代表長輩、貴人與提攜；比劫代表平輩、朋友與夥伴。'+
+        (es.ss.印星>=1.5?'你的貴人運（長輩緣）明顯較強。':'')+(es.ss.比劫<0.5?'平輩助力則相對少，較常靠自己。':''),
+        '對你來說：'+(es.ss.印星>=es.ss.比劫?'你容易遇到願意帶你、幫你的長輩或前輩，這是你的隱形資產。':'你在同儕、朋友圈裡吃得開，人脈是你的本錢。'),
+        '建議：'+(es.ss.比劫<0.5?'主動經營平輩人脈、參與社群，補足「朋友助力少」這塊。':'善用你的人和優勢，但合作時把權責講清楚，防因情失財。'),
+        '整體而言，人際是你'+tierWord(es.social)+'的一塊，貴人與同儕各有輕重。'
+      ]);
+    }
+    function exTalent(es){
+      return P([
+        '學習才華 <b style="color:var(--gold-bright)">'+es.talent+'</b> 分。',
+        '你命中食傷 '+es.ss.食傷.toFixed(1)+'、印星 '+es.ss.印星.toFixed(1)+'——食傷主才華、表達與創造；印星主學習、吸收與涵養。'+
+        (es.ss.食傷>=1?'你的才華外顯、點子多。':'你的才華偏內斂、重積累。'),
+        '對你來說：'+(es.ss.印星>=es.ss.食傷?'你適合靠學習、考證、鑽研專業取勝，是「愈讀愈有料」的類型。':'你適合靠創作、表達、展現點子取勝，舞台愈大愈發光。'),
+        '建議：'+(es.ss.印星>=es.ss.食傷?'持續進修、把知識變專業，是你最穩的增值路。':'多把才華變成看得見的作品或表現，別讓點子只留在腦裡。'),
+        '整體而言，才華是你'+tierWord(es.talent)+'的一塊，'+(es.ss.印星>=es.ss.食傷?'學習型':'表現型')+'路線最合你。'
+      ]);
+    }
+
+    /* ========== [D] 14主星特質庫(紫微) ========== */
+    var ZW_TRAIT={
+      紫微:{p:"尊貴穩重、天生領導氣場，重面子與格局",a:"適合居主導、管理之位；但忌孤高，宜納諫、接地氣"},
+      天機:{p:"機敏善謀、思緒轉得快，是天生的軍師與策劃者",a:"適合企劃、顧問、動腦的工作；但忌想太多、行動慢，宜想定就做"},
+      太陽:{p:"熱情大方、樂於付出、自帶光芒，愛照顧人",a:"適合檯面上、服務眾人的角色；但忌過度燃燒自己，記得留力給自己"},
+      武曲:{p:"剛毅果決、重原則、執行力強，是天生的財務戰將",a:"適合財經、業務、須魄力之事；但忌太剛硬，柔軟一點人緣更好"},
+      天同:{p:"溫和知足、有福氣、人緣好，天生懂得享受生活",a:"適合和諧、服務、創意之事；但忌太安逸，適度給自己壓力才成長"},
+      廉貞:{p:"精明多變、有魅力也有原則，能屈能伸",a:"適合須應變、交際、開創之事；但忌情緒起伏大，穩住心性是關鍵"},
+      天府:{p:"穩重厚實、善理財、重安全感，是天生的守成之才",a:"適合管理、財庫、須穩健之事；但忌過度保守，該冒險時也要敢"},
+      太陰:{p:"細膩溫柔、直覺敏銳、重感情，內在世界豐富",a:"適合幕後、企劃、須細心之事；但忌想太多、易多愁，多往外走走"},
+      貪狼:{p:"多才多藝、慾望旺盛、交際手腕高，是天生的社交高手",a:"適合須魅力、多元、開拓之事；但忌貪多嚼不爛，聚焦才成大器"},
+      巨門:{p:"口才辨才一流、觀察入微、擅長分析與質疑",a:"適合口才、專業、須鑽研之事；但忌口舌是非，話留三分福更多"},
+      天相:{p:"忠厚可靠、善協調、重義氣，是最佳的輔佐者",a:"適合輔助、協調、幕僚之位；但忌太在意他人、耳根軟，要有主見"},
+      天梁:{p:"穩重有長者風、善蔭護他人、原則性強",a:"適合須信任、照顧、監督之事；但忌倚老賣老、愛管，放手也是智慧"},
+      七殺:{p:"剛猛果斷、衝勁十足、敢拚敢闖，是天生的開路先鋒",a:"適合開創、挑戰、須魄力之事；但忌衝過頭，三思再行更穩"},
+      破軍:{p:"開創力強、不畏變動、勇於破舊立新，是天生的變革者",a:"適合創業、轉型、須突破之事；但忌破壞後無建設，破立要並重"}
+    };
+    function ziweiExplain(zw, es, gz){
+      var stars=String(zw).split("·")[0].split("・")[0]; // 取主星名(可能多顆)
+      var names=String(zw).replace(/·/g,"・").split("・").map(function(s){return s.replace(/[^\u4e00-\u9fa5]/g,"");}).filter(function(s){return ZW_TRAIT[s];});
+      if(names.length===0){
+        return P(['命宮主星為 <b style="color:var(--gold-bright)">'+zw+'</b>。此星坐命，性情與際遇受其牽引，宜順其星性發揮、逆之則耗。']);
+      }
+      var segs=['命宮入 <b style="color:var(--gold-bright)">'+names.join("・")+'</b>。'];
+      names.forEach(function(n){
+        var t=ZW_TRAIT[n];
+        segs.push('<b style="color:var(--gold-bright)">'+n+'</b>：'+t.p+'。'+t.a+'。');
+      });
+      if(names.length>=2){
+        segs.push('兩星同宮，'+names[0]+'的'+ZW_TRAIT[names[0]].p.split("、")[0]+'配上'+names[1]+'的'+ZW_TRAIT[names[1]].p.split("、")[0]+'，讓你兼具兩者之長——這組合並不常見，善用它是你的優勢。');
+      }
+      // 跟八字身強弱結合
+      segs.push('結合你八字日主'+gz.dGan+es.lvl+'來看：'+(es.lvl==="強"?'你有足夠的能量把這組星性發揮出來，愈主動愈能成事。':es.lvl==="弱"?'你的星性偏內斂，不必勉強外放，找對舞台再發力更順。':'你能剛能柔，可依場合彈性拿捏星性的展現。'));
+      return P(segs);
+    }
+
+    /* ========== [E] 八字四柱真解說 ========== */
+    function baziExplain(r, es){
+      var gz=r.gz, dayGan=gz.dGan;
+      var pillars=[["年",gz.yGan,gz.yZhi,"祖上、根源與少年"],["月",gz.mGan,gz.mZhi,"父母、事業與青年"],
+        ["日",gz.dGan,gz.dZhi,"自己與配偶、中年"],["時",gz.hGan,gz.hZhi,"子女、晚年與心境"]];
+      var segs=['你的四柱：<b style="color:var(--gold-bright)">'+gz.yGan+gz.yZhi+'年　'+gz.mGan+gz.mZhi+'月　'+gz.dGan+gz.dZhi+'日　'+(gz.hGan==="—"?"（時辰未填）":gz.hGan+gz.hZhi+'時')+'</b>。'];
+      segs.push('日主是 <b style="color:var(--gold-bright)">'+dayGan+'（'+GAN_WX[dayGan]+'・'+GAN_YY[dayGan]+'）</b>——這是「你自己」，整張命盤都以它為中心來看強弱喜忌。');
+      // 月令
+      if(r.strengthInfo){
+        segs.push('你生於'+gz.mZhi+'月，月令對日主為「'+r.strengthInfo.ling.state+'」，這是判斷你身強身弱最重要的一步——'+
+          (es.lvl==="強"?'你得月令之助，先天能量足，屬身強。':es.lvl==="弱"?'你不得月令之力，先天能量弱，屬身弱。':'你月令中平，能量中和。'));
+      }
+      // 十神當家
+      segs.push('你全局最旺的是「<b style="color:var(--gold-bright)">'+es.top+'</b>」、其次是「'+es.second+'」——這兩股力量，決定了你性格與人生的主旋律（詳見性格總論與各維分數）。');
+      // 四柱各管什麼
+      segs.push('四柱各有所主：年柱看'+pillars[0][3].split("、")[0]+'、月柱看'+pillars[1][3].split("、")[1]+'、日柱看你與'+pillars[2][3].split("、")[0].replace("自己","配偶")+'、時柱看'+pillars[3][3].split("、")[0]+'。可對照各柱天干十神，看人生各階段的重心。');
+      segs.push('整體而言，你的八字'+(r.strengthInfo&&es.lvl!=="中"?'身'+(es.lvl==="強"?'強':'弱')+'分明、用神清楚':'中和可塑')+'，是可依喜用神（'+r.weak+'）明確調候的格局。');
+      return P(segs);
+    }
+
+    /* ========== [F] 生肖 / 星盤 真交叉(借用 v3 已有的,若無則自算) ========== */
+    var SX_WX={鼠:"水",牛:"土",虎:"木",兔:"木",龍:"土",蛇:"火",馬:"火",羊:"土",猴:"金",雞:"金",狗:"土",豬:"水"};
+    function shengxiaoExplain(r,es){
+      var dayGan=r.gz.dGan, dw=GAN_WX[dayGan], sx=r.sx, sw=SX_WX[sx];
+      var rel;
+      if(dw===sw) rel="生肖"+sx+"（"+sw+"）與日主"+dayGan+"（"+dw+"）同氣，先天性情一致、根骨厚實、方向感強";
+      else if(SHENG[sw]===dw) rel="生肖"+sx+"（"+sw+"）生扶日主"+dayGan+"（"+dw+"），底氣得助、遇事多一分後援與貴人";
+      else if(SHENG[dw]===sw) rel="日主"+dayGan+"（"+dw+"）洩於生肖"+sx+"（"+sw+"），天生樂於付出、才華外顯，但要留意別過度消耗自己";
+      else if(KE[dw]===sw) rel="日主"+dayGan+"（"+dw+"）駕馭生肖"+sx+"（"+sw+"），主控制力強、能成事，但也容易攬事過勞";
+      else rel="生肖"+sx+"（"+sw+"）剋制日主"+dayGan+"（"+dw+"），內在常有自我拉扯，但磨過之後反成別人沒有的韌性";
+      return P([
+        '你屬 <b style="color:var(--gold-bright)">'+sx+'</b>，生肖五行為「'+sw+'」。'+SX_TRAIT[sx]+'。',
+        '生肖不是單獨看的——真正有意義的是它跟你八字日主的關係：'+rel+'。',
+        '對你來說：'+(SHENG[sw]===dw||dw===sw?'生肖是替你「加分」的一環，順著它的特質走，會覺得特別自在有力。':SHENG[dw]===sw||KE[dw]===sw?'生肖讓你天生願意付出、能扛，但要記得留一點給自己。':'生肖給你的是「逆境裡的韌性」，別人輕鬆的你要多費點勁，但你熬得住。'),
+        '建議：把生肖'+sx+'的'+SX_TRAIT[sx].split("，")[0]+'特質，用在對的地方，就是你最省力的優勢。',
+        '整體而言，生肖與你的八字'+(SHENG[sw]===dw||dw===sw?'相輔相成':'各有拉扯、互為磨練')+'，合起來看才是完整的你。'
+      ]);
+    }
+    function starExplain(r,es){
+      var sign=r.sign, zwHead=String(r.zw).split("·")[0].split("・")[0];
+      var dyn=["牡羊","獅子","射手","水瓶"], std=["金牛","處女","摩羯","巨蟹"];
+      var eastWest;
+      if(dyn.indexOf(sign)>=0) eastWest="你的太陽星座"+sign+"座外放進取、愛主導，與東方命盤那份"+(es.lvl==="強"?"身強的能量":"內在底蘊")+"相互拉抬——你外顯的張力強，適合給自己一個舞台";
+      else if(std.indexOf(sign)>=0) eastWest="你的太陽星座"+sign+"座沉穩內守、重踏實，與東方命盤一剛一柔、內外互補——你適合先穩後動，把根紮好再發力";
+      else eastWest="你的太陽星座"+sign+"座善於調和，與東方命盤交映，讓你性格層次豐富、能屈能伸";
+      return P([
+        '你的太陽落在 <b style="color:var(--gold-bright)">'+sign+'座</b>。'+(SIGN_TRAIT[sign]||"星性中和、內外兼修")+'。',
+        '西洋星座看的是你「外顯」的性格與人生節奏，跟東方八字看的「內在本質」剛好互補：'+eastWest+'。',
+        '對你來說：'+(dyn.indexOf(sign)>=0?'你天生帶著往外衝的能量，愈是能見人、能表現的環境，你愈發光。':std.indexOf(sign)>=0?'你天生穩，別人看你可靠、信得過，這是你長期累積優勢的本錢。':'你天生能適應各種人與場合，這份彈性是你的隱形武器。'),
+        '建議：把星座的外顯特質，跟八字的內在喜用（'+r.weak+'）配著用——'+(dyn.indexOf(sign)>=0?'該衝時衝，但記得回頭補內在的穩。':'穩得住之餘，也別忘了適時往外展現自己。'),
+        '整體而言，星盤與命盤交織，才拼出完整的你：'+(dyn.indexOf(sign)>=0?'外放而有底':'內斂而有勁')+'。'
+      ]);
+    }
+
+    /* ========== 攔截 render ========== */
+    var _orig=render;
+    render=function(r,info){
+      var html=_orig(r,info);
+      try{
+        var es=score8(r);
+        r_weak=r.weak||"水";
+
+        // (1) 換綜評數字 + SVG環比例
+        html=html.replace(/<div class="score-num"><b>\d+<\/b>/,
+          '<div class="score-num"><b>'+es.overall+'</b>');
+        var C=2*Math.PI*52;
+        // 只換 verdict 裡那個帶 dashoffset 的環(第一個)
+        html=html.replace(/stroke-dashoffset="[\d.]+"/,
+          'stroke-dashoffset="'+(C*(1-es.overall/100))+'"');
+
+        // (2) 在「九維詳解」標題前,插入八分項總表
+        var scoreTable=buildScoreTable(es);
+        html=html.replace('<div class="tasks-head"><div class="ln"></div><span>九 維 詳 解</span>',
+          scoreTable+'<div class="tasks-head"><div class="ln"></div><span>九 維 詳 解</span>');
+
+        // (3) 替換各維罐頭 body → 滿版解說
+        // 八字四柱
+        html=replaceCardBody(html,"八字四柱", baziExplain(r,es));
+        // 紫微斗數
+        html=replaceCardBody(html,"紫微斗數", ziweiExplain(r.zw,es,r.gz));
+        // 生肖
+        html=replaceCardBody(html,"生肖", shengxiaoExplain(r,es));
+        // 星盤
+        html=replaceCardBody(html,"星盤", starExplain(r,es));
+
+      }catch(e){ /* 出錯就回原樣,不弄壞頁面 */ }
+      return html;
+    };
+    render._v4=true;
+
+    /* 八分項總表(插在九維詳解前) */
+    function buildScoreTable(es){
+      var rows=[["事業",es.career],["財運",es.wealth],["感情",es.love],["健康",es.health],
+        ["人際",es.social],["性格",es.character],["才華",es.talent],["大運",es.luck]];
+      var bars=rows.map(function(x){
+        var c=x[1]>=75?"#3f8b5a":x[1]>=60?"#b08542":"#9c3a2e";
+        return '<div style="display:flex;align-items:center;gap:8px;margin:7px 0">'+
+          '<span style="width:34px;color:var(--gold-bright);font-size:13px">'+x[0]+'</span>'+
+          '<div class="bar" style="flex:1;margin:0"><i style="width:'+x[1]+'%;background:'+c+'"></i></div>'+
+          '<span style="font-size:13px;color:'+c+';min-width:26px;text-align:right">'+x[1]+'</span></div>';
+      }).join("");
+      return '<div style="margin:24px 0 8px;padding:20px 18px;border:1px solid var(--gold);border-radius:6px;background:linear-gradient(160deg,rgba(30,23,18,.85),rgba(15,11,9,.88))">'+
+        '<div style="font-size:14px;color:var(--gold-bright);letter-spacing:.2em;text-align:center;margin-bottom:14px">◈ 八 大 面 向 綜 評 ◈</div>'+
+        bars+
+        '<div style="font-size:11px;color:#8a7c5a;margin-top:10px;line-height:1.7">※ 各面向依你八字的十神分佈、身強弱、五行平衡與當前大運計算，點下方九維詳解看每一項的完整解讀。</div></div>';
+    }
+
+    /* 工具:找到某卡片,替換其 card-b-in 內容 */
+    function replaceCardBody(html, cardName, newBody){
+      // 卡片結構: <span class="nm">八字四柱</span> ... <div class="card-b"><div class="card-b-in">...</div></div>
+      var nmMark='<span class="nm">'+cardName+'</span>';
+      var i=html.indexOf(nmMark);
+      if(i<0) return html;
+      var binStart=html.indexOf('<div class="card-b-in">', i);
+      if(binStart<0) return html;
+      var contentStart=binStart+'<div class="card-b-in">'.length;
+      // 找到對應結尾:card-b-in 之後,配對到 </div></div>(card-b-in 收 + card-b 收)
+      // 用尋找下一個 '</div></div>\n    </div>' 較脆弱,改用計數法找 card-b-in 的收尾
+      var depth=1, j=contentStart, end=-1;
+      while(j<html.length){
+        var open=html.indexOf('<div',j), close=html.indexOf('</div>',j);
+        if(close<0) break;
+        if(open>=0 && open<close){ depth++; j=open+4; }
+        else{ depth--; if(depth===0){ end=close; break; } j=close+6; }
+      }
+      if(end<0) return html;
+      return html.slice(0,contentStart)+newBody+html.slice(end);
+    }
+  }
+
+  ready();
+})();
+</script>
+<!-- ============ 天衡 v4 補丁 結束 ============ -->
 
 </body>
 </html>
