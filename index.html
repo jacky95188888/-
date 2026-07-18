@@ -2139,6 +2139,172 @@ if(document.readyState!=="loading")showEngineNotice();
 })();
 </script>
 <!-- ============ 天衡 v4 補丁 結束 ============ -->
+<!-- ============================================================
+     天衡 v5 命格擴充補丁
+     內容:命格從15種 → 125種(五行×五級身強弱×十神當家)
+          + 稀有度金字塔分層(普通/稀有/極稀有)
+          + 抽卡感視覺 + 接真實統計
+     安裝:整段貼在 index.html 的 </body> 之前
+          (務必在 v4 補丁之後、v3 之後)
+     特性:取代舊命格卡、不重複、可移除復原
+     ============================================================ -->
+<script>
+(function(){
+  "use strict";
+
+  function ready(){
+    if(typeof render!=="function"){ setTimeout(ready,100); return; }
+    if(render._v5mingge) return;
+
+    /* ===== 五行×身強弱五級 → 主稱號(25) ===== */
+    var MAIN_TITLE={
+      "木極強":{t:"通天神木格",s:"氣沖霄漢，擋不住的向上之勢"},
+      "木身強":{t:"參天喬木格",s:"根深葉茂，越挫越往上長"},
+      "木中和":{t:"春林秀木格",s:"生機均衡，四季自有其時"},
+      "木身弱":{t:"幽谷靈芝格",s:"低調藏珍，遇貴人便一飛沖天"},
+      "木極弱":{t:"寒谷孤松格",s:"寒地獨立，熬過去便是風景"},
+      "火極強":{t:"烈日焚天格",s:"光焰萬丈，天生自帶主角光"},
+      "火身強":{t:"赤陽當空格",s:"熱力四射，走到哪亮到哪"},
+      "火中和":{t:"爐中暖焰格",s:"溫而不烈，最懂暖人心"},
+      "火身弱":{t:"星火燎原格",s:"火苗雖小，時機一到便成燎原"},
+      "火極弱":{t:"寒夜孤燈格",s:"微光不滅，照亮懂你的人"},
+      "土極強":{t:"崑崙鎮嶽格",s:"厚重如山，眾人皆倚你為靠"},
+      "土身強":{t:"厚土載物格",s:"承載有德，是眾人靠得住的山"},
+      "土中和":{t:"沃野千里格",s:"包容厚實，種什麼都能長"},
+      "土身弱":{t:"璞玉待琢格",s:"外樸內秀，一經雕琢便驚豔"},
+      "土極弱":{t:"瘠土育苗格",s:"薄地養苗，你的堅韌別人學不來"},
+      "金極強":{t:"崑吾利刃格",s:"鋒銳蓋世，出鞘即見血光"},
+      "金身強":{t:"出匣神鋒格",s:"鋒芒天成，出手就是要見真章"},
+      "金中和":{t:"藏鋒斂鍔格",s:"利刃在鞘，不出手則已"},
+      "金身弱":{t:"砂中真金格",s:"真金不怕磨，越淘越亮"},
+      "金極弱":{t:"礦中蘊金格",s:"深藏未顯，等的是識貨的人"},
+      "水極強":{t:"滄海橫流格",s:"浩瀚如海，攔是攔不住的"},
+      "水身強":{t:"江河奔湧格",s:"思緒如江，一往無前"},
+      "水中和":{t:"明鏡止水格",s:"靜水流深，看得比誰都透"},
+      "水身弱":{t:"寒潭映月格",s:"清冷通透，懂你的人視你如珍"},
+      "水極弱":{t:"滴水穿石格",s:"柔而不弱，滴水也能穿石"}
+    };
+    var SUB_TITLE={比劫:"同氣連枝",食傷:"才華天縱",財星:"財星入命",官殺:"官星加身",印星:"貴人蔭護"};
+
+    /* ===== 稀有度:金字塔分佈 ===== */
+    function rarityOf(strength, topGod){
+      var sScore = strength==="中和"?0 : (strength==="身強"||strength==="身弱")?1 : 3;
+      var gScore = (topGod==="印星"||topGod==="比劫"||topGod==="財星")?0 : 1;
+      var total=sScore+gScore;
+      if(total>=4) return "極稀有";
+      if(total>=2) return "稀有";
+      return "普通";
+    }
+    var RARITY={
+      普通:{pct:"12~20%",color:"#7a9c6a",icon:"◆",label:"命格"},
+      稀有:{pct:"3~8%",color:"#d9b66a",icon:"✦",label:"稀有命格"},
+      極稀有:{pct:"0.5~2%",color:"#c94fd9",icon:"❈",label:"極稀有命格"}
+    };
+
+    /* ===== 從 r 取出命格三要素 ===== */
+    function getMingge(r){
+      var wx = r.strengthInfo ? r.strengthInfo.dayWx : "土";
+      var strength = r.strengthInfo ? r.strengthInfo.strength : "中和";
+      // strength 可能是「極強」,MAIN_TITLE 用「極強」;身強對應「身強」
+      var strKey = strength; // 極強/身強/中和/身弱/極弱
+      var topGod = (r.personality && r.personality.top) ? r.personality.top : "印星";
+      var mainKey = wx + strKey;
+      var main = MAIN_TITLE[mainKey] || MAIN_TITLE["土中和"];
+      var sub = SUB_TITLE[topGod] || "命格天成";
+      var rarity = rarityOf(strKey, topGod);
+      return {
+        key: wx+strKey+topGod,
+        fullName: main.t+"·"+sub,
+        mainName: main.t, sub: sub, slogan: main.s,
+        rarity: rarity, R: RARITY[rarity]
+      };
+    }
+
+    /* ===== 建立新命格卡HTML ===== */
+    function buildMinggeCard(m){
+      var R=m.R;
+      var glow = m.rarity==="極稀有" ? "box-shadow:0 0 40px rgba(201,79,217,.35),inset 0 0 20px rgba(201,79,217,.1);" :
+                 m.rarity==="稀有" ? "box-shadow:0 0 32px rgba(217,182,106,.28);" :
+                 "box-shadow:0 0 20px rgba(122,156,106,.18);";
+      var rarityBadge = '<div style="display:inline-block;margin-bottom:10px;padding:4px 16px;border:1px solid '+R.color+';border-radius:20px;font-size:13px;color:'+R.color+';letter-spacing:.15em">'+R.icon+' '+R.label+' '+R.icon+'</div>';
+      return '<div style="margin:0 0 24px;padding:24px 20px;text-align:center;border:1px solid '+R.color+';border-radius:8px;background:linear-gradient(160deg,rgba(30,22,34,.92),rgba(15,11,22,.94));'+glow+'">'
+        +'<div style="font-size:12px;color:#cdb98e;letter-spacing:.3em;margin-bottom:10px">◈ 你 的 命 格 稱 號 ◈</div>'
+        +rarityBadge
+        +'<div style="font-size:30px;font-weight:900;margin:6px 0 4px;letter-spacing:.06em;background:linear-gradient(180deg,#fbf0d0,'+R.color+');-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.3">'+m.mainName+'</div>'
+        +'<div style="font-size:16px;color:'+R.color+';letter-spacing:.1em;margin-bottom:8px">· '+m.sub+' ·</div>'
+        +'<div style="font-size:14px;color:#e3d7bd;line-height:1.9">「'+m.slogan+'」</div>'
+        +'<div style="margin-top:14px;font-size:13px;color:'+R.color+'">'+R.icon+' 全台約 <b id="thRareNum" style="font-size:17px">'+m.R.pct+'</b> 的人是這個命格 '+R.icon+'</div>'
+        +'<div id="thRareNote" style="margin-top:6px;font-size:11px;color:#8a7c5a">※ 依五行×身強弱×十神當家 125種命格分佈估算</div>'
+        +'<button onclick="thCopyTitle()" style="margin-top:16px;width:100%;padding:14px;background:linear-gradient(135deg,#a83a2e,#7a2a20);color:#f0e8d6;border:1px solid '+R.color+';border-radius:6px;font-size:15px;letter-spacing:.15em;cursor:pointer;font-family:inherit">📋 複製我的命格，貼給朋友看</button>'
+        +'</div>';
+    }
+
+    /* ===== 替換舊命格卡(不重複插入) ===== */
+    function replaceMinggeCard(html, newCardHtml){
+      var mark='◈ 你 的 命 格 稱 號 ◈';
+      var mi=html.indexOf(mark);
+      if(mi<0) return null; // 找不到舊卡
+      var cardStart=html.lastIndexOf('<div style="margin:0 0 24px', mi);
+      if(cardStart<0) return null;
+      var depth=0, j=cardStart, end=-1;
+      while(j<html.length){
+        var open=html.indexOf('<div',j), close=html.indexOf('</div>',j);
+        if(close<0) break;
+        if(open>=0 && open<close){ depth++; j=open+4; }
+        else{ depth--; if(depth===0){ end=close+6; break; } j=close+6; }
+      }
+      if(end<0) return null;
+      return html.slice(0,cardStart)+newCardHtml+html.slice(end);
+    }
+
+    /* ===== 攔截 render ===== */
+    var _orig=render;
+    render=function(r,info){
+      var html=_orig(r,info);
+      try{
+        var m=getMingge(r);
+        window.__thMingge=m; // 給分享用
+        var newCard=buildMinggeCard(m);
+        var replaced=replaceMinggeCard(html, newCard);
+        if(replaced!==null){
+          html=replaced;
+          // 更新分享文字用的全域(沿用舊的 thCopyTitle,但換內容)
+          window.__thTitle={t:m.fullName, s:m.slogan, rare:m.R.pct, key:m.key, rarity:m.rarity};
+        }
+        // 若找不到舊卡(replaced===null),就不動,避免出錯
+      }catch(e){}
+      return html;
+    };
+    render._v5mingge=true;
+
+    /* ===== 覆寫分享文字(帶稀有度,更有炫耀感) ===== */
+    var _origCopy=window.thCopyTitle;
+    window.thCopyTitle=function(){
+      var m=window.__thMingge;
+      if(!m){ if(_origCopy) return _origCopy(); return; }
+      var text="🔮 我在「天衡」測出命格：【"+m.fullName+"】\n"+
+        m.R.icon+" "+m.R.label+"，全台約 "+m.R.pct+" 的人是這個命格！\n"+
+        "「"+m.slogan+"」\n"+
+        "你也來測你的命格 👇\nhttps://jacky95188888.github.io/-/?f=s";
+      function ok(){ if(typeof toast==="function") toast("已複製！貼到 LINE、Threads 或 IG 分享吧 ✨"); else alert("已複製！"); }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(ok, function(){ manualCopy(text,ok); });
+      }else{ manualCopy(text,ok); }
+    };
+    function manualCopy(text,ok){
+      try{
+        var ta=document.createElement("textarea");
+        ta.value=text; ta.style.cssText="position:fixed;opacity:0";
+        document.body.appendChild(ta); ta.select();
+        document.execCommand("copy"); document.body.removeChild(ta); ok();
+      }catch(e){ alert("複製失敗，請截圖分享"); }
+    }
+  }
+
+  ready();
+})();
+</script>
+<!-- ============ 天衡 v5 命格擴充補丁 結束 ============ -->
 
 </body>
 </html>
