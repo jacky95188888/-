@@ -1803,27 +1803,27 @@ if(document.readyState!=="loading")showEngineNotice();
       var totalSS=(ss.比劫+ss.食傷+ss.財星+ss.官殺+ss.印星)||1;
       var sb = lvl==="強"?1 : lvl==="弱"?-1 : 0;
 
-      var career = cl(55 + (ss.官殺/totalSS)*70 + sb*8, 35,95);
-      var wealth = cl(55 + (ss.財星/totalSS)*70 + sb*8, 35,95);
+      var career = cl(45 + (ss.官殺/totalSS)*100 + sb*12, 40,96);
+      var wealth = cl(45 + (ss.財星/totalSS)*100 + sb*12, 40,96);
       var dayGods=(ZHI_CANGAN[gz.dZhi]||[]).map(function(a){return SHISHEN_CLASS[tenGod(gz.dGan,a[0])]||"";});
       var loveStar=dayGods.filter(function(c){return c==="財星"||c==="官殺";}).length;
-      var love = cl(58 + loveStar*10 + (ss.財星+ss.官殺)/totalSS*25, 40,92);
+      var love = cl(46 + loveStar*13 + (ss.財星+ss.官殺)/totalSS*40, 40,94);
       var wxV=[wx.木,wx.火,wx.土,wx.金,wx.水];
       var wxMax=Math.max.apply(null,wxV), wxMin=Math.min.apply(null,wxV), wxSum=wxV.reduce(function(a,b){return a+b;},0)||1;
       var balance=1-((wxMax-wxMin)/wxSum);
-      var health = cl(50 + balance*45, 40,95);
-      var social = cl(52 + (ss.印星/totalSS)*45 + (ss.比劫/totalSS)*35, 40,92);
+      var health = cl(38 + balance*62, 40,96);
+      var social = cl(42 + (ss.印星/totalSS)*60 + (ss.比劫/totalSS)*50, 40,94);
       var entries=Object.keys(ss).map(function(k){return [k,ss[k]];}).sort(function(a,b){return b[1]-a[1];});
       var topRatio=entries[0][1]/totalSS;
-      var character = cl(60 + topRatio*40, 50,95);
-      var talent = cl(54 + (ss.食傷/totalSS)*45 + (ss.印星/totalSS)*30, 40,92);
+      var character = cl(52 + topRatio*60, 45,95);
+      var talent = cl(44 + (ss.食傷/totalSS)*60 + (ss.印星/totalSS)*42, 40,94);
       // 當前大運:接真實
-      var luck=68;
+      var luck=66;
       try{
         var dy=r.dayun;
         if(dy && dy.list && dy.cur>=0 && dy.list[dy.cur]){
           var t=tierOf(dy.list[dy.cur].gz, r.weak);
-          luck = t==="旺"?85 : t==="弱"?52 : 68;
+          luck = t==="旺"?88 : t==="弱"?46 : 66;
         }
       }catch(e){}
 
