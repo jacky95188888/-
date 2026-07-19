@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,9 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-
+<link rel="manifest" href="/-/manifest.json">
+<meta name="theme-color" content="#1a1a2e">
+<link rel="apple-touch-icon" href="/-/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Cinzel:wght@500;600&display=swap" rel="stylesheet">
@@ -2305,6 +2308,39 @@ if(document.readyState!=="loading")showEngineNotice();
 })();
 </script>
 <!-- ============ 天衡 v5 命格擴充補丁 結束 ============ -->
+<div style="text-align:center;margin:20px 0">
+  <button onclick="thEnableNotify()" style="padding:12px 24px;border:none;border-radius:8px;background:#c9a227;color:#1a1a2e;font-weight:bold;font-size:16px">🔔 開啟每日運勢通知</button>
+  <div id="thNotifyStatus" style="margin-top:10px;font-size:14px;color:#aaa"></div>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/-/sw.js', { scope: '/-/' })
+    .then(r => console.log('SW ok', r.scope))
+    .catch(e => console.log('SW fail', e));
+}
+async function thEnableNotify(){
+  const st = document.getElementById('thNotifyStatus');
+  const show = m => { if (st) st.textContent = m; };
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+    show('此瀏覽器不支援通知'); return;
+  }
+  const standalone = window.navigator.standalone === true ||
+                     window.matchMedia('(display-mode: standalone)').matches;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if (isIOS && !standalone) {
+    show('請先點分享鍵 → 加入主畫面，再從主畫面開啟本站'); return;
+  }
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') { show('通知權限未開啟'); return; }
+    const reg = await navigator.serviceWorker.ready;
+    reg.showNotification('天衡', { body: '通知已開啟 ✅', icon: '/-/icon-192.png' });
+    show('通知已開啟 ✅');
+  } catch (e) {
+    show('開啟失敗：' + e.message);
+  }
+}
+</script>
 
 </body>
 </html>
