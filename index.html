@@ -2320,26 +2320,44 @@ if ('serviceWorker' in navigator) {
 }
 async function thEnableNotify(){
   const st = document.getElementById('thNotifyStatus');
-  const show = m => { if (st) st.textContent = m; };
+  const show = m => { if (st) st.innerHTML = m; };
+
   if (!('Notification' in window) || !('serviceWorker' in navigator)) {
-    show('此瀏覽器不支援通知'); return;
+    show('此瀏覽器不支援通知，請改用 Safari 或 Chrome 開啟'); return;
   }
+
+  const ua = navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isAndroid = /Android/.test(ua);
   const standalone = window.navigator.standalone === true ||
                      window.matchMedia('(display-mode: standalone)').matches;
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
   if (isIOS && !standalone) {
-    show('請先點分享鍵 → 加入主畫面，再從主畫面開啟本站'); return;
+    show('iPhone / iPad 請先安裝到主畫面：<br>① 點下方分享鍵 <b>⎋</b><br>② 選「加入主畫面」<br>③ 從主畫面圖示重新開啟本站<br>④ 再點一次這個按鈕');
+    return;
   }
+  if (isAndroid && !standalone) {
+    show('Android 建議先安裝：<br>① 點右上角 <b>⋮</b><br>② 選「安裝應用程式」或「加到主畫面」<br>③ 從主畫面圖示開啟<br><br>（不安裝也能收通知，可直接再點一次按鈕）');
+  }
+
   try {
     const perm = await Notification.requestPermission();
-    if (perm !== 'granted') { show('通知權限未開啟'); return; }
+    if (perm === 'denied') {
+      show(isAndroid
+        ? '通知被封鎖。請點網址列左邊的鎖頭圖示 → 權限 → 通知 → 允許'
+        : '通知被封鎖。請到 設定 → 通知 中允許本站');
+      return;
+    }
+    if (perm !== 'granted') { show('尚未開啟通知權限'); return; }
+
     const reg = await navigator.serviceWorker.ready;
     reg.showNotification('天衡', { body: '通知已開啟 ✅', icon: '/-/icon-192.png' });
-    show('通知已開啟 ✅');
+    show('通知已開啟 ✅' + (standalone ? '' : '<br>提示：安裝到主畫面體驗更佳'));
   } catch (e) {
     show('開啟失敗：' + e.message);
   }
 }
+
 </script>
 
 </body>
