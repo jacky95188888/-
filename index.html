@@ -2366,6 +2366,8 @@ async function thEnableNotify(){
         });
       }
       await fetch('https://tianhe
+      reg.showNotification('天衡', { body: '每日運勢通知已開啟 ✅', icon: '/-/icon-192.png' });
+      show('通知已開啟 ✅ 每天早上會收到今日運勢');
 
   } catch (e) {
     show('開啟失敗：' + e.message);
