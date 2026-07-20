@@ -954,7 +954,8 @@ function dailyFortune(weak,strong,dGan,dayZhi){
 
   const hours=luckyHours(td.zhi);
   const badDir=DIR_BY_WX[KE[weak]]; // 剋我喜用的方位為差方位
-  return {idx,tier,relation,td,rel,
+      return {idx,tier,relation,td,rel,needWx,dbgWx:td.wx,dbgWeak:weak,
+
     color:LUCKY_COLOR[weak],dir:LUCKY_DIR[weak],badDir,num:LUCKY_NUM[weak],
     yi:[...new Set(yi)],ji:[...new Set(ji)],tip,dom,wear,hours,weak};
 }
@@ -1005,7 +1006,8 @@ function renderDaily(df,name){
     <div style="border:1px solid var(--panel-line);border-radius:6px;padding:12px 14px;margin-bottom:14px;background:rgba(10,8,16,.4)">
       <div style="font-size:12px;color:var(--gold-bright);letter-spacing:.15em;margin-bottom:6px">◈ 今 日 開 運 穿 戴</div>
       <div style="font-size:13px;color:#d8cbb0;line-height:1.9">
-        今日喜用補<b style="color:var(--gold-bright)">${df.weak}</b>，宜著 <b style="color:var(--gold-bright)">${df.wear.color}</b> 色系；<br>
+       今日宜補<b style="color:var(--gold-bright)">${df.needWx||df.weak}</b>，宜著 <b style="color:var(--gold-bright)">${df.wear.color}</b> 色系；<br>
+
         可隨身配戴 <b style="color:var(--gold-bright)">${df.wear.crystal}</b> 等開運晶石，或 ${df.wear.item}，助今日氣場流通。
       </div>
     </div>
