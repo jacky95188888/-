@@ -1,17 +1,22 @@
 self.addEventListener('install', e => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(clients.claim()));
 
+const API = 'https://tianheng-push.rhtm9y855y.workers.dev/today';
+
 self.addEventListener('push', e => {
-  let d = {};
-  try { d = e.data ? e.data.json() : {}; } catch (err) { d = { body: e.data ? e.data.text() : '' }; }
-  e.waitUntil(
-    self.registration.showNotification(d.title || '天衡', {
-      body: d.body || '今日運勢已更新',
+  e.waitUntil((async () => {
+    let d = { title: '天衡', body: '今日運勢已更新', url: '/-/' };
+    try {
+      const r = await fetch(API, { cache: 'no-store' });
+      if (r.ok) d = await r.json();
+    } catch (err) {}
+    await self.registration.showNotification(d.title, {
+      body: d.body,
       icon: '/-/icon-192.png',
       badge: '/-/icon-192.png',
       data: { url: d.url || '/-/' }
-    })
-  );
+    });
+  })());
 });
 
 self.addEventListener('notificationclick', e => {
