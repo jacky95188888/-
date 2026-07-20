@@ -2351,9 +2351,22 @@ async function thEnableNotify(){
     }
     if (perm !== 'granted') { show('尚未開啟通知權限'); return; }
 
-    const reg = await navigator.serviceWorker.ready;
-    reg.showNotification('天衡', { body: '通知已開啟 ✅', icon: '/-/icon-192.png' });
-    show('通知已開啟 ✅' + (standalone ? '' : '<br>提示：安裝到主畫面體驗更佳'));
+          const reg = await navigator.serviceWorker.ready;
+      const VAPID = 'BFjL4J9FB1Qd0P0nGodGKnmuxzRqcXePRXjaikDWsoJGZRFluzrJ3G4l416EidF1f3CniM9NXrRvTkNqSnQtwYw';
+      const b64ToU8 = b64 => {
+        const pad = '='.repeat((4 - b64.length % 4) % 4);
+        const raw = atob((b64 + pad).replace(/-/g, '+').replace(/_/g, '/'));
+        return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+      };
+      let sub = await reg.pushManager.getSubscription();
+      if (!sub) {
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: b64ToU8(VAPID)
+        });
+      }
+      await fetch('https://tianhe
+
   } catch (e) {
     show('開啟失敗：' + e.message);
   }
