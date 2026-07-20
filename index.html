@@ -942,7 +942,15 @@ function dailyFortune(weak,strong,dGan,dayZhi){
     財:domainScore(base,1,td.jdn), 事:domainScore(base,2,td.jdn),
     情:domainScore(base,3,td.jdn), 康:domainScore(base,4,td.jdn)
   };
-  const wear=pickWear(weak, td.gz);
+      // 今日補什麼:先看今日五行對命主的作用,再決定該補的五行
+    let needWx = weak;
+    if(SHENG[td.wx]===weak){ needWx = weak; }            // 今日生我用神,順勢加強
+    else if(KE[td.wx]===weak){ needWx = SHENG[td.wx]==null?weak:Object.keys(SHENG).find(k=>SHENG[k]===td.wx)||weak; } // 今日剋用神,補其母洩之
+    else if(KE[weak]===td.wx){ needWx = weak; }          // 用神剋今日,無妨
+    else if(td.wx===weak){ needWx = weak; }              // 同氣
+    else { needWx = SHENG[weak]||weak; }                 // 其餘,補生用神者
+    const wear=pickWear(needWx, String(td.jdn));
+
 
   const hours=luckyHours(td.zhi);
   const badDir=DIR_BY_WX[KE[weak]]; // 剋我喜用的方位為差方位
