@@ -758,12 +758,46 @@ function zhiRelation(dayZhi, todayZhi){
   return {type:"平",level:0,desc:"今日氣場平和，按既定節奏推進即可，穩穩走最實在。"};
 }
 const WUXING_WEAR={
-  木:{color:"青綠、墨綠",crystal:"綠幽靈、綠東陵、孔雀石",item:"木質手串、綠色系穿搭"},
-  火:{color:"朱紅、橙紫",crystal:"紅瑪瑙、石榴石、紅紋石",item:"紅繩、紅色內搭或配件"},
-  土:{color:"明黃、大地色",crystal:"黃水晶、虎眼石、黃玉",item:"黃水晶手串、土黃系配件"},
-  金:{color:"皎白、銀灰",crystal:"白水晶、白幽靈、月光石",item:"銀飾、白水晶、金屬感配件"},
-  水:{color:"墨藍、純黑",crystal:"黑曜石、海藍寶、藍晶石",item:"黑曜石手串、深藍系穿搭"}
+  木:[
+    {color:"青綠、墨綠",crystal:"綠幽靈、綠東陵",item:"木質手串、綠色系穿搭"},
+    {color:"翠青、抹茶綠",crystal:"孔雀石、橄欖石",item:"藤編配件、草綠系上衣"},
+    {color:"薄荷綠、竹青",crystal:"綠碧璽、葡萄石",item:"原木飾品、青綠系圍巾"},
+    {color:"深松綠、苔綠",crystal:"綠瑪瑙、螢石",item:"棉麻材質、森林綠外搭"}
+  ],
+  火:[
+    {color:"朱紅、橙紫",crystal:"紅瑪瑙、石榴石",item:"紅繩、紅色內搭或配件"},
+    {color:"正紅、酒紅",crystal:"紅紋石、紅碧璽",item:"紅色襪子、暖色系配件"},
+    {color:"珊瑚橘、緋紅",crystal:"太陽石、火瑪瑙",item:"橘紅系上衣、金屬紅飾品"},
+    {color:"桃紅、艷紫",crystal:"紫水晶、紅髮晶",item:"紫紅系圍巾、紅色手鍊"}
+  ],
+  土:[
+    {color:"明黃、大地色",crystal:"黃水晶、虎眼石",item:"黃水晶手串、土黃系配件"},
+    {color:"卡其、駝色",crystal:"黃玉、琥珀",item:"皮革配件、大地色外套"},
+    {color:"米棕、赭黃",crystal:"茶晶、方解石",item:"陶瓷飾品、棕色系鞋款"},
+    {color:"沙金、暖褐",crystal:"金髮晶、黃玉髓",item:"編織腰帶、土色系穿搭"}
+  ],
+  金:[
+    {color:"皎白、銀灰",crystal:"白水晶、白幽靈",item:"銀飾、白水晶、金屬感配件"},
+    {color:"珍珠白、月牙白",crystal:"月光石、白玉髓",item:"白色上衣、銀色鍊飾"},
+    {color:"香檳金、亮銀",crystal:"髮晶、賽黃晶",item:"金屬手錶、金色小配件"},
+    {color:"淺灰、霧銀",crystal:"透石膏、銀曜石",item:"灰白系穿搭、金屬框眼鏡"}
+  ],
+  水:[
+    {color:"墨藍、純黑",crystal:"黑曜石、海藍寶",item:"黑曜石手串、深藍系穿搭"},
+    {color:"靛藍、玄黑",crystal:"藍晶石、青金石",item:"深藍外套、黑色系配件"},
+    {color:"湖水藍、灰藍",crystal:"海藍寶、藍紋瑪瑙",item:"藍色圍巾、水晶項鍊"},
+    {color:"藏青、曜黑",crystal:"黑碧璽、黑髮晶",item:"黑色手鍊、深色系鞋款"}
+  ]
 };
+/* 依當日干支輪替，同五行也天天不同 */
+function pickWear(wx, dayGanZhi){
+  const arr=WUXING_WEAR[wx]||WUXING_WEAR.水;
+  let h=0;
+  const s=String(dayGanZhi||"");
+  for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0;
+  return arr[h%arr.length];
+}
+
 const DIR_BY_WX={木:"東方",火:"南方",土:"中央／本位",金:"西方",水:"北方"};
 /* 四領域文案庫 */
 const DOMAIN_TEXT={
@@ -908,7 +942,8 @@ function dailyFortune(weak,strong,dGan,dayZhi){
     財:domainScore(base,1,td.jdn), 事:domainScore(base,2,td.jdn),
     情:domainScore(base,3,td.jdn), 康:domainScore(base,4,td.jdn)
   };
-  const wear=WUXING_WEAR[weak];
+  const wear=pickWear(weak, td.gz);
+
   const hours=luckyHours(td.zhi);
   const badDir=DIR_BY_WX[KE[weak]]; // 剋我喜用的方位為差方位
   return {idx,tier,relation,td,rel,
