@@ -2410,7 +2410,12 @@ async function thEnableNotify(){
           applicationServerKey: b64ToU8(VAPID)
         });
       }
-      await fetch('https://tianhe
+            await fetch('https://tianheng-push.rhtm9y855y.workers.dev/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sub)
+      });
+
       reg.showNotification('天衡', { body: '每日運勢通知已開啟 ✅', icon: '/-/icon-192.png' });
       show('通知已開啟 ✅ 每天早上會收到今日運勢');
 
