@@ -249,13 +249,157 @@
     .support{margin-left:14px;margin-right:14px;padding-left:15px;padding-right:15px}
     .support-number{font-size:17px;letter-spacing:.04em}
   }
+
+  /* =========================================================
+     天衡玄夜金玉主題：單一作用域，無 !important 疊加
+     ========================================================= */
+  .th-luxe{
+    --night:#07060d;--night-2:#100b17;--glass:rgba(18,13,25,.78);
+    --glass-strong:rgba(13,9,19,.92);--line-soft:rgba(217,182,106,.30);
+    --ivory:#f5ead0;--muted-luxe:#b9a98a;
+    min-height:100vh;background:#07060d;color:var(--ivory)
+  }
+  .th-luxe #bgLayer{
+    background-position:center top;filter:saturate(.86) contrast(1.08) brightness(.78);
+    transform:scale(1.015)
+  }
+  .th-luxe #bgVeil{
+    background:
+      radial-gradient(circle at 50% 7%,rgba(176,133,66,.16),transparent 28%),
+      radial-gradient(circle at 12% 38%,rgba(87,45,110,.16),transparent 34%),
+      linear-gradient(180deg,rgba(5,4,11,.06),rgba(5,4,11,.62) 45%,#07060d 100%)
+  }
+  .th-luxe #app{
+    width:min(100%,560px);margin:0 auto;overflow:hidden;
+    border-left:1px solid rgba(217,182,106,.09);
+    border-right:1px solid rgba(217,182,106,.09);
+    box-shadow:0 0 80px rgba(0,0,0,.46)
+  }
+  .th-luxe .view-count{
+    position:relative;z-index:3;width:max-content;margin:12px auto -38px;
+    padding:7px 13px;border:1px solid rgba(217,182,106,.28);border-radius:999px;
+    background:rgba(7,6,13,.58);backdrop-filter:blur(12px);
+    color:#b9aa8b;font-size:11px;letter-spacing:.08em
+  }
+  .th-luxe .view-count span{color:var(--gold-bright);text-shadow:0 0 12px rgba(217,182,106,.8)}
+  .th-luxe .view-count b{color:#ead5a2;font-weight:700}
+  .th-luxe .hero{
+    min-height:430px;padding:96px 24px 50px;display:flex;align-items:center;
+    justify-content:center;flex-direction:column;isolation:isolate
+  }
+  .th-luxe .hero::before{
+    content:"";position:absolute;inset:34px 18px 8px;z-index:-1;border-radius:190px 190px 24px 24px;
+    border:1px solid rgba(217,182,106,.17);
+    background:linear-gradient(180deg,rgba(12,8,18,.10),rgba(10,7,15,.50));
+    box-shadow:inset 0 0 70px rgba(217,182,106,.035),0 30px 70px rgba(0,0,0,.28)
+  }
+  .th-luxe .hero::after{
+    content:"✦";position:absolute;top:59px;left:50%;transform:translateX(-50%);
+    color:var(--gold-bright);font-size:13px;text-shadow:0 0 20px rgba(217,182,106,.9)
+  }
+  .th-luxe .sigil{
+    margin-bottom:19px;color:#e2c982;font-size:11px;letter-spacing:.72em;
+    padding-left:.72em;opacity:.96
+  }
+  .th-luxe .title{
+    font-size:68px;line-height:1.1;letter-spacing:.20em;padding-left:.20em;
+    background:linear-gradient(180deg,#fff7dc 0%,#e8c979 44%,#9c6e30 100%);
+    -webkit-background-clip:text;background-clip:text;
+    filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))
+  }
+  .th-luxe .subtitle{margin-top:15px;color:#ddcba8;font-size:13px;letter-spacing:.34em}
+  .th-luxe .daily-entry{
+    min-width:158px;justify-content:center;margin-top:25px;padding:11px 20px;
+    border-color:rgba(217,182,106,.55);background:linear-gradient(135deg,rgba(38,26,43,.82),rgba(14,10,20,.88));
+    color:#f0d899;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 12px 28px rgba(0,0,0,.3)
+  }
+  .th-luxe .daily-entry + .daily-entry{margin-top:10px}
+  .th-luxe .form{
+    margin:0 16px 28px;padding:25px 20px 23px;border:1px solid var(--line-soft);
+    border-radius:18px;background:linear-gradient(155deg,rgba(24,17,31,.88),rgba(10,8,16,.92));
+    box-shadow:0 22px 55px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.04);
+    backdrop-filter:blur(16px)
+  }
+  .th-luxe .form-intro{text-align:center;margin:0 0 25px;padding-bottom:21px;border-bottom:1px solid rgba(217,182,106,.16)}
+  .th-luxe .form-intro span{color:#9c8965;font-family:Cinzel,serif;font-size:9px;letter-spacing:.25em}
+  .th-luxe .form-intro h2{margin:5px 0 4px;color:#f0d79c;font-size:22px;letter-spacing:.18em;padding-left:.18em}
+  .th-luxe .form-intro p{color:#a99b84;font-size:11px;line-height:1.7}
+  .th-luxe .field{margin-bottom:20px}
+  .th-luxe .label{color:#e0c884;font-size:12px}
+  .th-luxe input,.th-luxe select{
+    min-height:50px;border-color:rgba(217,182,106,.29);border-radius:10px;
+    background-color:rgba(5,4,10,.54);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)
+  }
+  .th-luxe input:focus,.th-luxe select:focus{
+    border-color:#d9b66a;background:rgba(16,11,22,.9);
+    box-shadow:0 0 0 3px rgba(217,182,106,.10),0 8px 24px rgba(0,0,0,.24)
+  }
+  .th-luxe .sex label{
+    padding:14px;border-radius:10px;border-color:rgba(217,182,106,.29);
+    background:rgba(5,4,10,.48)
+  }
+  .th-luxe .sex label:has(input:checked){
+    border-color:#d9b66a;background:linear-gradient(135deg,rgba(108,62,42,.58),rgba(43,27,45,.78));
+    box-shadow:inset 0 0 20px rgba(217,182,106,.08),0 8px 18px rgba(0,0,0,.22)
+  }
+  .th-luxe .era-toggle button{
+    border-color:rgba(217,182,106,.26);background:rgba(5,4,10,.48);border-radius:999px
+  }
+  .th-luxe .era-toggle button.on{
+    border-color:#d9b66a;color:#fff0c4;background:linear-gradient(135deg,#7d342a,#4d2529)
+  }
+  .th-luxe .cta{
+    margin-top:24px;padding:19px;border-radius:999px;border-color:#e0bd6c;
+    background:linear-gradient(135deg,#a64331 0%,#7b2e27 48%,#4f1d22 100%);
+    box-shadow:inset 0 1px 0 rgba(255,241,198,.26),0 15px 34px rgba(83,24,23,.45);
+    text-shadow:0 1px 4px rgba(0,0,0,.45)
+  }
+  .th-luxe .result{padding:8px 16px 0}
+  .th-luxe .daily,.th-luxe .verdict{
+    border-radius:16px;border-color:rgba(217,182,106,.48);
+    background:linear-gradient(150deg,rgba(26,18,32,.95),rgba(9,7,14,.96));
+    box-shadow:0 18px 45px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.04)
+  }
+  .th-luxe .verdict{padding:31px 22px}
+  .th-luxe .score-ring{filter:drop-shadow(0 0 18px rgba(217,182,106,.17))}
+  .th-luxe .tasks-head{margin:34px 0 18px}
+  .th-luxe .tasks-head span{color:#edd79e;font-size:12px;letter-spacing:.34em}
+  .th-luxe .card{
+    margin-bottom:11px;border-color:rgba(217,182,106,.25);border-radius:12px;
+    background:linear-gradient(145deg,rgba(25,18,31,.88),rgba(10,8,15,.92));
+    box-shadow:0 8px 24px rgba(0,0,0,.18)
+  }
+  .th-luxe .card-h{padding:17px 15px}
+  .th-luxe .card-h .no{
+    width:28px;height:28px;display:grid;place-items:center;border:1px solid rgba(217,182,106,.42);
+    border-radius:50%;color:#e6ca83;font-size:10px
+  }
+  .th-luxe .card-h .nm{color:#f1e5cd;font-size:15px}
+  .th-luxe .card-h .mini{color:#c6aa70;font-size:11px}
+  .th-luxe .card.open{border-color:rgba(217,182,106,.52)}
+  .th-luxe .card-b-in{padding:16px 17px 21px;border-top-color:rgba(217,182,106,.16);color:#d9ccb2}
+  .th-luxe .cross,.th-luxe .lock{
+    border-radius:15px;background:linear-gradient(150deg,rgba(28,20,34,.92),rgba(9,7,14,.94));
+    box-shadow:0 15px 36px rgba(0,0,0,.28)
+  }
+  .th-luxe .support{
+    border-radius:18px;background:linear-gradient(145deg,rgba(31,22,37,.96),rgba(9,7,14,.97));
+    box-shadow:0 24px 55px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.04)
+  }
+  @media(max-width:390px){
+    .th-luxe .hero{min-height:402px;padding-top:87px}
+    .th-luxe .title{font-size:57px}
+    .th-luxe .subtitle{font-size:11px;letter-spacing:.28em}
+    .th-luxe .form{margin-left:11px;margin-right:11px;padding-left:15px;padding-right:15px}
+    .th-luxe .row{gap:7px}
+  }
 </style>
 </head>
-<body>
+<body class="th-luxe">
  <script src="https://cdn.jsdelivr.net/npm/iztro/dist/iztro.min.js"></script>
-  <div style="text-align:center;color:#888;font-size:13px;padding:12px;">
-  👁️ 累計瀏覽 <span id="viewNum">—</span> 次
-</div>
+  <div class="view-count" aria-label="網站瀏覽人次">
+    <span aria-hidden="true">◉</span> 累計推演 <b id="viewNum">—</b> 次
+  </div>
 <script>
 (async()=>{
   try{
@@ -276,6 +420,11 @@
   <a href="compat.html" class="daily-entry" style="text-decoration:none;margin-top:14px;">◇ 雙 人 合 度</a>
 </header>
 <section class="form" id="form">
+  <div class="form-intro">
+    <span>PERSONAL DESTINY MATRIX</span>
+    <h2>輸入命盤資料</h2>
+    <p>融合八字、姓名、命卦、紫微與流年，完成您的九維交叉推演</p>
+  </div>
   <div class="field">
     <label class="label">姓名</label>
     <input id="name" type="text" placeholder="請輸入中文全名" maxlength="6">
@@ -593,7 +742,7 @@ function lunar2solar(lY,lM,lD,isLeap){
   return {y:t.getUTCFullYear(), m:t.getUTCMonth()+1, d:t.getUTCDate()};
 }
 const STROKES={
-    "王":5,"李":7,"張":11,"陳":16,"林":8,"黃":12,"劉":15,"吳":7,
+    "王":4,"李":7,"張":11,"陳":16,"林":8,"黃":12,"劉":15,"吳":7,
   "蔡":17,"楊":13,"許":11,"鄭":19,"謝":17,"郭":15,"洪":10,"曾":12,
   "廖":14,"賴":16,"徐":10,"周":8,"葉":15,"蘇":22,"莊":13,"江":7,
   "呂":7,"何":7,"羅":20,"高":10,"潘":16,"簡":18,"朱":6,"鍾":17,
@@ -645,13 +794,13 @@ const LUCK81={
 };
 function luck81(n){ let k=((n-1)%80)+1; return LUCK81[k]||2; }
 function luckText(v){return v===3?"大吉":v===2?"半吉":v===1?"凶":"半吉";}
-function wuxingTally(ganzhi,nameWx){
+function wuxingTally(ganzhi){
+  /* 命局五行只計四柱；姓名五行另在姓名維度解讀，避免污染八字旺衰。 */
   const t={木:0,火:0,土:0,金:0,水:0};
   [ganzhi.yGan,ganzhi.mGan,ganzhi.dGan].forEach(g=>t[GAN_WX[g]]++);
   if(ganzhi.hGan!=="—") t[GAN_WX[ganzhi.hGan]]++;
   [ganzhi.yZhi,ganzhi.mZhi,ganzhi.dZhi].forEach(z=>t[ZHI_WX[z]]+=0.6);
   if(ganzhi.hZhi!=="—") t[ZHI_WX[ganzhi.hZhi]]+=0.6;
-  nameWx.forEach(w=>{if(t[w]!=null)t[w]+=0.8});
   return t;
 }
 const USER_STROKES={};
@@ -738,26 +887,29 @@ const GUA=[
  {n:"艮 · 山篤實",en:"KEEPING STILL",lo:"穩重厚實，知止有定，宜固本培基"},
  {n:"坤 · 地厚載",en:"RECEPTIVE",lo:"柔厚包容，承載有德，宜以柔克剛"}
 ];
-function getLifeGua(birthYear, sex) {
-  let sum = 0;
-  let yearStr = birthYear.toString();
-  for (let i = 0; i < yearStr.length; i++) { sum += parseInt(yearStr[i]); }
-  while (sum > 9) {
-    let temp = 0; let sumStr = sum.toString();
-    for (let i = 0; i < sumStr.length; i++) { temp += parseInt(sumStr[i]); }
-    sum = temp;
-  }
-  let guaNum = 0;
-  if (sex === "男") { guaNum = 11 - sum; if (guaNum > 9) guaNum -= 9; }
-  else { guaNum = sum + 5; if (guaNum > 9) guaNum -= 9; }
-  if (guaNum === 5) { return sex === "男" ? 7 : 6; }
-  const guaIndexMap = {1:5,2:7,3:3,4:4,6:0,7:1,8:6,9:2};
-  return guaIndexMap[guaNum] !== undefined ? guaIndexMap[guaNum] : 6;
+function reduceToDigit(n){
+  n=Math.abs(Number(n)||0);
+  while(n>9) n=String(n).split("").reduce((a,d)=>a+Number(d),0);
+  return n;
 }
-GUA.getByYear = function(birthYear, sex) {
-  if (parseInt(birthYear) === 1981 && (sex === "女" || sex === "坤" || sex === "坤・女")) { return GUA[6]; }
-  const idx = getLifeGua(birthYear, sex);
-  return GUA[idx];
+function getLifeGua(birthYear, sex) {
+  const year=Number(birthYear);
+  const female=(sex==="女"||sex==="坤"||sex==="坤·女"||sex==="坤・女");
+  const yy=((year%100)+100)%100;
+  const yearSum=reduceToDigit(Math.floor(yy/10)+(yy%10));
+  let guaNum;
+  if(year>=2000){
+    guaNum=female?reduceToDigit(yearSum+6):9-yearSum;
+  }else{
+    guaNum=female?reduceToDigit(yearSum+5):10-yearSum;
+  }
+  if(guaNum===0) guaNum=9;
+  if(guaNum===5) guaNum=female?8:2;
+  const guaIndexMap={1:5,2:7,3:3,4:4,6:0,7:1,8:6,9:2};
+  return guaIndexMap[guaNum]!==undefined?guaIndexMap[guaNum]:6;
+}
+GUA.getByYear=function(birthYear,sex){
+  return GUA[getLifeGua(birthYear,sex)];
 };
 /* ===== 流年/大運 旺平弱判定 + 宜忌 ===== */
 function _pillarWx(gz){ return {gan:GAN_WX[gz[0]], zhi:ZHI_WX[gz[1]]}; }
@@ -834,8 +986,8 @@ const WUXING_WEAR={
   金:[
     {color:"皎白、銀灰",crystal:"白水晶、白幽靈",item:"銀飾、白水晶、金屬感配件"},
     {color:"珍珠白、月牙白",crystal:"月光石、白玉髓",item:"白色上衣、銀色鍊飾"},
-    {color:"香檳金、亮銀",crystal:"髮晶、賽黃晶",item:"金屬手錶、金色小配件"},
-    {color:"淺灰、霧銀",crystal:"透石膏、銀曜石",item:"灰白系穿搭、金屬框眼鏡"}
+    {color:"香檳金、亮銀",crystal:"白髮晶、白瑪瑙",item:"金屬手錶、金色小配件"},
+    {color:"淺灰、霧銀",crystal:"透石膏、白水晶",item:"灰白系穿搭、金屬框眼鏡"}
   ],
   水:[
     {color:"墨藍、純黑",crystal:"黑曜石、海藍寶",item:"黑曜石手串、深藍系穿搭"},
@@ -870,11 +1022,18 @@ function luckyHours(todayZhi){
   const heIdx=ZHI.indexOf(heZhi), chongIdx=ZHI.indexOf(chongZhi);
   return {good:SHICHEN[heIdx], bad:SHICHEN[chongIdx]};
 }
-function calcDaYun(gz, y, m, d, hIdx, sex){
+function calcDaYun(gz, y, m, d, hIdx, sex, ziSchool){
   const male = !(sex==="女"||sex==="坤"||sex==="坤·女");
+  const birthYear=y;
   let hh=hIdx;
   let dd=d;
-  if(hIdx===99){ hh=0; dd=d+1; }
+  if(hIdx===99){
+    hh=0;
+    if(ziSchool==="late"){
+      const next=new Date(Date.UTC(y,m-1,d)+86400000);
+      y=next.getUTCFullYear();m=next.getUTCMonth()+1;dd=next.getUTCDate();
+    }
+  }
   if(hh<0) hh=-1;
   const tz=8;
   const bornHour=(hh>=0)?(hh*2):12;
@@ -902,9 +1061,9 @@ function calcDaYun(gz, y, m, d, hIdx, sex){
     if(forward){gi=(gi+1)%10; zi=(zi+1)%12;}
     else       {gi=(gi+9)%10; zi=(zi+11)%12;}
     const a0=startAge+s*10;
-    list.push({gz:GAN[gi]+ZHI[zi], startAge:a0, startYear:y+a0});
+    list.push({gz:GAN[gi]+ZHI[zi], startAge:a0, startYear:birthYear+a0});
   }
-  const curAge=new Date().getFullYear()-y;
+  const curAge=new Date().getFullYear()-birthYear;
   let cur=-1;
   for(let i=0;i<list.length;i++)
     if(curAge>=list[i].startAge&&curAge<list[i].startAge+10){cur=i;break;}
@@ -952,7 +1111,7 @@ function divine(name,sex,y,m,d,hIdx,ziSchool){
   return {gz,sx,chars,surname,strokesArr,guessed,total,grids,symbols,nameWx,tally,weak,strong,scarce,
     strengthInfo,personality,
     zw,sign,tone,nameScore,wxBalance:Math.max(40,Math.min(96,wxBalance)),
-    overall,gua:GUA.getByYear(y,sex),dayun:calcDaYun(gz,y,m,d,hIdx,sex)};
+    overall,gua:GUA.getByYear(y,sex),dayun:calcDaYun(gz,y,m,d,hIdx,sex,ziSchool)};
 }
 const LUCKY_COLOR={木:"青綠",火:"朱紅",土:"明黃",金:"皎白",水:"墨藍"};
 const LUCKY_DIR={木:"東方",火:"南方",土:"中央／本位",金:"西方",水:"北方"};
@@ -997,21 +1156,23 @@ function dailyFortune(weak,strong,dGan,dayZhi){
     財:domainScore(base,1,td.jdn), 事:domainScore(base,2,td.jdn),
     情:domainScore(base,3,td.jdn), 康:domainScore(base,4,td.jdn)
   };
-      // 今日補什麼:先看今日五行對命主的作用,再決定該補的五行
-    let needWx = weak;
-    if(SHENG[td.wx]===weak){ needWx = weak; }            // 今日生我用神,順勢加強
-    else if(KE[td.wx]===weak){ needWx = SHENG[td.wx]==null?weak:Object.keys(SHENG).find(k=>SHENG[k]===td.wx)||weak; } // 今日剋用神,補其母洩之
-    else if(KE[weak]===td.wx){ needWx = weak; }          // 用神剋今日,無妨
-    else if(td.wx===weak){ needWx = weak; }              // 同氣
-    else { needWx = SHENG[weak]||weak; }                 // 其餘,補生用神者
-    const wear=pickWear(needWx, String(td.jdn));
-
+  /* 今日補運只在「喜用神」與「生喜用神者」之間選擇。
+     遭剋或被洩時補母氣，避免誤選成強化剋星的五行。 */
+  const motherWx=SHENG_BY(weak)||weak;
+  let needWx=weak;
+  if(td.wx===weak || SHENG[td.wx]===weak){
+    needWx=weak;
+  }else if(KE[td.wx]===weak || SHENG[weak]===td.wx || KE[weak]===td.wx){
+    needWx=motherWx;
+  }
+  const wear=pickWear(needWx,String(td.jdn));
 
   const hours=luckyHours(td.zhi);
-  const badDir=DIR_BY_WX[KE[weak]]; // 剋我喜用的方位為差方位
+  const controllingWx=Object.keys(KE).find(k=>KE[k]===weak);
+  const badDir=DIR_BY_WX[controllingWx]||"—";
       return {idx,tier,relation,td,rel,needWx,dbgWx:td.wx,dbgWeak:weak,
 
-    color:LUCKY_COLOR[weak],dir:LUCKY_DIR[weak],badDir,num:LUCKY_NUM[weak],
+    color:LUCKY_COLOR[needWx],dir:LUCKY_DIR[needWx],badDir,num:LUCKY_NUM[needWx],
     yi:[...new Set(yi)],ji:[...new Set(ji)],tip,dom,wear,hours,weak};
 }
 function renderDaily(df,name){
@@ -1717,7 +1878,7 @@ if(document.readyState!=="loading")showEngineNotice();
 </script>
 
 <!-- ===== 天衡瀏覽人數統計 結束 ===== -->
-<script src="tianheng-v3.js"></script>
+<!-- tianheng-v3 已整合進主程式，避免重複載入 -->
   <!-- ===== 命格稱號 · 稀有度 · 一鍵分享 v2 開始 ===== -->
 <script>
 (function(){
@@ -1857,7 +2018,7 @@ if(document.readyState!=="loading")showEngineNotice();
 </script>
 <!-- ===== 病毒漏斗統計 結束 ===== -->
 <!-- ============================================================
-     天衡 v4 補丁（測試用）
+     天衡整合分析層（正式版）
      內容:① 八分項計分 ② 綜評改八塊加權 ③ 九維滿版詳解
           ④ 八字/生肖/星盤/紫微 砍罐頭
      安裝:整段貼在 index-test.html 的 </body> 之前
