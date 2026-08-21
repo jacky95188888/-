@@ -211,6 +211,44 @@
     *{animation-duration:.01ms!important;animation-iteration-count:1!important}
     .cta::before{display:none}
   }
+
+  /* ===== 隨喜支持 ===== */
+  .support{
+    display:none;margin:12px 20px 34px;padding:28px 20px 22px;text-align:center;
+    position:relative;overflow:hidden;border:1px solid var(--gold);border-radius:8px;
+    background:linear-gradient(155deg,rgba(38,28,43,.94),rgba(13,10,20,.96));
+    box-shadow:0 10px 34px rgba(0,0,0,.48),inset 0 0 28px rgba(217,182,106,.07);
+    backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)
+  }
+  .result.show + .support{display:block;animation:rise .65s ease}
+  .support::before{content:"";position:absolute;left:12%;right:12%;top:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold-bright),transparent);
+    box-shadow:0 0 14px rgba(217,182,106,.6)}
+  .support-mark{width:42px;height:42px;margin:0 auto 12px;display:grid;place-items:center;
+    border:1px solid var(--gold);border-radius:50%;color:var(--gold-bright);font-size:18px;
+    box-shadow:0 0 20px rgba(217,182,106,.2)}
+  .support h3{font-size:18px;color:var(--gold-bright);letter-spacing:.24em;
+    padding-left:.24em;margin-bottom:10px}
+  .support-lead{font-size:14px;color:#e3d7bd;line-height:1.95;margin:0 auto 12px;max-width:390px}
+  .support-use{font-size:12px;color:#aa9a79;line-height:1.8;margin-bottom:16px}
+  .support-amounts{display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .support-amounts span{padding:5px 13px;border:1px solid rgba(176,133,66,.55);
+    border-radius:20px;color:#d8c69d;background:rgba(176,133,66,.07);font-size:12px}
+  .support-account{padding:15px 14px;border:1px solid rgba(176,133,66,.48);border-radius:6px;
+    background:rgba(7,6,12,.46);text-align:left}
+  .support-bank{font-size:12px;color:#ad9c7b;letter-spacing:.1em;margin-bottom:5px}
+  .support-number-row{display:flex;align-items:center;gap:10px}
+  .support-number{flex:1;color:#f4dfaa;font-family:Cinzel,monospace;font-size:20px;
+    letter-spacing:.08em;white-space:nowrap}
+  .support-copy{flex:none;border:1px solid var(--gold);border-radius:4px;padding:8px 11px;
+    background:linear-gradient(135deg,#9c3a2e,#76291f);color:#fff4da;font-family:inherit;
+    font-size:12px;cursor:pointer}
+  .support-copy:active{transform:scale(.97)}
+  .support-note{margin-top:13px;font-size:11px;color:#8f8269;line-height:1.75}
+  @media(max-width:380px){
+    .support{margin-left:14px;margin-right:14px;padding-left:15px;padding-right:15px}
+    .support-number{font-size:17px;letter-spacing:.04em}
+  }
 </style>
 </head>
 <body>
@@ -300,6 +338,23 @@
   <button class="cta" id="go">啟 盤 推 演</button>
 </section>
 <section class="result" id="result"></section>
+<section class="support" id="support" aria-labelledby="supportTitle">
+  <div class="support-mark" aria-hidden="true">心</div>
+  <h3 id="supportTitle">隨 喜 支 持</h3>
+  <p class="support-lead">若這次推演，讓您對自己多了一分理解、對下一步多了一點方向，歡迎量力隨喜，成為天衡繼續前行的一份力量。</p>
+  <p class="support-use">每一份支持，都將用於命理資料校正、演算法維護與閱讀體驗優化，讓完整解析能持續免費提供。</p>
+  <div class="support-amounts" aria-label="隨喜金額參考">
+    <span>一份心意 NT$66</span><span>一路順心 NT$168</span><span>圓滿支持 NT$360</span>
+  </div>
+  <div class="support-account">
+    <div class="support-bank">中國信託銀行・隨喜轉帳帳號</div>
+    <div class="support-number-row">
+      <strong class="support-number" id="supportAccount">0935-4001-5944</strong>
+      <button class="support-copy" type="button" onclick="copySupportAccount(this)">複製帳號</button>
+    </div>
+  </div>
+  <p class="support-note">隨喜完全自由，支持與否不影響任何功能或解析內容。命理推演僅供文化研究與人生思考參考。</p>
+</section>
 </div>
 <script>
 /* ===== 天衡 · 九維命理交叉推演 核心引擎 ===== */
@@ -2424,6 +2479,28 @@ async function thEnableNotify(){
   }
 }
 
+
+function copySupportAccount(btn){
+  var account="093540015944";
+  function done(){
+    var old=btn.textContent;
+    btn.textContent="已複製";
+    setTimeout(function(){btn.textContent=old;},1600);
+  }
+  if(navigator.clipboard&&window.isSecureContext){
+    navigator.clipboard.writeText(account).then(done).catch(function(){fallbackCopy(account,done);});
+  }else{
+    fallbackCopy(account,done);
+  }
+}
+function fallbackCopy(text,done){
+  var input=document.createElement("textarea");
+  input.value=text;input.setAttribute("readonly","");
+  input.style.cssText="position:fixed;left:-9999px;top:0";
+  document.body.appendChild(input);input.select();
+  try{document.execCommand("copy");done();}catch(e){alert("請複製帳號："+text);}
+  input.remove();
+}
 </script>
 
 </body>
