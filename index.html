@@ -393,6 +393,64 @@
     .th-luxe .form{margin-left:11px;margin-right:11px;padding-left:15px;padding-right:15px}
     .th-luxe .row{gap:7px}
   }
+
+  /* ===== 版本更新公告 ===== */
+  .th-luxe .update-modal[hidden]{display:none}
+  .th-luxe .update-modal{
+    position:fixed;inset:0;z-index:12000;display:grid;place-items:center;padding:20px;
+    background:rgba(4,3,9,.84);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)
+  }
+  .th-luxe .update-panel{
+    position:relative;width:min(100%,430px);max-height:min(88vh,720px);overflow:auto;
+    padding:28px 22px 22px;border:1px solid rgba(217,182,106,.62);border-radius:22px;
+    background:
+      radial-gradient(circle at 50% 0,rgba(217,182,106,.15),transparent 34%),
+      linear-gradient(150deg,#201729 0%,#0d0a13 70%);
+    box-shadow:0 30px 90px rgba(0,0,0,.68),inset 0 1px 0 rgba(255,255,255,.06);
+    animation:updateRise .48s cubic-bezier(.2,.8,.2,1)
+  }
+  @keyframes updateRise{
+    from{opacity:0;transform:translateY(18px) scale(.97)}
+    to{opacity:1;transform:none}
+  }
+  .th-luxe .update-close{
+    position:absolute;right:15px;top:14px;width:32px;height:32px;border:1px solid rgba(217,182,106,.28);
+    border-radius:50%;background:rgba(7,5,11,.46);color:#ad9b76;font-size:18px;cursor:pointer
+  }
+  .th-luxe .update-kicker{
+    color:#a9956d;font-family:Cinzel,serif;font-size:9px;letter-spacing:.22em;text-align:center
+  }
+  .th-luxe .update-emblem{
+    width:54px;height:54px;margin:14px auto 12px;display:grid;place-items:center;
+    border:1px solid #d9b66a;border-radius:50%;color:#f0d48d;font-size:22px;
+    box-shadow:0 0 28px rgba(217,182,106,.18),inset 0 0 18px rgba(217,182,106,.08)
+  }
+  .th-luxe .update-panel h2{
+    margin:0;text-align:center;color:#f6e5b9;font-size:25px;letter-spacing:.16em;padding-left:.16em
+  }
+  .th-luxe .update-subtitle{
+    margin:6px 0 20px;text-align:center;color:#b7a78a;font-size:12px;letter-spacing:.08em
+  }
+  .th-luxe .update-list{display:grid;gap:9px;margin:0 0 18px}
+  .th-luxe .update-item{
+    display:grid;grid-template-columns:34px 1fr;gap:10px;padding:12px;
+    border:1px solid rgba(217,182,106,.18);border-radius:11px;background:rgba(6,5,11,.34)
+  }
+  .th-luxe .update-item i{
+    width:30px;height:30px;display:grid;place-items:center;border-radius:9px;
+    background:rgba(217,182,106,.10);color:#e3c676;font-style:normal;font-size:14px
+  }
+  .th-luxe .update-item b{display:block;margin-bottom:2px;color:#ead7aa;font-size:13px}
+  .th-luxe .update-item span{display:block;color:#a99b82;font-size:11px;line-height:1.65}
+  .th-luxe .update-note{
+    margin:0 0 17px;text-align:center;color:#877b68;font-size:10.5px;line-height:1.7
+  }
+  .th-luxe .update-start{
+    width:100%;min-height:51px;border:1px solid #e0bd6c;border-radius:999px;
+    background:linear-gradient(135deg,#a64331,#762923 54%,#4a1a20);color:#fff2d0;
+    font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.22em;padding-left:.22em;
+    box-shadow:inset 0 1px 0 rgba(255,241,198,.24),0 12px 28px rgba(83,24,23,.36);cursor:pointer
+  }
 </style>
 </head>
 <body class="th-luxe">
@@ -411,6 +469,23 @@
 </script>
 <div id="bgLayer"></div>
 <div id="bgVeil"></div>
+<div class="update-modal" id="updateModal" role="dialog" aria-modal="true" aria-labelledby="updateTitle" hidden>
+  <section class="update-panel">
+    <button class="update-close" id="updateClose" type="button" aria-label="關閉更新公告">×</button>
+    <div class="update-kicker">2026.08.21・ENGINE &amp; DESIGN UPDATE</div>
+    <div class="update-emblem" aria-hidden="true">衡</div>
+    <h2 id="updateTitle">天衡全面煥新</h2>
+    <p class="update-subtitle">命理更準確，閱讀更清楚，體驗更完整</p>
+    <div class="update-list">
+      <div class="update-item"><i>晶</i><div><b>五行穿戴全面校正</b><span>修正水晶、幸運色與忌方位的生剋方向，讓每日建議前後一致。</span></div></div>
+      <div class="update-item"><i>命</i><div><b>核心命盤引擎升級</b><span>校正命卦、子時換日、大運與姓名筆畫，八字五行不再混入姓名計算。</span></div></div>
+      <div class="update-item"><i>新</i><div><b>玄夜金玉全新介面</b><span>首頁、表單、每日運勢與九維詳解重新設計，手機閱讀更加精緻流暢。</span></div></div>
+      <div class="update-item"><i>心</i><div><b>隨喜支持正式上線</b><span>完整解析維持免費；若內容帶來幫助，可自由隨喜支持天衡持續優化。</span></div></div>
+    </div>
+    <p class="update-note">命理推演僅供文化研究與人生思考參考。隨喜與否不影響任何功能。</p>
+    <button class="update-start" id="updateStart" type="button">開 始 體 驗</button>
+  </section>
+</div>
 <div id="app">
 <header class="hero">
   <div class="sigil">天 ◇ 衡 ◇ 命 ◇ 盤</div>
@@ -2662,6 +2737,29 @@ function fallbackCopy(text,done){
   try{document.execCommand("copy");done();}catch(e){alert("請複製帳號："+text);}
   input.remove();
 }
+
+(function(){
+  var key="tianheng_update_seen_20260821_v1";
+  var modal=document.getElementById("updateModal");
+  var start=document.getElementById("updateStart");
+  var close=document.getElementById("updateClose");
+  if(!modal)return;
+  function seen(){try{return localStorage.getItem(key)==="1";}catch(e){return false;}}
+  function dismiss(){
+    modal.hidden=true;
+    document.body.style.overflow="";
+    try{localStorage.setItem(key,"1");}catch(e){}
+  }
+  if(!seen()){
+    modal.hidden=false;
+    document.body.style.overflow="hidden";
+    setTimeout(function(){if(start)start.focus();},120);
+  }
+  if(start)start.addEventListener("click",dismiss);
+  if(close)close.addEventListener("click",dismiss);
+  modal.addEventListener("click",function(e){if(e.target===modal)dismiss();});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!modal.hidden)dismiss();});
+})();
 </script>
 
 </body>
