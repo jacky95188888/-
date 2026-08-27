@@ -1,14 +1,18 @@
-const TH_LOADER = '/-/tianheng-v3.js?v=b83d292197d659f66b4ffb07478cdd76ff2834dc';
+const TH_ASSETS = [
+  '/-/tianheng-v9-line.js?v=20260827-0225',
+  '/-/tianheng-v10-gates.js?v=20260827-0225'
+];
 
 self.addEventListener('install', e => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(clients.claim()));
 
 /*
- * Production safety net:
- * the current index.html contains the legacy Tianheng logic inline and does not
- * reliably include the external enhancement loader. For navigations under /-/,
- * inject the version-pinned loader once before </body>. This keeps V4–V8 active
- * without duplicating them and avoids raw/main cache drift.
+ * Tianheng production bootstrap.
+ * Keep the production page on the existing stable inline engine, then inject
+ * only the same-origin V9 LINE entry and V10 four-gate preview. V11 payment is
+ * intentionally NOT injected until the Cloudflare/ECPay backend is deployed
+ * and verified end-to-end. This avoids raw.githubusercontent.com cache/CORS
+ * drift and keeps support as voluntary (隨喜) in the meantime.
  */
 self.addEventListener('fetch', e => {
   const req = e.request;
@@ -22,13 +26,20 @@ self.addEventListener('fetch', e => {
       const type = r.headers.get('content-type') || '';
       if (!r.ok || !type.includes('text/html')) return r;
       let html = await r.text();
-      if (!html.includes('tianheng-v3.js')) {
-        const tag = '<script src="' + TH_LOADER + '"></script>';
-        html = html.includes('</body>') ? html.replace('</body>', tag + '\n</body>') : html + tag;
+      const tags = [];
+      for (const src of TH_ASSETS) {
+        const base = src.split('?')[0];
+        if (!html.includes(base)) tags.push('<script src="' + src + '"></script>');
+      }
+      if (tags.length) {
+        const block = '\n<!-- Tianheng production enhancements -->\n' + tags.join('\n') + '\n';
+        html = html.includes('</body>') ? html.replace('</body>', block + '</body>') : html + block;
       }
       const h = new Headers(r.headers);
       h.delete('content-length');
-      h.set('cache-control', 'no-store, max-age=0');
+      h.set('cache-control', 'no-store, no-cache, must-revalidate, max-age=0');
+      h.set('pragma', 'no-cache');
+      h.set('expires', '0');
       return new Response(html, { status: r.status, statusText: r.statusText, headers: h });
     } catch (err) {
       return fetch(req);
