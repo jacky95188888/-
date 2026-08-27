@@ -7,6 +7,7 @@
   var V8='https://raw.githubusercontent.com/jacky95188888/-/83e9ba1a669877536a529ccc09ed5fa3ccf5cd29/tianheng-v8.js';
   var V9='https://raw.githubusercontent.com/jacky95188888/-/90c440619113c3bf00aab74b8b6463f7673b2271/tianheng-v9-line.js';
   var V10='https://raw.githubusercontent.com/jacky95188888/-/52d5e271487b64ccc4c85d16ab2018fa22c3a438/tianheng-v10-gates.js';
+  var V11='https://raw.githubusercontent.com/jacky95188888/-/42cc03a8d04f38fc58463709f16386ad16a2fc07/tianheng-v11-pay.js';
   function load(src,done){
     var s=document.createElement('script');
     s.src=src;
@@ -15,5 +16,5 @@
     s.onerror=function(){console.error('[天衡] 載入失敗：',src);(done||function(){})();};
     document.head.appendChild(s);
   }
-  load(V4,function(){load(V5,function(){load(V6,function(){load(V7,function(){load(V8,function(){load(V9,function(){load(V10);});});});});});});
+  load(V4,function(){load(V5,function(){load(V6,function(){load(V7,function(){load(V8,function(){load(V9,function(){load(V10,function(){load(V11);});});});});});});});
 })();
