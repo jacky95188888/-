@@ -1,351 +1,195 @@
-/* 天衡 v3 增補：流年十槽 + 凶年替代 + 九維砍罐頭 + 個資彈窗 + 筆畫補字 */
-/* 此檔以 <script src> 在主程式之後載入 */
+/* 天衡 V4 介面增強層：保留既有 V3 演算法，再加入感情／事業／30・90 日趨勢卡 */
 (function(){
-  "use strict";
-  function init(){
-    if(typeof STROKES==="undefined"||typeof GAN_WX==="undefined"){ setTimeout(init,80); return; }
-
-    /* 1. 筆畫補字（只增不蓋）*/
-    var ADD={"陸":16,"夏":10,"邱":12,"龔":22,"嚴":20,"萬":15,"顧":21,"蔣":17,"童":12,"巫":7,"麥":11,"凃":12,"塗":13,"卜":2,"尤":4,"鞏":15,"連":14,"康":11,"伍":6,"柴":10,"閔":12,"關":19,"邵":12,"湯":13,"汪":8,"白":5,"田":5,"申":5,"石":5,"任":6,"金":8,"姚":9,"秦":10,"唐":10,"凌":10,"孔":4,"毛":4,"尹":4,"水":4,"包":5,"史":5,"皮":5,"甘":5,"左":5,"冉":5,"全":6,"利":7,"吉":6,"年":6,"朵":6,"車":7,"辛":7,"谷":7,"汝":7,"池":7,"牟":6,"宓":8,"杭":8,"狄":8,"竺":8,"武":8,"花":10,"邰":12,"封":9,"姜":9,"段":9,"俞":9,"紀":9,"宣":9,"祝":10,"庫":10,"晁":10,"班":11,"婁":11,"區":11,"商":11,"崔":11,"麻":11,"那":11,"屠":11,"盛":12,"鈕":12,"閎":12,"郎":14,"管":14,"齊":14,"裴":14,"暨":14,"閣":14,"翟":14,"褚":15,"談":15,"墨":15,"養":15,"歐":15,"魯":15,"葛":15,"應":17,"勵":17,"繆":17,"蕭":18,"聶":18,"瞿":18,"鄢":18,"叢":18,"譚":19,"龐":19,"薄":19,"懷":20,"竇":20,"釋":20,"佩":8,"昀":8,"沛":8,"知":8,"承":8,"昇":8,"念":8,"宛":8,"奇":8,"果":8,"亭":9,"亮":9,"信":9,"俊":9,"勇":9,"南":9,"奕":9,"姿":9,"威":9,"屏":9,"彥":9,"柔":9,"盈":9,"芃":9,"虹":9,"軍":9,"音":9,"風":9,"倢":10,"修":10,"倫":10,"哥":10,"娟":10,"紓":10,"航":10,"芮":10,"芹":10,"倩":10,"書":10,"桓":10,"桐":10,"偵":11,"健":11,"勖":11,"婕":11,"婉":11,"梓":11,"梵":11,"翊":11,"淇":12,"淨":12,"涴":12,"琇":12,"惠":12,"晰":12,"晶":12,"皓":12,"筑":12,"貴":12,"超":12,"集":12,"意":13,"愛":13,"楨":13,"楷":13,"歆":13,"煜":13,"睦":13,"祺":13,"稚":13,"群":13,"義":13,"詩":13,"資":13,"頌":13,"鼎":13,"煦":13,"渝":13,"暄":13,"愉":13,"莛":13,"鈿":13,"鈴":13,"禎":14,"碩":14,"綵":14,"翠":14,"郡":14,"銨":14,"頗":14,"鳳":14,"嫣":14,"寧":14,"實":14,"暢":14,"槐":14,"歌":14,"精":14,"綿":14,"億":15,"儀":15,"嬋":15,"寬":15,"廣":15,"徵":15,"慶":15,"摯":15,"陶":16,"輝":15,"輔":15,"震":15,"霆":15,"霈":15,"鞍":15,"駕":15,"麾":15,"嬌":15,"摩":15,"槿":15,"蓮":17,"蔚":17,"嬪":17,"擇":17,"檀":17,"檜":17,"璐":17,"璦":17,"穗":17,"翼":18,"雙":18,"瓊":20,"瀞":20,"礦":20,"瓏":21,"鶴":21,"儷":21,"曦":20,"鑑":22};
-    for(var k in ADD){ if(STROKES[k]==null) STROKES[k]=ADD[k]; }
-
-    /* 2. 流年十槽資料 */
-    var SLOT_SHISHEN={比肩:["獨立自主、靠本事立足","與同輩並肩、合作競爭並存"],劫財:["人事往來頻繁、財務宜守","群力可借但分潤難免"],食神:["才華舒展、心境輕快","福氣顯露、宜享受耕耘成果"],傷官:["創意噴發、鋒芒外露","表現慾強、易突破也易招議"],偏財:["機會與外財浮動","交際活絡、財源多向"],正財:["務實積累、財由勤得","腳踏實地、收穫看得見"],七殺:["壓力與磨練並至","挑戰升級、責任加身"],正官:["責任加身、宜守規矩","名分將近、利正途升遷"],偏印:["思慮深沉、宜內修專研","偏門靈感多、宜鑽研冷門"],正印:["貴人扶持、適合沉澱蓄能","長輩助力、利進修受蔭"]};
-    var SLOT_FAV={旺:["五行正中你的喜用，順勢進取的好時機","大環境順風，把握得宜可更上層樓"],平:["吉凶參半，守住節奏、量力而為最穩","氣場中性，主動經營仍有可為"],弱:["五行剋你喜用，宜守不宜攻、沉潛蓄力","逆風之年，低調穩守為要"]};
-    var SLOT_ZHI_POS={沖:"惟逢歲支相沖，難免有奔波或變動，順勢調整即可",自刑:"惟逢自刑，心緒易亂，記得別跟自己過不去",刑:"惟逢歲支相刑，人際偶有摩擦，話留三分",害:"惟逢相害，提防暗處小阻力，別把話全押",合:"加之歲支相合，貴人易近、利協商合作",比:"加之歲支同氣，做擅長之事格外順手",平:"歲支平和，按節奏推進即可"};
-    var SLOT_ZHI_NEG={沖:"又逢歲支相沖，動盪加劇，重大決定務必緩行",自刑:"又逢自刑，內耗加重，更要照顧情緒、別鑽牛角尖",刑:"又逢歲支相刑，口角是非難免，凡事和為貴",害:"又逢相害，暗中阻力多，凡事留一手",合:"所幸歲支相合，仍有貴人可借力，守中待援",比:"所幸歲支同氣，守住熟悉領域仍有立足之地",平:"歲支尚平和，守穩節奏便是上策"};
-    var SLOT_DOMAIN={比劫:"重點落在人際與合作",食傷:"重點落在表達與才華發揮",財星:"重點落在財務與事業經營",官殺:"重點落在事業與職場地位",印星:"重點落在學習、貴人與內在沉澱"};
-    function _dayunFavOfYear(dayun,year,weak){if(!dayun||!dayun.list)return 0;var seg=null;for(var i=0;i<dayun.list.length;i++){var p=dayun.list[i];if(year>=p.startYear&&year<p.startYear+10)seg=p;}if(!seg)return 0;var gw=GAN_WX[seg.gz[0]],zw=ZHI_WX[seg.gz[1]];function f(w){if(w===weak)return 2;if(SHENG[w]===weak)return 1;if(KE[w]===weak)return-2;if(KE[weak]===w)return-1;return 0;}return f(gw)*2+f(zw);}
-    var SLOT_DAYUN={順:"當前大運亦助你喜用，順勢可乘",逆:"惜當前大運偏剋喜用，旺也短難久、宜速戰速決",中:"大運態度中性，成敗多看自身經營"};
-    function _cangFav(zhi,weak){var a=ZHI_CANGAN[zhi]||[];for(var i=0;i<a.length;i++){if(GAN_WX[a[i][0]]===weak)return true;}return false;}
-    var WX_SEASON={木:"春（正—三月）",火:"夏（四—六月）",土:"四季土月（三六九臘）",金:"秋（七—九月）",水:"冬（十—臘月）"};
-    function slot7Months(weak,yearZhi){var y=ZHI_WX[yearZhi];var r;if(y===weak||SHENG[y]===weak)r=WX_SEASON[y]+"前後氣旺、最能借力";else if(KE[y]===weak)r=WX_SEASON[y]+"前後壓力較顯、宜收斂";else r=WX_SEASON[y]+"前後為全年轉折、宜留意節奏";return "時序上"+r;}
-    var SLOT_ACTION={比劫:{yi:"宜獨當一面、結盟靠譜夥伴",ji:"忌合夥糾紛、為人作保"},食傷:{yi:"宜發揮專長、創作與表達",ji:"忌口無遮攔、頂撞上位"},財星:{yi:"宜穩紮經營、置產理財",ji:"忌投機賭性、因財失義"},官殺:{yi:"宜爭取升遷、承擔重任",ji:"忌違規越矩、硬扛內耗"},印星:{yi:"宜進修受證、親近貴人",ji:"忌過度依賴、行動遲緩"}};
-    var SLOT_TRIGGER={比劫:"引動比劫，利人際結盟，但防財務分潤",食傷:"引動食傷，利才華變現與名聲",財星:"引動財星，利正財偏財與務實收成",官殺:"引動官殺，利職場名分與地位",印星:"引動印星，利學習、靠山與心境沉澱"};
-    var WX_ORGAN={木:"肝膽、筋骨與情緒疏泄",火:"心血管、睡眠與精神",土:"脾胃與消化",金:"肺氣、呼吸與皮膚",水:"腎氣、泌尿與精力"};
-    function slot10Health(weak,tier){if(tier==="弱")return "健康上"+weak+"受抑，留意"+WX_ORGAN[weak]+"，別恃強熬夜";if(tier==="旺")return "健康上"+weak+"得氣，整體有勁，仍宜作息規律、勿過耗";return "健康平平，維持規律即可，留意"+WX_ORGAN[weak];}
-    var ALT_BY_CLASS={比劫:"與其單打獨鬥硬拚，不如鞏固既有人脈、深化信任，等順流年再擴張",食傷:"與其急著表現衝撞，不如把才華沉澱成作品或專業，安靜累積待時而發",財星:"與其冒進求財，不如守穩現金流、精進本業，把基本盤顧牢",官殺:"與其硬扛求表現，不如先把份內做到無可挑剔，建口碑勝過搶功",印星:"正是進修充電的好時機，學習、考證、近貴人，蓄能勝過硬衝"};
-    function altSuggestion(weak,cls){return "轉念建議："+ALT_BY_CLASS[cls]+"。趨吉可多往"+LUCKY_DIR[weak]+"走動、近"+LUCKY_COLOR[weak]+"色系與喜用"+weak+"的人事物，藉外氣補內運";}
-    function _pickSlot(a,s){return a[s%a.length];}
-    function lnNarrative2(L,dayGan,weak,dayZhi,dayun,prevSg){
-      var gz=L.gz,year=L.year,gan=gz[0],zhi=gz[1];
-      var sg=tenGod(dayGan,gan)||"比肩",cls=SHISHEN_CLASS[sg],tier=tierOf(gz,weak);
-      var seed=gz.charCodeAt(0)+gz.charCodeAt(1)+year;
-      var s1i=seed%2;if(prevSg===sg)s1i=(s1i+1)%2;
-      var s1=SLOT_SHISHEN[sg][s1i];
-      var s2=_pickSlot(SLOT_FAV[tier],seed+1);
-      var zr=(typeof zhiRelation==="function")?zhiRelation(dayZhi,zhi).type:"平";
-      var zhiTxt=(tier==="弱")?SLOT_ZHI_NEG[zr]:SLOT_ZHI_POS[zr];
-      var s4=SLOT_DOMAIN[cls];
-      var dyf=_dayunFavOfYear(dayun,year,weak);
-      var s5=SLOT_DAYUN[dyf>=2?"順":dyf<=-2?"逆":"中"];
-      var s6=_cangFav(zhi,weak)?(zhi+"中藏有喜用，暗處仍有助力"):"";
-      var s7=slot7Months(weak,zhi);
-      var act=SLOT_ACTION[cls],s9=SLOT_TRIGGER[cls],s10=slot10Health(weak,tier);
-      var alt=(tier==="弱")?altSuggestion(weak,cls):"";
-      var full=sg+"透干，"+s1+"；"+s2+"。"+zhiTxt+"，"+s4+(s6?"；"+s6:"")+"。"+s5+"。"+s7+"。落地建議："+act.yi+"，"+act.ji+"。"+s9+"。"+s10+"。"+alt;
-      var brief=s1+"。"+s2;
-      return {year:year,gz:gz,tier:tier,sg:sg,full:full,brief:brief,yi:act.yi,ji:act.ji};
-    }
-    window.buildLnHtmlV2=function(dayun,dayGan,weak,dayZhi){
-      var prev=null,out="";
-      for(var i=0;i<dayun.ln.length;i++){
-        var o=lnNarrative2(dayun.ln[i],dayGan,weak,dayZhi,dayun,prev);prev=o.sg;
-        var c=TIER_COLOR[o.tier],active=(i===0);
-        if(active){
-          out+='<div style="border:1px solid '+c+';border-radius:8px;padding:12px 14px;margin-bottom:8px;background:rgba(176,133,66,.08)"><div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span style="color:#e9d5a8;font-size:15px;font-weight:600">'+o.year+' '+o.gz+'</span><span style="color:'+c+';font-size:13px;font-weight:600;border:1px solid '+c+';border-radius:3px;padding:0 7px">'+o.tier+'</span><span style="color:#8a7c5a;font-size:11px">· 今年</span></div><div style="color:#d8cbb0;font-size:13px;line-height:1.95">'+o.full+'</div></div>';
-        }else{
-          out+='<div style="border:1px solid rgba(176,133,66,.25);border-radius:8px;margin-bottom:8px;background:rgba(176,133,66,.02)"><div onclick="this.parentElement.classList.toggle(\'lnopen\')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer"><span style="color:#e9d5a8;font-size:15px;font-weight:600">'+o.year+' '+o.gz+'</span><span style="color:'+c+';font-size:13px;font-weight:600;border:1px solid '+c+';border-radius:3px;padding:0 7px">'+o.tier+'</span><span style="color:#8a7c5a;font-size:11px;flex:1">'+o.brief+'</span><span style="color:#8a7c5a;font-size:11px">▼</span></div><div class="lnbody" style="max-height:0;overflow:hidden;transition:max-height .35s"><div style="color:#d8cbb0;font-size:13px;line-height:1.95;padding:0 12px 12px">'+o.full+'</div></div></div>';
-        }
-      }
-      return out;
-    };
-
-    /* 3. 九維交叉四段 */
-    var SX_WX={鼠:"水",牛:"土",虎:"木",兔:"木",龍:"土",蛇:"火",馬:"火",羊:"土",猴:"金",雞:"金",狗:"土",豬:"水"};
-    var GUA_NAME={乾:"剛健開創",兌:"和悅聚緣",離:"光明顯達",震:"動中求進",巽:"柔順漸進",坎:"沉潛蓄力",艮:"穩重篤實",坤:"厚德載物"};
-    function crossDayVsSx(dayGan,sx){var dw=GAN_WX[dayGan],sw=SX_WX[sx];if(dw===sw)return "日主"+dayGan+"（"+dw+"）與生肖"+sx+"同氣相挺，先天性情一致、根骨厚實";if(SHENG[sw]===dw)return "生肖"+sx+"（"+sw+"）生扶日主"+dayGan+"（"+dw+"），底氣得助、行事多一分後援";if(SHENG[dw]===sw)return "日主"+dayGan+"（"+dw+"）洩於生肖"+sx+"（"+sw+"），天生樂於付出、才華外顯但需留意耗神";if(KE[dw]===sw)return "日主"+dayGan+"（"+dw+"）駕馭生肖"+sx+"（"+sw+"），主控制力強、能成事但易過勞";if(KE[sw]===dw)return "生肖"+sx+"（"+sw+"）剋制日主"+dayGan+"（"+dw+"），內在常有自我拉扯，磨練後反成韌性";return "日主"+dayGan+"與生肖"+sx+"各有其性，剛柔並存";}
-    function crossWuxing(strong,weak){if(SHENG[weak]===strong)return "命中"+strong+"旺、"+weak+"弱，而"+weak+"能生"+strong+"，補"+weak+"等於替"+strong+"添柴，補強弱項後格局更上層";if(KE[strong]===weak)return "命中"+strong+"旺剋"+weak+"，"+weak+"受壓最深，調候補"+weak+"是全局最該下手處，補起來運勢翻轉最明顯";if(SHENG[strong]===weak)return "命中"+strong+"旺、"+weak+"弱，"+strong+"本可生"+weak+"卻力有未逮，順勢引"+strong+"入"+weak+"是關鍵";if(KE[weak]===strong)return "命中"+strong+"旺、"+weak+"弱，"+weak+"雖能剋"+strong+"卻力不足，補"+weak+"方能制衡過旺的"+strong;return "命中"+strong+"主、"+weak+"需補，五行各據其位、整體可塑性高";}
-    function crossEastWest(zw,sign){var h=String(zw).split("·")[0];var dyn=["牡羊","獅子","射手","水瓶"],std=["金牛","處女","摩羯","巨蟹"];if(dyn.indexOf(sign)>=0)return "西洋"+sign+"座外放進取，與東方"+h+"相互拉抬，外顯張力強、宜給自己舞台";if(std.indexOf(sign)>=0)return "西洋"+sign+"座沉穩內守，與東方"+h+"一剛一柔、內外互補，先穩後動最順";return "西洋"+sign+"座善調和，與東方"+h+"交映，性格層次豐富、能屈能伸";}
-    function crossVerdictV2(g,weak,strong,overall,sx,sign){var t;if(overall>=85)t="底蘊深厚，順勢而為便能水到渠成";else if(overall>=75)t="格局中上，補強弱項可由佳轉盛";else if(overall>=65)t="根基平穩，後天調候得宜則漸入佳境";else t="先天平實，正因如此後天努力的每一分都算數";return "九維交叉之下，您屬「"+g+"」格局——"+(GUA_NAME[g]||"自成一格")+"。大運重點在補"+weak+"、調節過旺的"+strong+"；"+t+"。屬"+sx+"帶"+sign+"座之性，"+((sx.charCodeAt(0)+sign.charCodeAt(0))%2?"宜把握貴人與舞台之機":"宜穩中求進、厚積薄發")+"。";}
-    window.buildCrossHtmlV2=function(r){
-      var guaShort=r.gua.n.split(" ")[0];
-      return '<div class="cross"><h4>◈ 九 維 交 叉 推 演</h4>'+
-        '<p>'+crossDayVsSx(r.gz.dGan,r.sx)+'。</p>'+
-        '<p>'+crossWuxing(r.strong,r.weak)+'。</p>'+
-        '<p>'+crossEastWest(r.zw,r.sign)+'；姓名音律屬<span class="em">'+r.tone+'</span>，加乘整體氣場。</p>'+
-        '<p style="color:var(--gold-bright);border-top:1px solid var(--panel-line);padding-top:12px;margin-top:14px">'+crossVerdictV2(guaShort,r.weak,r.strong,r.overall,r.sx,r.sign)+'</p></div>';
-    };
-
-    /* 5. 流年自動接管 */
-    if(typeof render==="function" && !render._v3){
-      var _orig=render;
-      render=function(r,info){
-        var html=_orig(r,info);
-        try{
-          var a='近六年流年細解</div>';
-          var b='<div style="font-size:11px;color:#8a7c5a;margin-top:4px';
-          var i1=html.indexOf(a),i2=html.indexOf(b);
-          if(i1>=0&&i2>i1&&r&&r.dayun&&r.gz){
-            var nl=window.buildLnHtmlV2(r.dayun,r.gz.dGan,r.weak,r.gz.dZhi);
-            html=html.slice(0,i1+a.length)+nl+html.slice(i2);
-          }
-        }catch(e){}
-        return html;
-      };
-      render._v3=true;
-    }
-  }
-
-  /* 4. 個資彈窗 */
-  var PDPA_KEY="tianheng_pdpa_agreed_v1";
-  function pdpaAgreed(){try{return localStorage.getItem(PDPA_KEY)==="1";}catch(e){return false;}}
-  function showPdpaModal(){
-    if(pdpaAgreed())return;
-    if(!document.body){setTimeout(showPdpaModal,100);return;}
-    if(document.getElementById("pdpaModal"))return;
-    var m=document.createElement("div");m.id="pdpaModal";
-    m.style.cssText="position:fixed;inset:0;z-index:9999;background:rgba(6,6,13,.82);display:flex;align-items:center;justify-content:center;padding:24px";
-    var box=document.createElement("div");
-    box.style.cssText="max-width:420px;background:linear-gradient(160deg,rgba(34,26,40,.97),rgba(15,11,22,.98));border:1px solid #b08542;border-radius:10px;padding:26px 22px;color:#f0e8d6";
-    box.innerHTML='<div style="font-size:16px;color:#d9b66a;letter-spacing:.1em;margin-bottom:14px;text-align:center">◈ 個資使用聲明 ◈</div><div style="font-size:13px;line-height:1.95;color:#d8cbb0">天衡為純前端命理工具，您輸入的姓名與生日<b style="color:#d9b66a">僅在您的裝置本機運算</b>，不會上傳、不會儲存於伺服器，關閉頁面即消失。瀏覽人次統計僅累計次數、不含任何個人資料。<br><br>點選下方按鈕即表示您已知悉並同意（依個人資料保護法）。</div>';
-    var btn=document.createElement("button");btn.textContent="我 了 解 並 同 意";
-    btn.style.cssText="width:100%;margin-top:18px;padding:13px;background:linear-gradient(135deg,#a83a2e,#7a2a20);color:#f0e8d6;border:1px solid #b08542;border-radius:6px;font-size:15px;letter-spacing:.15em;cursor:pointer;font-family:inherit";
-    btn.onclick=function(){try{localStorage.setItem(PDPA_KEY,"1");}catch(e){}if(m.parentNode)m.parentNode.removeChild(m);};
-    box.appendChild(btn);m.appendChild(box);document.body.appendChild(m);
-  }
-
-  if(document.readyState==="loading"){
-    document.addEventListener("DOMContentLoaded",function(){init();showPdpaModal();});
-  }else{ init();showPdpaModal(); }
-})();
-/* ============================================================
-   天衡 v3 增強包（2026-07-07）
-   內容：① 一鍵分享個人化結果 ② 明日運勢預告＋加入主畫面提示
-        ③ 總格「凶」信任說明
-   安裝方式：整段貼到 tianheng-v3.js 的「最後面」（只加不改）
-   ============================================================ */
-(function () {
   'use strict';
 
-  var TH_URL = 'https://jacky95188888.github.io/-/';
+  var LEGACY='https://raw.githubusercontent.com/jacky95188888/-/a8cff9494fd0b330a48f683dbe319423c9a0f376/tianheng-v3.js';
 
-  /* ---------- 共用小工具 ---------- */
-
-  // 站內風格 Toast（不用 alert，iframe 也能跑）
-  function thToast(msg) {
-    try {
-      var t = document.createElement('div');
-      t.textContent = msg;
-      t.style.cssText =
-        'position:fixed;left:50%;bottom:12%;transform:translateX(-50%);' +
-        'background:rgba(20,16,30,.95);color:#e8d9a8;border:1px solid #c9a24b;' +
-        'padding:10px 18px;border-radius:24px;font-size:15px;z-index:99999;' +
-        'box-shadow:0 4px 18px rgba(0,0,0,.6);max-width:80%;text-align:center;' +
-        'transition:opacity .4s;opacity:1;pointer-events:none;';
-      document.body.appendChild(t);
-      setTimeout(function () { t.style.opacity = '0'; }, 1800);
-      setTimeout(function () { t.remove(); }, 2300);
-    } catch (e) {}
+  function loadLegacy(done){
+    if(window.__TH_LEGACY_LOADED){ done(); return; }
+    window.__TH_LEGACY_LOADED=true;
+    var s=document.createElement('script');
+    s.src=LEGACY;
+    s.onload=done;
+    s.onerror=done;
+    document.head.appendChild(s);
   }
 
-  // 找出「包含某文字、且最深層」的區塊
-  function thFindBlock(keyword) {
-    var els = document.querySelectorAll('div,p,section,span');
-    var best = null;
-    for (var i = 0; i < els.length; i++) {
-      var el = els[i];
-      if (el.textContent && el.textContent.indexOf(keyword) !== -1) {
-        if (!best || el.textContent.length <= best.textContent.length) best = el;
-      }
+  function txt(){ return (document.body && document.body.innerText) || ''; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c];}); }
+  function clamp(n,a,b){ return Math.max(a,Math.min(b,n)); }
+  function pickScore(label, fallback){
+    var t=txt();
+    var re=new RegExp(label+'[^0-9]{0,18}(\\d{2,3})');
+    var m=t.match(re);
+    return m?clamp(parseInt(m[1],10),35,96):fallback;
+  }
+  function overall(){
+    var m=txt().match(/(\d{2,3})[\s\n]*命\s*運\s*綜\s*評/);
+    return m?clamp(parseInt(m[1],10),35,96):72;
+  }
+  function weakElem(){
+    var m=txt().match(/喜用神宜補([木火土金水])/);
+    return m?m[1]:'木';
+  }
+  function zodiac(){
+    var m=txt().match(/屬\s*([鼠牛虎兔龍蛇馬羊猴雞狗豬])/);
+    return m?m[1]:'';
+  }
+  function star(){
+    var m=txt().match(/(白羊|牡羊|金牛|雙子|巨蟹|獅子|處女|天秤|天蠍|射手|魔羯|摩羯|水瓶|雙魚)座/);
+    return m?m[1]:'';
+  }
+  function tone(score){ return score>=80?'旺':score>=68?'漸旺':score>=56?'平穩':'蓄勢'; }
+  function trend(score,days){
+    var seed=(new Date().getMonth()+1)*7 + new Date().getDate() + days + score;
+    var d=((seed%13)-6);
+    return clamp(score + d,42,95);
+  }
+
+  function relationshipCopy(score){
+    if(score>=80) return {
+      single:'緣分活躍，容易在朋友引介、工作往來或共同興趣中出現值得留意的人。主動回應，比被動等待更容易把好感變成機會。',
+      paired:'關係正處於可升溫的區段，適合安排共同計畫、旅行或談清楚下一步。少用猜測，多說真正需求，感情會更穩。',
+      risk:'桃花旺時也容易分心；不要用短暫的新鮮感衡量長期關係。'
+    };
+    if(score>=66) return {
+      single:'桃花不是爆發型，而是「越聊越有感」的慢熱走勢。熟人圈、合作場合與固定活動，比陌生社交更容易出現正緣。',
+      paired:'近期適合修復生活中的小摩擦。把時間留給真正的相處，而不是只處理事情，關係會慢慢回暖。',
+      risk:'最需要避免的是悶著不說，讓小誤會累積成距離。'
+    };
+    return {
+      single:'目前更適合先整理自己的情緒與擇偶標準，不必為了「有對象」而加快節奏。穩定自己後，反而比較容易遇到適合的人。',
+      paired:'關係需要耐心經營，暫時不要用一次爭執判斷未來。先處理溝通方式，再處理對錯。',
+      risk:'情緒低潮時容易把對方的沉默解讀成拒絕，重要決定宜多觀察幾天。'
+    };
+  }
+
+  function careerCopy(score){
+    if(score>=80) return {
+      now:'事業推進力強，適合主動談合作、爭取資源、推出新方案或把已準備好的計畫正式上線。',
+      money:'財運重點在「靠能力擴大收入」，比追逐短線機會更有利。已有客戶、專業與人脈是最值得放大的資產。',
+      risk:'旺運期最怕一次開太多戰線；先把最有把握的一件事做成，再擴張。'
+    };
+    if(score>=66) return {
+      now:'事業屬穩中轉強，適合整理流程、重新談條件、接觸舊客戶與布局下一波機會。',
+      money:'收入宜以穩定現金流為核心，先提高轉換率與回購，再考慮高風險投入。',
+      risk:'不要因一兩次卡關就全面改方向；目前更需要微調，而不是推翻。'
+    };
+    return {
+      now:'目前偏向整理期，適合補能力、清理低效工作與重整資源。重大轉職或重押投資，宜先做小規模驗證。',
+      money:'守住現金流比追高報酬重要；先降低不必要支出與固定成本，再等待較清楚的機會。',
+      risk:'壓力大時容易做出「想立刻翻盤」的決定，越急越要先算成本。'
+    };
+  }
+
+  function injectStyle(){
+    if(document.getElementById('th-v4-style')) return;
+    var st=document.createElement('style');
+    st.id='th-v4-style';
+    st.textContent='\
+      #th-v4-report{margin:28px auto;max-width:960px;padding:0 0 4px;font-family:inherit;color:#e9dfca;}\
+      #th-v4-report *{box-sizing:border-box;}\
+      .th4-kicker{text-align:center;color:#d6b567;letter-spacing:.3em;font-size:13px;margin:8px 0 18px;}\
+      .th4-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}\
+      .th4-card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(27,20,34,.96),rgba(8,8,14,.98));border:1px solid rgba(194,150,71,.58);border-radius:24px;padding:25px 24px;box-shadow:0 18px 45px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.025);}\
+      .th4-card:before{content:"";position:absolute;width:180px;height:180px;border-radius:50%;right:-70px;top:-85px;background:radial-gradient(circle,rgba(212,169,86,.16),transparent 68%);pointer-events:none;}\
+      .th4-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px;}\
+      .th4-title{font-size:22px;letter-spacing:.12em;color:#f0dfbd;}\
+      .th4-score{display:flex;align-items:baseline;gap:4px;color:#e5bd63;}\
+      .th4-score b{font-size:38px;font-weight:500;line-height:1;}\
+      .th4-score span{font-size:12px;letter-spacing:.12em;}\
+      .th4-tag{display:inline-block;border:1px solid rgba(111,163,126,.55);border-radius:999px;padding:5px 10px;color:#93bd9f;font-size:12px;letter-spacing:.12em;}\
+      .th4-meter{height:7px;border-radius:99px;background:#2a2022;overflow:hidden;margin:12px 0 20px;}\
+      .th4-meter i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#b6893e,#e3c46f);}\
+      .th4-section{padding:13px 0;border-top:1px solid rgba(189,151,83,.16);}\
+      .th4-section:first-of-type{border-top:0;}\
+      .th4-label{font-size:12px;color:#c9a65e;letter-spacing:.18em;margin-bottom:6px;}\
+      .th4-section p{margin:0;color:#d8ccba;font-size:15px;line-height:1.9;}\
+      .th4-risk{color:#c88478!important;}\
+      .th4-timeline{margin-top:18px;background:rgba(8,8,14,.62);border:1px solid rgba(194,150,71,.35);border-radius:19px;padding:18px;}\
+      .th4-timeline-title{text-align:center;color:#e0c27d;font-size:15px;letter-spacing:.18em;margin-bottom:15px;}\
+      .th4-timegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}\
+      .th4-time{padding:12px 8px;text-align:center;border-radius:13px;background:rgba(255,255,255,.025);}\
+      .th4-time small{display:block;color:#988b78;font-size:11px;margin-bottom:5px;}\
+      .th4-time strong{font-size:20px;color:#e7cc8c;font-weight:500;}\
+      .th4-time em{display:block;color:#8bad93;font-size:11px;font-style:normal;margin-top:4px;}\
+      .th4-note{text-align:center;color:#8d8377;font-size:11px;line-height:1.7;margin:15px 12px 2px;}\
+      @media(max-width:700px){#th-v4-report{margin:22px 0}.th4-grid{grid-template-columns:1fr;gap:16px}.th4-card{border-radius:19px;padding:21px 18px}.th4-title{font-size:20px}.th4-score b{font-size:34px}.th4-section p{font-size:15px;line-height:1.85}.th4-timegrid{gap:7px}.th4-time{padding:11px 4px}.th4-time strong{font-size:18px}}\
+    ';
+    document.head.appendChild(st);
+  }
+
+  function findAnchor(){
+    var nodes=document.querySelectorAll('h1,h2,h3,h4,div,section');
+    for(var i=0;i<nodes.length;i++){
+      var s=(nodes[i].textContent||'').replace(/\s+/g,'');
+      if(s==='九維詳解' || (s.indexOf('九維詳解')!==-1 && s.length<12)) return nodes[i];
     }
-    return best;
+    return null;
   }
 
-  // 複製文字（clipboard API + 舊法備援）
-  function thCopy(text, okMsg) {
-    function fallback() {
-      try {
-        var ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.cssText = 'position:fixed;top:-999px;opacity:0;';
-        document.body.appendChild(ta);
-        ta.focus(); ta.select();
-        document.execCommand('copy');
-        ta.remove();
-        thToast(okMsg);
-      } catch (e) { thToast('複製失敗，請截圖分享'); }
+  function render(){
+    if(document.getElementById('th-v4-report')) return;
+    var body=txt();
+    if(body.indexOf('命運綜評')===-1 || body.indexOf('九維')===-1) return;
+    var anchor=findAnchor();
+    if(!anchor || !anchor.parentNode) return;
+
+    var o=overall();
+    var love=pickScore('感情', clamp(o+3,45,92));
+    var career=pickScore('事業', clamp(o+1,45,92));
+    var lc=relationshipCopy(love), cc=careerCopy(career);
+    var e=weakElem(), z=zodiac(), st=star();
+    var l30=trend(love,30), l90=trend(love,90), c30=trend(career,31), c90=trend(career,91);
+
+    var wrap=document.createElement('section');
+    wrap.id='th-v4-report';
+    wrap.innerHTML='\
+      <div class="th4-kicker">天 衡 ・ 個 人 命 書</div>\
+      <div class="th4-grid">\
+        <article class="th4-card">\
+          <div class="th4-head"><div><div class="th4-title">感 情 命 書</div><span class="th4-tag">'+tone(love)+' ・ '+esc(e)+'氣調候</span></div><div class="th4-score"><b>'+love+'</b><span>分</span></div></div>\
+          <div class="th4-meter"><i style="width:'+love+'%"></i></div>\
+          <div class="th4-section"><div class="th4-label">單 身 ・ 緣 分</div><p>'+lc.single+'</p></div>\
+          <div class="th4-section"><div class="th4-label">有 伴 ・ 關 係</div><p>'+lc.paired+'</p></div>\
+          <div class="th4-section"><div class="th4-label">感 情 提 醒</div><p class="th4-risk">'+lc.risk+'</p></div>\
+          <div class="th4-timeline"><div class="th4-timeline-title">近期感情氣場</div><div class="th4-timegrid"><div class="th4-time"><small>此刻</small><strong>'+love+'</strong><em>'+tone(love)+'</em></div><div class="th4-time"><small>30 日</small><strong>'+l30+'</strong><em>'+tone(l30)+'</em></div><div class="th4-time"><small>90 日</small><strong>'+l90+'</strong><em>'+tone(l90)+'</em></div></div></div>\
+        </article>\
+        <article class="th4-card">\
+          <div class="th4-head"><div><div class="th4-title">事 業 財 運</div><span class="th4-tag">'+tone(career)+' ・ 行動指引</span></div><div class="th4-score"><b>'+career+'</b><span>分</span></div></div>\
+          <div class="th4-meter"><i style="width:'+career+'%"></i></div>\
+          <div class="th4-section"><div class="th4-label">事 業 ・ 現 況</div><p>'+cc.now+'</p></div>\
+          <div class="th4-section"><div class="th4-label">財 運 ・ 策 略</div><p>'+cc.money+'</p></div>\
+          <div class="th4-section"><div class="th4-label">行 動 提 醒</div><p class="th4-risk">'+cc.risk+'</p></div>\
+          <div class="th4-timeline"><div class="th4-timeline-title">近期事業動能</div><div class="th4-timegrid"><div class="th4-time"><small>此刻</small><strong>'+career+'</strong><em>'+tone(career)+'</em></div><div class="th4-time"><small>30 日</small><strong>'+c30+'</strong><em>'+tone(c30)+'</em></div><div class="th4-time"><small>90 日</small><strong>'+c90+'</strong><em>'+tone(c90)+'</em></div></div></div>\
+        </article>\
+      </div>\
+      <div class="th4-note">依既有九維結果、喜用五行與目前命盤分數整理行動趨勢；'+(z?'生肖 '+esc(z):'')+(st?'・'+esc(st)+'座':'')+'。命理推演用於自我觀察與規劃參考，不代表事件必然發生。</div>';
+
+    var top=anchor;
+    while(top.parentElement && top.parentElement!==document.body){
+      var p=top.parentElement;
+      var pt=(p.textContent||'').replace(/\s+/g,'');
+      if(pt.length>1600) break;
+      top=p;
     }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function () { thToast(okMsg); }, fallback);
-    } else { fallback(); }
+    top.parentNode.insertBefore(wrap,top);
   }
 
-    /* ---------- ① 分享功能 Phase 1：一鍵分享個人化結果（v2 乾淨版） ---------- */
-
-  function thBuildShareText() {
-    var body = document.body.innerText || '';
-    var parts = [];
-
-    var m = body.match(/(\d{2,3})[\s\n]*命\s*運\s*綜\s*評/);
-    var score = m ? m[1] : '';
-
-    var hexName = '';
-    var hm = body.match(/命\s*運\s*綜\s*評[\s\S]{0,40}?[·．・]?\s*([\u4e00-\u9fa5][\u4e00-\u9fa5\s]{1,10}[\u4e00-\u9fa5])\s*\n\s*[A-Z]/);
-    if (hm) hexName = hm[1].replace(/\s+/g, '');
-
-    var zm = body.match(/屬([\u4e00-\u9fa5])[。・，\s]/);
-    var zodiac = zm ? zm[1] : '';
-
-    var sm = body.match(/(白羊|牡羊|金牛|雙子|巨蟹|獅子|處女|天秤|天蠍|射手|魔羯|摩羯|水瓶|雙魚)座/);
-    var star = sm ? sm[0] : '';
-
-    var em = body.match(/喜用神宜補([\u4e00-\u9fa5])/);
-    var elem = em ? em[1] : '';
-
-    var line1 = '我在「天衡・九維命理」算了命';
-    if (score) line1 += '，命運綜評 ' + score + ' 分';
-    if (hexName) line1 += '，是「' + hexName + '」格局！✨';
-    parts.push(line1);
-
-    var line2 = '';
-    if (zodiac || star) line2 = '屬' + zodiac + (star ? '・' + star : '');
-    if (elem) line2 += (line2 ? '，' : '') + '喜用神補' + elem + ' 🔥';
-    if (line2) parts.push(line2);
-
-    parts.push('八字・紫微・姓名・星盤九維交叉推演，你也來免費算算看 👇');
-    // 注意：文字裡「不放網址」，網址交給 navigator.share 的 url 參數，
-    // 或複製時才另外接在後面，避免 LINE 重複附連結。
-    return parts.join('\n');
-  }
-
-  function thHookShare() {
-    var btns = document.querySelectorAll('button,a,div');
-    for (var i = 0; i < btns.length; i++) {
-      var b = btns[i];
-      if (b.dataset && b.dataset.thShare) continue;
-      var t = (b.textContent || '').replace(/\s+/g, '');
-      if (t.indexOf('分享天衡') !== -1 && t.length <= 8) {
-        var clone = b.cloneNode(true);
-        clone.dataset.thShare = '1';
-        b.parentNode.replaceChild(clone, b);
-        clone.addEventListener('click', function (ev) {
-          ev.preventDefault();
-          ev.stopPropagation();
-          var text = thBuildShareText();
-          if (navigator.share) {
-            // 文字與網址分開傳：LINE / 訊息只會出現一次連結
-            navigator.share({ text: text, url: TH_URL }).catch(function () {
-              thCopy(text + '\n' + TH_URL, '已複製，貼上就能分享 ✅');
-            });
-          } else {
-            // 不支援原生分享時才把網址接在文字後面複製
-            thCopy(text + '\n' + TH_URL, '已複製，貼上就能分享 ✅');
-          }
-        });
-      }
+  function boot(){
+    injectStyle();
+    var timer=null;
+    function schedule(){ clearTimeout(timer); timer=setTimeout(render,450); }
+    if(document.body){
+      new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});
+      schedule();
+    }else{
+      document.addEventListener('DOMContentLoaded',function(){
+        new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});
+        schedule();
+      });
     }
   }
 
-  /* ---------- ② 明日運勢預告 ＋ 加入主畫面提示 ---------- */
-
-  var TH_STEMS = '甲乙丙丁戊己庚辛壬癸';
-  var TH_BRANCH = '子丑寅卯辰巳午未申酉戌亥';
-  var TH_STEM_ELEM = { 甲: '木', 乙: '木', 丙: '火', 丁: '火', 戊: '土', 己: '土', 庚: '金', 辛: '金', 壬: '水', 癸: '水' };
-
-  // 錨點：2026-07-07 為 壬午（六十甲子第 19 位，索引 18）
-  function thGanzhiOf(dateObj) {
-    var anchor = new Date(2026, 6, 7);           // 本地時區 7/7 零點
-    anchor.setHours(0, 0, 0, 0);
-    var d = new Date(dateObj.getTime());
-    d.setHours(0, 0, 0, 0);
-    var diff = Math.round((d - anchor) / 86400000);
-    var idx = ((18 + diff) % 60 + 60) % 60;
-    var stem = TH_STEMS[idx % 10];
-    var branch = TH_BRANCH[idx % 12];
-    return stem + branch + '（' + TH_STEM_ELEM[stem] + '）';
-  }
-
-  function thAddTomorrowTeaser() {
-    // 今日運勢彈窗載入後，在「凶時」區塊下方加預告（只加一次）
-    if (document.getElementById('th-tomorrow')) return;
-    var anchorEl = thFindBlock('凶時');
-    if (!anchorEl) return;
-    var modal = anchorEl.closest('div');
-    // 往上找到彈窗容器（包含「今日干支」的那層）
-    var p = anchorEl;
-    for (var i = 0; i < 8 && p; i++) {
-      if (p.textContent.indexOf('今日干支') !== -1) { modal = p; break; }
-      p = p.parentElement;
-    }
-    if (!modal) return;
-
-    var tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    var gz = thGanzhiOf(tomorrow);
-
-    var box = document.createElement('div');
-    box.id = 'th-tomorrow';
-    box.style.cssText =
-      'margin:16px 12px 8px;padding:12px 14px;border:1px dashed #c9a24b;' +
-      'border-radius:12px;color:#e8d9a8;font-size:14px;line-height:1.7;text-align:center;';
-    var hint = '';
-    try {
-      if (!localStorage.getItem('th_pwa_hint')) {
-        hint = '<div style="margin-top:8px;font-size:12px;color:#b8a877;">' +
-               '小技巧：Safari 點「分享」→「加入主畫面」，天衡變成 App，每天一鍵看運勢' +
-               ' <span id="th-pwa-x" style="border:1px solid #b8a877;border-radius:50%;padding:0 6px;margin-left:6px;">✕</span></div>';
-      }
-    } catch (e) {}
-    box.innerHTML = '☀️ 明日干支 <b style="color:#f0d78c;">' + gz + '</b>・明天再來，看你的運勢起伏' + hint;
-    modal.appendChild(box);
-
-    var x = document.getElementById('th-pwa-x');
-    if (x) x.addEventListener('click', function (ev) {
-      ev.stopPropagation();
-      try { localStorage.setItem('th_pwa_hint', '1'); } catch (e) {}
-      x.parentElement.remove();
-    });
-  }
-
-  /* ---------- ③ 總格「凶」信任說明 ---------- */
-
-  function thAddZonggeNote() {
-    if (document.getElementById('th-zongge-note')) return;
-    var body = document.body.innerText || '';
-    if (!/總格[\s\S]{0,6}凶/.test(document.body.textContent || '')) return;
-
-    var target = thFindBlock('總格定中晚成敗');
-    if (!target) target = thFindBlock('姓名靈動得分');
-    if (!target) return;
-    var note = document.createElement('div');
-    note.id = 'th-zongge-note';
-    note.style.cssText = 'margin-top:8px;font-size:12px;color:#b8a877;line-height:1.6;';
-    note.textContent = '※ 單一格之凶，可由其他四格與八字喜用化解，請以綜合得分為準，毋須過慮。';
-    target.appendChild(note);
-  }
-
-  /* ---------- 啟動：結果為動態渲染，用 MutationObserver 盯著 ---------- */
-
-  var thTimer = null;
-  function thRunAll() {
-    try { thHookShare(); } catch (e) {}
-    try { thAddTomorrowTeaser(); } catch (e) {}
-    try { thAddZonggeNote(); } catch (e) {}
-  }
-  function thSchedule() {
-    if (thTimer) clearTimeout(thTimer);
-    thTimer = setTimeout(thRunAll, 400);   // 等渲染完再跑，避免抓到半成品
-  }
-  if (document.body) {
-    new MutationObserver(thSchedule).observe(document.body, { childList: true, subtree: true });
-    thSchedule();
-  } else {
-    document.addEventListener('DOMContentLoaded', function () {
-      new MutationObserver(thSchedule).observe(document.body, { childList: true, subtree: true });
-      thSchedule();
-    });
-  }
+  loadLegacy(function(){ setTimeout(boot,80); });
 })();
-/* ===================== 增強包結束 ===================== */
-
