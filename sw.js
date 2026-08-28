@@ -1,4 +1,4 @@
-const TH_LIVE = '/-/tianheng-live.js?v=20260827a';
+const TH_LIVE = '/-/tianheng-live.js?v=20260828-ziwei';
 
 self.addEventListener('install', e => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(clients.claim()));
