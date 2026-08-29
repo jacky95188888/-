@@ -1,0 +1,21 @@
+'use strict';
+require('./tianheng-bazi-advanced-v1.js');
+require('./tianheng-bazi-geju-tiaohou-v1.js');
+require('./tianheng-ziping-officer-kill-v2.js');
+const O=globalThis.TianhengZipingOfficerKill;
+let pass=0,fail=0;
+function assert(name,fn){try{if(!fn())throw Error('assert false');console.log('PASS',name);pass++;}catch(e){console.error('FAIL',name,'::',e.message);fail++;}}
+const mixed=[{gan:'壬',zhi:'辰'},{gan:'壬',zhi:'子'},{gan:'丙',zhi:'寅'},{gan:'癸',zhi:'巳'}];
+const base=O.analyze(mixed);
+assert('原局辨官殺並見',()=>base.mixed&&base.visibleOfficer.length===1&&base.visibleKill.length===2);
+assert('原局有印承化但尚未去留',()=>!base.resolvedToPure&&base.status.includes('有印承化'));
+const removed=O.analyzeFortune(mixed,{type:'流年',gan:'己',zhi:'巳'});
+assert('己傷官進局辨去官留殺',()=>removed.after.resolvedToPure&&removed.after.events.some(x=>x.code==='REMOVE_OFFICER_KEEP_KILL'));
+assert('去官後七殺有印承化',()=>removed.after.status==='去官留殺・殺印相生');
+const plain=O.analyzeFortune([{gan:'辛',zhi:'亥'},{gan:'辛',zhi:'酉'},{gan:'甲',zhi:'辰'},{gan:'癸',zhi:'未'}],{gan:'丁',zhi:'卯'});
+assert('沒有七殺時不把傷官見官解讀成去官留殺',()=>plain.after.mixed===false&&!plain.after.events.some(x=>x.code==='REMOVE_OFFICER_KEEP_KILL'));
+const food=O.analyze([{gan:'庚',zhi:'子'},{gan:'辛',zhi:'酉'},{gan:'甲',zhi:'辰'},{gan:'丙',zhi:'寅'}]);
+assert('食神制殺留官',()=>food.resolvedToPure&&food.events.some(x=>x.code==='CONTROL_KILL_KEEP_OFFICER'));
+assert('底層證據完整保留',()=>base.rawEvidence.length>base.visibleOfficer.length+base.visibleKill.length&&base.legacyOverride===false);
+assert('錯誤輸入安全攔截',()=>O.safeAnalyze([{gan:'甲',zhi:'子'}]).ok===false);
+console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);

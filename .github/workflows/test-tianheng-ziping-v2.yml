@@ -14,6 +14,8 @@ on:
       - 'tianheng-ziping-flow-tests-v2.js'
       - 'tianheng-ziping-fortune-v2.js'
       - 'tianheng-ziping-fortune-tests-v2.js'
+      - 'tianheng-ziping-officer-kill-v2.js'
+      - 'tianheng-ziping-officer-kill-tests-v2.js'
       - '.github/workflows/test-tianheng-ziping-v2.yml'
 
 jobs:
@@ -34,3 +36,5 @@ jobs:
         run: node tianheng-ziping-flow-tests-v2.js
       - name: Run fortune transition synthesis tests
         run: node tianheng-ziping-fortune-tests-v2.js
+      - name: Run officer-kill purity tests
+        run: node tianheng-ziping-officer-kill-tests-v2.js
