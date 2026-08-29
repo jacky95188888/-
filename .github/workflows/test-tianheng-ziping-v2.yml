@@ -18,6 +18,8 @@ on:
       - 'tianheng-ziping-officer-kill-tests-v2.js'
       - 'tianheng-ziping-fortune-combinations-v2.js'
       - 'tianheng-ziping-fortune-combinations-tests-v2.js'
+      - 'tianheng-ziping-combination-effect-v2.js'
+      - 'tianheng-ziping-combination-effect-tests-v2.js'
       - '.github/workflows/test-tianheng-ziping-v2.yml'
 
 jobs:
@@ -42,3 +44,5 @@ jobs:
         run: node tianheng-ziping-officer-kill-tests-v2.js
       - name: Run fortune combination transition tests
         run: node tianheng-ziping-fortune-combinations-tests-v2.js
+      - name: Run combination effect tests
+        run: node tianheng-ziping-combination-effect-tests-v2.js

@@ -7,6 +7,7 @@ require('./tianheng-ziping-flow-v2.js');
 require('./tianheng-ziping-officer-kill-v2.js');
 require('./tianheng-bazi-combinations-v1.js');
 require('./tianheng-ziping-fortune-combinations-v2.js');
+require('./tianheng-ziping-combination-effect-v2.js');
 require('./tianheng-ziping-fortune-v2.js');
 require('./tianheng-ziping-classics-v2.js');
 const C=globalThis.TianhengZipingClassics;
@@ -48,7 +49,8 @@ assert('斷流例能辨元素缺口',()=>flowGap.engine.flow.blockedTransitions.
 const woodTransform=C.runFortune('DT-YUANLIU-008',1,{strength:'身強'});
 assert('丁亥運辨干支共同引木並判重塑',()=>woodTransform.comparison.matched&&woodTransform.engine.combinations.stemCombinations.some(x=>x.name==='丁壬合木'));
 const fireExcess=C.runFortune('DT-YUANLIU-008',0,{strength:'身強'});
-assert('火局已辨但對用神吉凶仍誠實列缺口',()=>fireExcess.engine.combinations.completedGroups.some(x=>x.huaQi==='火')&&!fireExcess.comparison.matched&&fireExcess.gapCodes.includes('COMBINATION_EFFECT_ON_USEFUL_GOD'));
+assert('火局增印辨梟神奪食並符合破壞方向',()=>fireExcess.comparison.matched&&fireExcess.engine.combinationEffects.effects.some(x=>x.codes.includes('OWL_STEALS_FOOD')));
+assert('合化方向完成但強度仍列待量化',()=>fireExcess.gapCodes.includes('COMBINATION_TRANSFORM_STRENGTH'));
 assert('命例不因未覆蓋而偽稱一致',()=>second.some(x=>x.engineExpectation.coverage==='gap'));
 
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);

@@ -7,6 +7,7 @@ require('./tianheng-ziping-flow-v2.js');
 require('./tianheng-ziping-officer-kill-v2.js');
 require('./tianheng-bazi-combinations-v1.js');
 require('./tianheng-ziping-fortune-combinations-v2.js');
+require('./tianheng-ziping-combination-effect-v2.js');
 require('./tianheng-ziping-fortune-v2.js');
 const F=globalThis.TianhengZipingFortune;
 let pass=0,fail=0;
@@ -31,4 +32,6 @@ assert('保留底層衝突與上層解法',()=>cleared.transition.pattern.newFai
 const completed=F.analyze([{gan:'甲',zhi:'申'},{gan:'乙',zhi:'子'},{gan:'丙',zhi:'午'},{gan:'丁',zhi:'酉'}],{type:'流年',gan:'戊',zhi:'辰'},{strength:'身中和'});
 assert('運程補成三合局使格局重塑',()=>completed.transition.types.includes('被重塑')&&completed.transition.combinations.completedGroups.some(x=>x.huaQi==='水'));
 assert('原局與運後合會事件分開保存',()=>completed.original.combinationEvents!==completed.afterFortune.combinationEvents);
+const owl=F.analyze([{gan:'庚',zhi:'寅'},{gan:'壬',zhi:'午'},{gan:'戊',zhi:'午'},{gan:'丁',zhi:'巳'}],{type:'大運',gan:'丙',zhi:'戌'},{strength:'身強'});
+assert('火印局增忌使最終方向包含被破壞',()=>owl.transition.types.includes('被破壞')&&owl.transition.combinationEffects.effects.some(x=>x.codes.includes('OWL_STEALS_FOOD')));
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);
