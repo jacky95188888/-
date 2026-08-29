@@ -20,6 +20,14 @@ on:
       - 'tianheng-ziping-fortune-combinations-tests-v2.js'
       - 'tianheng-ziping-combination-effect-v2.js'
       - 'tianheng-ziping-combination-effect-tests-v2.js'
+      - 'tianheng-ziping-advice-v2.js'
+      - 'tianheng-ziping-advice-tests-v2.js'
+      - 'tianheng-ziping-engine-v2.js'
+      - 'tianheng-ziping-engine-tests-v2.js'
+      - 'tianheng-ziping-integration-v2.js'
+      - 'tianheng-ziping-integration-tests-v2.js'
+      - 'tianheng-bazi-integration-v1.js'
+      - 'index.html'
       - '.github/workflows/test-tianheng-ziping-v2.yml'
 
 jobs:
@@ -46,3 +54,9 @@ jobs:
         run: node tianheng-ziping-fortune-combinations-tests-v2.js
       - name: Run combination effect tests
         run: node tianheng-ziping-combination-effect-tests-v2.js
+      - name: Run evidence-driven advice tests
+        run: node tianheng-ziping-advice-tests-v2.js
+      - name: Run Ziping v2 engine tests
+        run: node tianheng-ziping-engine-tests-v2.js
+      - name: Run side-by-side integration tests
+        run: node tianheng-ziping-integration-tests-v2.js

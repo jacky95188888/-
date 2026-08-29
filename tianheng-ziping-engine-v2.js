@@ -1,0 +1,8 @@
+/* 天衡・九維命理｜子平二階總引擎 v2.0｜原局、運後、建議三層分存 */
+(function(root){'use strict';
+function deps(){var p=root.TianhengZipingPattern,f=root.TianhengZipingFlow,q=root.TianhengZipingQi,o=root.TianhengZipingOfficerKill,u=root.TianhengZipingFortune,a=root.TianhengZipingAdvice;if(!p||!f||!q||!o||!u||!a)throw Error('子平二階模組尚未完整載入');return {p:p,f:f,q:q,o:o,u:u,a:a};}
+function analyze(pillars,options){var d=deps();return {engine:'TianhengZipingEngine',version:'2.0',mode:'add-only',original:{pattern:d.p.analyze(pillars,options||{}),flow:d.f.analyze(pillars),qi:d.q.analyze(pillars),officerKill:d.o.analyze(pillars)},fortune:null,advice:null,legacyOverride:false,notes:['原局、運後、近期建議分層保存','二階不覆寫舊天衡與八字進階 v1']};}
+function analyzeFortune(pillars,fortune,options){var d=deps(),u=d.u.analyze(pillars,fortune,options||{}),a=d.a.generate(u,{period:options&&options.period});return {engine:'TianhengZipingEngine',version:'2.0',mode:'add-only',original:u.original,fortune:{input:u.fortune,after:u.afterFortune,transition:u.transition},advice:a,legacyOverride:false,notes:['原局、運後、近期建議分層保存','建議由運程證據生成','二階不覆寫舊天衡與八字進階 v1']};}
+function safe(fn,args){try{return {ok:true,result:fn.apply(null,args),error:null};}catch(e){return {ok:false,result:null,error:String(e&&e.message||e)};}}
+var api=Object.freeze({analyze:analyze,analyzeFortune:analyzeFortune,safeAnalyze:function(p,o){return safe(analyze,[p,o]);},safeAnalyzeFortune:function(p,f,o){return safe(analyzeFortune,[p,f,o]);}});if(!root.TianhengZipingEngine)root.TianhengZipingEngine=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);

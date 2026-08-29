@@ -16,6 +16,8 @@ const bind=C.analyze([{gan:'甲',zhi:'子'},{gan:'乙',zhi:'午'},{gan:'丙',zhi
 assert('運支沖開原局午未合絆',()=>bind.brokenBindings.some(x=>x.baseGroup==='午未六合'));
 assert('月柱與日柱互動分開標示',()=>Array.isArray(bind.patternInteractions.month)&&Array.isArray(bind.patternInteractions.day));
 assert('原局資料不覆寫',()=>full.legacyOverride===false&&full.originalEvents!==full.afterEvents);
+assert('運程合化前後強度分開保存',()=>full.strength.originalStrength!==full.strength.finalStrength&&full.strength.transformEvents.some(x=>x.huaQi==='水'));
+assert('運程合化保留有效強度',()=>full.strength.selectedEvents.every(x=>x.effectivePower>0&&x.transformedStrength>0));
 const stem=C.analyze([{gan:'庚',zhi:'寅'},{gan:'壬',zhi:'午'},{gan:'戊',zhi:'午'},{gan:'丁',zhi:'巳'}],{type:'大運',gan:'丁',zhi:'亥'});
 assert('丁壬天干五合獨立保存',()=>stem.stemCombinations.some(x=>x.name==='丁壬合木'));
 assert('寅亥合木可支持丁壬合木候選',()=>stem.stemCombinations.some(x=>x.name==='丁壬合木'&&x.branchSupports&&x.status==='合化候選'));

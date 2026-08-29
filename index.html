@@ -586,6 +586,16 @@
 <script src="./tianheng-bazi-quality-v1.js"></script>
 <script src="./tianheng-bazi-engine-v1.js"></script>
 <script src="./tianheng-bazi-integration-v1.js"></script>
+<script src="./tianheng-ziping-pattern-v2.js"></script>
+<script src="./tianheng-ziping-flow-v2.js"></script>
+<script src="./tianheng-ziping-qi-v2.js"></script>
+<script src="./tianheng-ziping-officer-kill-v2.js"></script>
+<script src="./tianheng-ziping-fortune-combinations-v2.js"></script>
+<script src="./tianheng-ziping-combination-effect-v2.js"></script>
+<script src="./tianheng-ziping-fortune-v2.js"></script>
+<script src="./tianheng-ziping-advice-v2.js"></script>
+<script src="./tianheng-ziping-engine-v2.js"></script>
+<script src="./tianheng-ziping-integration-v2.js"></script>
 <script>
 /* ===== 天衡 · 九維命理交叉推演 核心引擎 ===== */
 const GAN=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
@@ -1312,7 +1322,7 @@ function renderDaily(df,name){
   </div>`;
 }
 function pct(v){return Math.max(8,Math.min(100,v))+"%"}
-function buildRecentBaziGuidance(a,r){
+function buildRecentBaziGuidanceLegacy(a,r){
   const now=r.dayun&&r.dayun.ln&&r.dayun.ln[0]?r.dayun.ln[0]:null;
   const yearGz=now&&now.gz?now.gz:'';
   const yearGan=yearGz[0]||'', yearZhi=yearGz[1]||'';
@@ -1343,6 +1353,27 @@ function buildRecentBaziGuidance(a,r){
     <div style="margin-top:14px;color:#8f836d;font-size:11px;line-height:1.7">判斷依據：${yearGod}流年、日支${relation.type}象、${a.geJu.geJu}、${root}${dayJoin?'、'+dayJoin.name:''}${breakNames.length?'、'+breakNames.join('／'):''}。命理建議供生活規劃參考。</div>
   </div>`;
 }
+function escapeZipingText(value){
+  return String(value==null?'':value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function buildZipingV2Guidance(ziping){
+  const advice=ziping&&ziping.advice;
+  if(!advice)return `<div style="border:1px solid rgba(192,89,74,.45);border-radius:10px;padding:14px 16px;margin:14px 0;color:#caa98d">子平二階近期建議暫時無法產生；原本天衡與八字進階結果仍完整保留。</div>`;
+  const section=(title,color,data)=>`<div style="border-left:3px solid ${color};padding:2px 0 2px 13px">
+    <div style="color:${color};font-size:15px;font-weight:600;margin-bottom:7px">${title}｜${escapeZipingText(data.theme)}</div>
+    <div style="color:#ddd2bc;font-size:13.5px;line-height:1.9">${escapeZipingText(data.reading)}</div>
+    <div style="margin-top:9px;color:#d9c79f;font-size:12.5px;line-height:1.8"><b style="color:#87b7a3">可以做：</b>${data.actions.map(escapeZipingText).join('；')}</div>
+    <div style="margin-top:4px;color:#c98b82;font-size:12.5px;line-height:1.8"><b>先避免：</b>${data.avoid.map(escapeZipingText).join('；')}</div>
+  </div>`;
+  const transitions=ziping.fortune&&ziping.fortune.transition&&ziping.fortune.transition.types||[];
+  const evidence=advice.career.evidence.concat(advice.relationship.evidence).slice(0,7);
+  return `<div style="border:1px solid rgba(217,182,106,.55);border-radius:12px;padding:18px 16px;margin:14px 0 18px;background:linear-gradient(145deg,rgba(48,34,29,.72),rgba(14,13,23,.9));box-shadow:0 10px 28px rgba(0,0,0,.25)">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px"><div><div style="color:var(--gold-bright);font-size:17px;letter-spacing:.13em;font-weight:600">子平二階・近期格局動態</div><div style="color:#a99877;font-size:11px;margin-top:5px">不是固定文案，由本命與流年證據即時生成</div></div><span style="color:#d0a85d;border:1px solid #d0a85d;border-radius:999px;padding:3px 9px;font-size:11px;white-space:nowrap">${escapeZipingText(advice.period)}</span></div>
+    <div style="color:#cdbf9e;font-size:13px;line-height:1.8;margin-bottom:16px">${escapeZipingText(advice.overview)}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px">${section('事業','#e7c982',advice.career)}${section('感情','#e3a9b4',advice.relationship)}</div>
+    <div style="margin-top:15px;padding-top:12px;border-top:1px solid rgba(176,133,66,.22);color:#8f836d;font-size:11px;line-height:1.7">格局轉態：${escapeZipingText(transitions.join('、')||'延續')}｜${escapeZipingText(advice.confidence.level)}（${advice.confidence.evidenceCount} 項證據）<br>依據：${evidence.map(escapeZipingText).join('；')}<br>${escapeZipingText(advice.disclaimer)}</div>
+  </div>`;
+}
 function buildAdvancedBaziHtml(r){
   const gz=r&&r.gz;
   if(!gz||gz.hGan==="—"||gz.hZhi==="—"){
@@ -1363,10 +1394,17 @@ function buildAdvancedBaziHtml(r){
   const breaks=a.quality.poGeJianCe.map(x=>x.name+(x.huaJie?'（有'+x.huaJieShen+'化解）':'')).join('、')||'目前規則未檢出破格';
   const th=a.tiaoHou;
   const conflict=th.yongShenChongTu?`<div style="margin-top:8px;color:var(--cinnabar)">用神矛盾：${th.chongTuGan.join('、')} 與通根身強弱取向不同，兩套判斷均保留。</div>`:'';
-  const recentGuidance=buildRecentBaziGuidance(a,r);
+  const now=r.dayun&&r.dayun.ln&&r.dayun.ln[0]?r.dayun.ln[0]:null;
+  const fortune=now&&/^[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]$/.test(now.gz)?{gan:now.gz[0],zhi:now.gz[1],type:'流年'}:null;
+  const zipingPack=window.TianhengZipingIntegrationV2&&fortune?TianhengZipingIntegrationV2.safeAnalyzeAlongsideLegacy(pillars,r,fortune,{legacyStrengthPath:'strengthInfo.strength',strength:a.tongGen.riZhu.strength,period:(now.year?now.year+' ':'')+now.gz}):{ok:false};
+  const ziping=zipingPack.ok?zipingPack.data.zipingV2:null;
+  const recentGuidance=buildZipingV2Guidance(ziping);
+  const zipingPattern=ziping&&ziping.original&&ziping.original.pattern;
+  const zipingCard=zipingPattern?`<div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">子</span><span class="nm">子平二階動態格局</span><span class="mini">${escapeZipingText(zipingPattern.pattern)}・${escapeZipingText(zipingPattern.status)}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in"><span class="tag">骨架 ${escapeZipingText(zipingPattern.pattern)}</span><span class="tag">變格 ${escapeZipingText(zipingPattern.variant)}</span><span class="tag">運程 ${escapeZipingText(ziping.fortune.transition.types.join('、'))}</span><div style="margin-top:9px">成、敗、救應與運程引動皆以證據鏈保存；原局與運後結果分開，不以單一分數代替格局判斷。</div></div></div></div>`:'';
   return `<div class="tasks-head"><div class="ln"></div><span>八 字 進 階 分 析</span><div class="ln"></div></div>
     ${recentGuidance}
     <div style="text-align:center;color:#8f836d;font-size:11px;letter-spacing:.18em;margin:20px 0 10px">老師專業資料・點擊展開</div>
+    ${zipingCard}
     <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">進</span><span class="nm">藏干結構</span><span class="mini">本氣・中氣・餘氣</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${hidden}</div></div></div>
     <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">根</span><span class="nm">日主通根</span><span class="mini">${cmp.tongGenStrength.strength}・${cmp.tongGenStrength.score} 分</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in"><span class="tag">原站 ${cmp.legacyStrength||'未提供'}</span><span class="tag">進階 ${cmp.tongGenStrength.strength}</span><div style="margin-top:9px">通根原始分 <b style="color:var(--gold-bright)">${cmp.tongGenStrength.rawScore}</b>；顯示分 ${cmp.tongGenStrength.score}。原站與進階判斷分開保存，不互相覆蓋。</div></div></div></div>
     <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">生</span><span class="nm">十二長生</span><span class="mini">日干 ${a.changSheng.riGan}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${stages}</div></div></div>

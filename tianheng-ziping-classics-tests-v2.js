@@ -50,7 +50,7 @@ const woodTransform=C.runFortune('DT-YUANLIU-008',1,{strength:'身強'});
 assert('丁亥運辨干支共同引木並判重塑',()=>woodTransform.comparison.matched&&woodTransform.engine.combinations.stemCombinations.some(x=>x.name==='丁壬合木'));
 const fireExcess=C.runFortune('DT-YUANLIU-008',0,{strength:'身強'});
 assert('火局增印辨梟神奪食並符合破壞方向',()=>fireExcess.comparison.matched&&fireExcess.engine.combinationEffects.effects.some(x=>x.codes.includes('OWL_STEALS_FOOD')));
-assert('合化方向完成但強度仍列待量化',()=>fireExcess.gapCodes.includes('COMBINATION_TRANSFORM_STRENGTH'));
+assert('合化方向與強度事件均已保存',()=>fireExcess.gapCodes.length===0&&fireExcess.engine.combinations.strength.transformEvents.length>0);
 assert('命例不因未覆蓋而偽稱一致',()=>second.some(x=>x.engineExpectation.coverage==='gap'));
 
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);
