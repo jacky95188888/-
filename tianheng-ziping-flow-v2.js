@@ -1,0 +1,22 @@
+/* 天衡・九維命理｜源流鏈判讀 v2.0-alpha
+ * 依干支位置追蹤五行相生路徑；保留全部節點、主鏈、斷點與原始強度，不覆寫月令格局。
+ */
+(function(root){'use strict';
+var WX={甲:'木',乙:'木',丙:'火',丁:'火',戊:'土',己:'土',庚:'金',辛:'金',壬:'水',癸:'水'};
+var SHENG={木:'火',火:'土',土:'金',金:'水',水:'木'};
+var PREV={木:'水',火:'木',土:'火',金:'土',水:'金'};
+var PN=['年','月','日','時'];
+function deps(){if(!root.TianhengBaziAdvanced)throw Error('需先載入 tianheng-bazi-advanced-v1.js');if(!root.TianhengBaziGeJuTiaoHou)throw Error('需先載入 tianheng-bazi-geju-tiaohou-v1.js');return {a:root.TianhengBaziAdvanced,g:root.TianhengBaziGeJuTiaoHou};}
+function valid(p){return Array.isArray(p)&&p.length===4&&p.every(function(x){return x&&WX[x.gan]&&typeof x.zhi==='string';});}
+function nodes(p){var d=deps(),dm=p[2].gan,out=[];p.forEach(function(x,i){out.push({id:i+'.gan',pillarIndex:i,pillar:PN[i],layer:'天干',gan:x.gan,wuxing:WX[x.gan],god:i===2?'日主':d.g.getTenGod(dm,x.gan),weight:1,active:true});d.a.getCangGan(x.zhi).forEach(function(c,j){out.push({id:i+'.zhi.'+j,pillarIndex:i,pillar:PN[i],layer:c.type,branch:x.zhi,gan:c.gan,wuxing:c.wuxing,god:d.g.getTenGod(dm,c.gan),weight:c.weight,active:c.weight>=.3});});});return out;}
+function strengths(ns){var s={木:0,火:0,土:0,金:0,水:0};ns.forEach(function(n){s[n.wuxing]+=n.weight*(n.pillarIndex===1&&n.layer!=='天干'?1.2:1);});Object.keys(s).forEach(function(k){s[k]=+s[k].toFixed(4);});return s;}
+function edges(ns){var active=ns.filter(function(n){return n.active;}),out=[];active.forEach(function(a){active.forEach(function(b){if(a.id===b.id||a.pillarIndex>b.pillarIndex)return;if(SHENG[a.wuxing]!==b.wuxing)return;out.push({from:a.id,to:b.id,relation:a.wuxing+'生'+b.wuxing});});});return out;}
+function bestPath(ns,es){var map={},next={};ns.forEach(function(n){map[n.id]=n;next[n.id]=[];});es.forEach(function(e){next[e.from].push(e.to);});var best=[];
+ function better(a,b){if(a.length!==b.length)return a.length>b.length;var aw=a.reduce(function(t,id){return t+map[id].weight;},0),bw=b.reduce(function(t,id){return t+map[id].weight;},0);if(aw!==bw)return aw>bw;return map[a[0]].pillarIndex<map[b[0]].pillarIndex;}
+ function walk(id,path,seen){var current=path.concat(id);if(better(current,best))best=current.slice();(next[id]||[]).forEach(function(to){if(!seen[to]){var copy=Object.assign({},seen);copy[to]=true;walk(to,current,copy);}});}
+ ns.filter(function(n){return n.active;}).forEach(function(n){var seen={};seen[n.id]=true;walk(n.id,[],seen);});return best.map(function(id){return map[id];});}
+function broken(s){return Object.keys(s).filter(function(k){return s[k]>0&&s[SHENG[k]]===0;}).map(function(k){return {from:k,to:SHENG[k],reason:'後續'+SHENG[k]+'不現'};});}
+function analyze(p){if(!valid(p))throw Error('需要有效完整四柱');var ns=nodes(p),s=strengths(ns),es=edges(ns),chain=bestPath(ns,es),seq=chain.map(function(n){return n.wuxing;}),unique=[];seq.forEach(function(x){if(unique.indexOf(x)<0)unique.push(x);});var ratio=unique.length/5,state=unique.length>=5?'五氣接續':unique.length>=4?'接續流通':unique.length>=3?'局部流通':'源流阻節';return {version:'2.0-alpha',legacyOverride:false,weightedStrength:s,nodes:ns,edges:es,primaryChain:{nodes:chain,elements:seq,elementCoverage:unique,source:chain[0]||null,sink:chain[chain.length-1]||null},coverageRatio:+ratio.toFixed(2),flowState:state,blockedTransitions:broken(s),elementSources:Object.keys(s).filter(function(k){return s[k]>0&&s[PREV[k]]===0;}),elementSinks:Object.keys(s).filter(function(k){return s[k]>0&&s[SHENG[k]]===0;}),note:'源流鏈是結構證據：顯示相生能否按柱位接續；不等同吉凶保證，亦不覆寫月令格局。'};}
+function safeAnalyze(p){try{return {ok:true,result:analyze(p)};}catch(e){return {ok:false,error:e.message};}}
+var api=Object.freeze({analyze:analyze,safeAnalyze:safeAnalyze});if(!root.TianhengZipingFlow)root.TianhengZipingFlow=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);

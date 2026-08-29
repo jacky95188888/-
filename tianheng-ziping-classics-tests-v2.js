@@ -3,6 +3,7 @@ require('./tianheng-bazi-advanced-v1.js');
 require('./tianheng-bazi-geju-tiaohou-v1.js');
 require('./tianheng-ziping-qi-v2.js');
 require('./tianheng-ziping-pattern-v2.js');
+require('./tianheng-ziping-flow-v2.js');
 require('./tianheng-ziping-classics-v2.js');
 const C=globalThis.TianhengZipingClassics;
 let pass=0,fail=0;
@@ -20,7 +21,8 @@ const c3=C.run('DT-SHIZHONG-003',{strength:'身中和'});
 assert('始終例一辨傷官月令骨架',()=>c1.coverage.resolvedPatternMatches&&c1.engine.basePattern==='傷官格');
 assert('始終例二辨印格骨架',()=>c2.coverage.resolvedPatternMatches&&c2.engine.basePattern==='印格');
 assert('始終例三辨官格骨架',()=>c3.coverage.resolvedPatternMatches&&c3.engine.basePattern==='官格');
-assert('流通古例明列源流鏈缺口',()=>[c1,c2,c3].every(x=>x.coverage.gaps.includes('FLOW_CHAIN')));
+assert('三個始終古例已補上源流鏈',()=>[c1,c2,c3].every(x=>x.engine.flow&&x.engine.flow.primaryChain.elementCoverage.length>=4));
+assert('源流鏈完成後移除既有缺口碼',()=>[c1,c2,c3].every(x=>!x.coverage.gaps.includes('FLOW_CHAIN')));
 
 const image1=C.run('DT-XIANG-004',{strength:'身強'});
 const image2=C.run('DT-XIANG-005',{strength:'身強'});
