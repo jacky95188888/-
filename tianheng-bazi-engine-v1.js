@@ -1,0 +1,8 @@
+/* 天衡・九維命理｜八字進階總整合器 v1｜add-only */
+(function(root){'use strict';
+function deps(){var d={advanced:root.TianhengBaziAdvanced,combinations:root.TianhengBaziCombinations,geju:root.TianhengBaziGeJuTiaoHou,quality:root.TianhengBaziQuality};Object.keys(d).forEach(function(k){if(!d[k])throw Error('缺少模組: '+k);});return d;}
+function validate(p){if(!Array.isArray(p)||p.length!==4)throw Error('四柱格式必須為 [{gan,zhi},{gan,zhi},{gan,zhi},{gan,zhi}]');p.forEach(function(x,i){if(!x||typeof x.gan!=='string'||typeof x.zhi!=='string')throw Error('第'+(i+1)+'柱格式錯誤');});return p;}
+function analyze(pillars){var p=validate(pillars),d=deps(),phase1=d.advanced.analyze(p),comb=d.combinations.analyze(p),gt=d.geju.analyze(p,phase1),quality=d.quality.analyze(p,phase1,gt);return {engine:'TianhengBaziAdvanced',version:'1.0',mode:'add-only',pillars:p.map(function(x){return {gan:x.gan,zhi:x.zhi};}),cangGan:phase1.cangGan,tongGen:phase1.tongGen,changSheng:phase1.changSheng,heHuiJu:comb,geJu:gt.geJu,tiaoHou:gt.tiaoHou,quality:quality,legacyOverride:false,disclaimer:'本進階結果為新增分析層，不覆蓋天衡既有八字判斷；新舊結果並存供教師與使用者比對。'};}
+function safeAnalyze(p){try{return {ok:true,data:analyze(p),error:null};}catch(e){return {ok:false,data:null,error:String(e&&e.message||e)};}}
+var api=Object.freeze({analyze:analyze,safeAnalyze:safeAnalyze});if(!root.TianhengBaziEngine)root.TianhengBaziEngine=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);
