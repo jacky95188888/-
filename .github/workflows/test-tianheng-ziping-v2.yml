@@ -1,0 +1,20 @@
+name: Test Tianheng Ziping Pattern v2
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tianheng-ziping-pattern-v2.js'
+      - 'tianheng-ziping-pattern-tests-v2.js'
+      - '.github/workflows/test-tianheng-ziping-v2.yml'
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run Ziping pattern v2 regression tests
+        run: node tianheng-ziping-pattern-tests-v2.js
