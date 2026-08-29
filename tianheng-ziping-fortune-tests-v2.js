@@ -5,6 +5,8 @@ require('./tianheng-ziping-qi-v2.js');
 require('./tianheng-ziping-pattern-v2.js');
 require('./tianheng-ziping-flow-v2.js');
 require('./tianheng-ziping-officer-kill-v2.js');
+require('./tianheng-bazi-combinations-v1.js');
+require('./tianheng-ziping-fortune-combinations-v2.js');
 require('./tianheng-ziping-fortune-v2.js');
 const F=globalThis.TianhengZipingFortune;
 let pass=0,fail=0;
@@ -26,4 +28,7 @@ assert('錯誤運程由 safeAnalyze 攔截',()=>F.safeAnalyze(officer,{gan:'X',z
 const cleared=F.analyze([{gan:'壬',zhi:'辰'},{gan:'壬',zhi:'子'},{gan:'丙',zhi:'寅'},{gan:'癸',zhi:'巳'}],{type:'流年',gan:'己',zhi:'巳'},{strength:'身中和'});
 assert('去官留殺把最終方向裁為重塑',()=>cleared.transition.rawTypes.includes('被破壞')&&!cleared.transition.types.includes('被破壞')&&cleared.transition.types.includes('被重塑'));
 assert('保留底層衝突與上層解法',()=>cleared.transition.pattern.newFailures.some(x=>x.code==='OFFICER_HURT')&&cleared.transition.conflictResolutions.some(x=>x.resolvedBy==='REMOVE_OFFICER_KEEP_KILL'));
+const completed=F.analyze([{gan:'甲',zhi:'申'},{gan:'乙',zhi:'子'},{gan:'丙',zhi:'午'},{gan:'丁',zhi:'酉'}],{type:'流年',gan:'戊',zhi:'辰'},{strength:'身中和'});
+assert('運程補成三合局使格局重塑',()=>completed.transition.types.includes('被重塑')&&completed.transition.combinations.completedGroups.some(x=>x.huaQi==='水'));
+assert('原局與運後合會事件分開保存',()=>completed.original.combinationEvents!==completed.afterFortune.combinationEvents);
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);

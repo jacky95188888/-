@@ -1,0 +1,23 @@
+'use strict';
+require('./tianheng-bazi-combinations-v1.js');
+require('./tianheng-ziping-fortune-combinations-v2.js');
+const C=globalThis.TianhengZipingFortuneCombinations;
+let pass=0,fail=0;
+function assert(name,fn){try{if(!fn())throw Error('assert false');console.log('PASS',name);pass++;}catch(e){console.error('FAIL',name,'::',e.message);fail++;}}
+const half=[{gan:'甲',zhi:'申'},{gan:'乙',zhi:'子'},{gan:'丙',zhi:'午'},{gan:'丁',zhi:'酉'}];
+const full=C.analyze(half,{type:'流年',gan:'戊',zhi:'辰'});
+assert('運支辰補成申子辰三合水局',()=>full.completedGroups.some(x=>x.type==='三合'&&x.huaQi==='水'));
+assert('原局半合與運後三合分開保存',()=>full.originalEvents.some(x=>x.type==='半合')&&full.addedEvents.some(x=>x.type==='三合'));
+const hui=C.analyze([{gan:'甲',zhi:'寅'},{gan:'乙',zhi:'卯'},{gan:'丙',zhi:'午'},{gan:'丁',zhi:'酉'}],{gan:'戊',zhi:'辰'});
+assert('運支辰補成寅卯辰三會木局',()=>hui.completedGroups.some(x=>x.type==='三會'&&x.huaQi==='木'));
+const he=C.analyze([{gan:'甲',zhi:'子'},{gan:'乙',zhi:'辰'},{gan:'丙',zhi:'午'},{gan:'丁',zhi:'酉'}],{gan:'戊',zhi:'丑'});
+assert('運支可與非相鄰原局地支成立動態六合',()=>he.addedEvents.some(x=>x.type==='六合'&&x.zhi.includes('子')&&x.zhi.includes('丑')));
+const bind=C.analyze([{gan:'甲',zhi:'子'},{gan:'乙',zhi:'午'},{gan:'丙',zhi:'未'},{gan:'丁',zhi:'酉'}],{gan:'戊',zhi:'子'});
+assert('運支沖開原局午未合絆',()=>bind.brokenBindings.some(x=>x.baseGroup==='午未六合'));
+assert('月柱與日柱互動分開標示',()=>Array.isArray(bind.patternInteractions.month)&&Array.isArray(bind.patternInteractions.day));
+assert('原局資料不覆寫',()=>full.legacyOverride===false&&full.originalEvents!==full.afterEvents);
+const stem=C.analyze([{gan:'庚',zhi:'寅'},{gan:'壬',zhi:'午'},{gan:'戊',zhi:'午'},{gan:'丁',zhi:'巳'}],{type:'大運',gan:'丁',zhi:'亥'});
+assert('丁壬天干五合獨立保存',()=>stem.stemCombinations.some(x=>x.name==='丁壬合木'));
+assert('寅亥合木可支持丁壬合木候選',()=>stem.stemCombinations.some(x=>x.name==='丁壬合木'&&x.branchSupports&&x.status==='合化候選'));
+assert('錯誤輸入安全攔截',()=>C.safeAnalyze(half,{gan:'X',zhi:'辰'}).ok===false);
+console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);
