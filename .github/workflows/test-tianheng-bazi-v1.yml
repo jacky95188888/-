@@ -1,0 +1,24 @@
+name: Test Tianheng Bazi v1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tianheng-bazi-advanced-v1.js'
+      - 'tianheng-bazi-combinations-v1.js'
+      - 'tianheng-bazi-geju-tiaohou-v1.js'
+      - 'tianheng-bazi-quality-v1.js'
+      - 'tianheng-bazi-engine-v1.js'
+      - 'tianheng-bazi-tests-node-v1.js'
+      - '.github/workflows/test-tianheng-bazi-v1.yml'
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run Tianheng Bazi regression tests
+        run: node tianheng-bazi-tests-node-v1.js
