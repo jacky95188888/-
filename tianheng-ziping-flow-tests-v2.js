@@ -14,11 +14,14 @@ assert('始終例二形成土金水木接續鏈',()=>/土金水木/.test(b.prima
 assert('始終例三跨干支形成水木火土金鏈',()=>/水木火土金/.test(c.primaryChain.elements.join(''))&&c.flowState==='五氣接續');
 assert('原始加權五行力量獨立保存',()=>Object.keys(a.weightedStrength).length===5&&a.weightedStrength.木>0);
 assert('節點保留天干與藏干證據',()=>a.nodes.some(x=>x.layer==='天干')&&a.nodes.some(x=>x.layer==='本氣'));
+assert('原始與有效強度分開保存',()=>a.weightedStrength&&a.effectiveStrength&&a.weightedStrength!==a.effectiveStrength);
 assert('主鏈保留起點終點與十神',()=>a.primaryChain.source&&a.primaryChain.sink&&a.primaryChain.nodes.every(x=>x.god));
 assert('不覆寫舊引擎',()=>a.legacyOverride===false);
 const moved=F.analyzeFortune(p([['壬','寅'],['甲','辰'],['丁','亥'],['己','酉']]),{type:'流年',gan:'庚',zhi:'子'});
 assert('運程加入前後源流分開保存',()=>moved.before.nodes.length<moved.after.nodes.length&&moved.legacyOverride===false);
 assert('運程五行增量獨立保存',()=>moved.deltaStrength.金>0&&moved.deltaStrength.水>0);
+const latent=F.analyze(p([['辛','卯'],['辛','卯'],['丙','子'],['甲','午']]));
+assert('單一中氣不誤當有效通關',()=>latent.weightedStrength.土>.2&&latent.effectiveStrength.土===0&&latent.blockedTransitions.some(x=>x.from==='火'&&x.to==='土'));
 assert('錯誤輸入由 safeAnalyze 攔截',()=>F.safeAnalyze([{gan:'甲',zhi:'子'}]).ok===false);
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);
 if(fail)process.exit(1);
