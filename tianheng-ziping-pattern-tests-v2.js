@@ -43,5 +43,25 @@ assert('不覆蓋舊引擎',()=>officer.legacyOverride===false&&officer.mode==='
 const bad=Z.safeAnalyze([{gan:'甲',zhi:'子'}]);
 assert('錯誤輸入可安全攔截',()=>bad.ok===false&&!!bad.error);
 
+const savedByLuck=Z.analyzeFortune(
+  [{gan:'丁',zhi:'亥'},{gan:'丙',zhi:'酉'},{gan:'甲',zhi:'辰'},{gan:'戊',zhi:'未'}],
+  {type:'流年',gan:'癸',zhi:'巳'},{strength:'身弱'});
+assert('流年印星加入後形成救應',()=>savedByLuck.transition.types.includes('獲得救應')&&has(savedByLuck.transition.newRescues,'SEAL_CONTROLS_HURT'));
+assert('運前運後狀態分開保存',()=>!!savedByLuck.base.status&&!!savedByLuck.after.status&&savedByLuck.legacyOverride===false);
+
+const brokenByLuck=Z.analyzeFortune(
+  [{gan:'己',zhi:'亥'},{gan:'丙',zhi:'酉'},{gan:'甲',zhi:'辰'},{gan:'癸',zhi:'未'}],
+  {type:'流年',gan:'丁',zhi:'卯'},{strength:'身中和'});
+assert('流年傷官與沖月令破壞官格',()=>brokenByLuck.transition.types.includes('被破壞')&&has(brokenByLuck.transition.newFailures,'OFFICER_HURT')&&has(brokenByLuck.transition.newFailures,'FORTUNE_CLASH_MONTH'));
+assert('記錄流年沖到月柱',()=>brokenByLuck.transition.relations.some(x=>x.type==='沖'&&x.targetPillarIndex===1));
+
+const activatedByLuck=Z.analyzeFortune(
+  [{gan:'乙',zhi:'子'},{gan:'壬',zhi:'巳'},{gan:'甲',zhi:'辰'},{gan:'癸',zhi:'未'}],
+  {type:'大運',gan:'己',zhi:'酉'},{strength:'身強'});
+assert('大運財星引動食神生財',()=>activatedByLuck.transition.types.includes('被引動')&&has(activatedByLuck.transition.newFormation,'FOOD_BIRTH_WEALTH'));
+assert('格局變體因運程被重塑',()=>activatedByLuck.transition.types.includes('被重塑')&&activatedByLuck.after.variant==='食神生財');
+const badLuck=Z.safeAnalyzeFortune(officer.pillars,{gan:'X',zhi:'子'},{strength:'身中和'});
+assert('錯誤運程可安全攔截',()=>badLuck.ok===false&&badLuck.error.includes('運程干支無效'));
+
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);
 if(fail)process.exit(1);
