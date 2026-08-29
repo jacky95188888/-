@@ -27,6 +27,6 @@ jobs:
       - name: Deploy Worker
         uses: cloudflare/wrangler-action@v4
         with:
-          apiToken: ${{ secrets.CF_TOKEN }}
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: 22bd6a71b50e9eeaa0daa802615a3459
           command: deploy --config tianheng-ziwei-ai-wrangler.jsonc
