@@ -6,6 +6,10 @@ on:
     paths:
       - 'tianheng-ziping-pattern-v2.js'
       - 'tianheng-ziping-pattern-tests-v2.js'
+      - 'tianheng-ziping-classics-v2.js'
+      - 'tianheng-ziping-classics-tests-v2.js'
+      - 'tianheng-ziping-qi-v2.js'
+      - 'tianheng-ziping-qi-tests-v2.js'
       - '.github/workflows/test-tianheng-ziping-v2.yml'
 
 jobs:
@@ -18,3 +22,7 @@ jobs:
           node-version: '22'
       - name: Run Ziping pattern v2 regression tests
         run: node tianheng-ziping-pattern-tests-v2.js
+      - name: Run verified classics case tests
+        run: node tianheng-ziping-classics-tests-v2.js
+      - name: Run qi-structure override tests
+        run: node tianheng-ziping-qi-tests-v2.js
