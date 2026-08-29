@@ -580,6 +580,12 @@
   <p class="support-note">隨喜完全自由，支持與否不影響任何功能或解析內容。命理推演僅供文化研究與人生思考參考。</p>
 </section>
 </div>
+<script src="./tianheng-bazi-advanced-v1.js"></script>
+<script src="./tianheng-bazi-combinations-v1.js"></script>
+<script src="./tianheng-bazi-geju-tiaohou-v1.js"></script>
+<script src="./tianheng-bazi-quality-v1.js"></script>
+<script src="./tianheng-bazi-engine-v1.js"></script>
+<script src="./tianheng-bazi-integration-v1.js"></script>
 <script>
 /* ===== 天衡 · 九維命理交叉推演 核心引擎 ===== */
 const GAN=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
@@ -1306,6 +1312,35 @@ function renderDaily(df,name){
   </div>`;
 }
 function pct(v){return Math.max(8,Math.min(100,v))+"%"}
+function buildAdvancedBaziHtml(r){
+  const gz=r&&r.gz;
+  if(!gz||gz.hGan==="—"||gz.hZhi==="—"){
+    return `<div class="card" onclick="this.classList.toggle('open')">
+      <div class="card-h"><span class="no">進</span><span class="nm">八字進階分析</span><span class="mini">需完整出生時辰</span><span class="arr">▶</span></div>
+      <div class="card-b"><div class="card-b-in">進階引擎需要年、月、日、時四柱完整資料。原本天衡結果仍照常保留；補上出生時辰後，才會新增藏干、通根、十二長生、合會局、格局與調候分析。</div></div>
+    </div>`;
+  }
+  if(!window.TianhengBaziIntegration)return '';
+  const pillars=[{gan:gz.yGan,zhi:gz.yZhi},{gan:gz.mGan,zhi:gz.mZhi},{gan:gz.dGan,zhi:gz.dZhi},{gan:gz.hGan,zhi:gz.hZhi}];
+  const packed=TianhengBaziIntegration.safeAnalyzeAlongsideLegacy(pillars,r,{legacyStrengthPath:'strengthInfo.strength'});
+  if(!packed.ok)return `<div class="card"><div class="card-h"><span class="no">進</span><span class="nm">八字進階分析</span><span class="mini">暫時無法產生</span></div></div>`;
+  const a=packed.data.advanced, cmp=packed.data.comparison, labels=['年','月','日','時'];
+  const hidden=a.cangGan.map((x,i)=>`<div style="margin:5px 0"><b style="color:var(--gold-bright)">${labels[i]}支 ${x.zhi}</b>　${x.layers.map(c=>c.gan+'・'+c.type+' '+Math.round(c.weight*100)+'%').join('　')}</div>`).join('');
+  const stages=a.changSheng.byPillar.map((x,i)=>`<span class="tag">${labels[i]}支 ${x.zhi}・${x.stage}</span>`).join('');
+  const selected=a.heHuiJu.conflicts.selected.map(x=>x.name+'（'+Math.round(x.effectivePower*100)+'%）').join('、')||'本命四支未形成有效合化局';
+  const rejected=a.heHuiJu.conflicts.rejected.map(x=>x.name+'：'+x.rejectedReason).join('；');
+  const breaks=a.quality.poGeJianCe.map(x=>x.name+(x.huaJie?'（有'+x.huaJieShen+'化解）':'')).join('、')||'目前規則未檢出破格';
+  const th=a.tiaoHou;
+  const conflict=th.yongShenChongTu?`<div style="margin-top:8px;color:var(--cinnabar)">用神矛盾：${th.chongTuGan.join('、')} 與通根身強弱取向不同，兩套判斷均保留。</div>`:'';
+  return `<div class="tasks-head"><div class="ln"></div><span>八 字 進 階 分 析</span><div class="ln"></div></div>
+    <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">進</span><span class="nm">藏干結構</span><span class="mini">本氣・中氣・餘氣</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${hidden}</div></div></div>
+    <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">根</span><span class="nm">日主通根</span><span class="mini">${cmp.tongGenStrength.strength}・${cmp.tongGenStrength.score} 分</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in"><span class="tag">原站 ${cmp.legacyStrength||'未提供'}</span><span class="tag">進階 ${cmp.tongGenStrength.strength}</span><div style="margin-top:9px">通根原始分 <b style="color:var(--gold-bright)">${cmp.tongGenStrength.rawScore}</b>；顯示分 ${cmp.tongGenStrength.score}。原站與進階判斷分開保存，不互相覆蓋。</div></div></div></div>
+    <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">生</span><span class="nm">十二長生</span><span class="mini">日干 ${a.changSheng.riGan}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${stages}</div></div></div>
+    <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">格</span><span class="nm">月令格局</span><span class="mini">${a.geJu.geJu}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in"><span class="tag">${a.geJu.strength}</span>${a.geJu.touGanGan?`<span class="tag">${a.geJu.touGanGan}・${a.geJu.touGanCeng}透干</span>`:''}<div style="margin-top:9px">以月令藏干依本氣、中氣、餘氣順序檢查透干成格。</div></div></div></div>
+    <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">合</span><span class="nm">合會局引化</span><span class="mini">${a.heHuiJu.conflicts.selected.length?'檢出 '+a.heHuiJu.conflicts.selected.length+' 局':'未成有效局'}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${selected}${rejected?`<div style="margin-top:8px;color:#a99877">競局未取：${rejected}</div>`:''}<div style="margin-top:8px;color:#a99877">合化前五行、引化事件與合化後五行均獨立保存。</div></div></div></div>
+    <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">候</span><span class="nm">調候用神</span><span class="mini">${th.qihouShuxing}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in"><span class="tag">需要 ${th.tiaohouXuqiu.join('、')||'視格局而定'}</span><span class="tag">已有 ${th.yiJuBei.join('、')||'無'}</span><span class="tag">缺 ${th.queShi.join('、')||'無'}</span><div style="margin-top:9px">${th.desc}</div>${conflict}</div></div></div>
+    <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">品</span><span class="nm">格局高低與破格</span><span class="mini">${a.quality.gaoDiPingJi}・${a.quality.xiuZhengHouFen} 分</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in"><span class="tag">基礎 ${a.quality.jiBenFen}</span><span class="tag">修正係數 ${a.quality.xiuZhengXiShu}</span><div style="margin-top:9px">破格提醒：${breaks}</div><div style="margin-top:8px;color:#a99877">此為規格化輔助量表，保留原始因子供老師查核。</div></div></div></div>`;
+}
 function render(r,info){
   const t=r.tally;
   const wxRows=["木","火","土","金","水"].map(k=>
@@ -1362,6 +1397,7 @@ function render(r,info){
         <span class="mini">${mini}</span><span class="arr">▶</span></div>
       <div class="card-b"><div class="card-b-in">${body}</div></div>
     </div>`).join("");
+  const advancedHtml=buildAdvancedBaziHtml(r);
   const crossHtml=buildCrossHtmlV2(r);
 
   const df=dailyFortune(r.weak,r.strong,r.gz.dGan,r.gz.dZhi);
@@ -1386,6 +1422,7 @@ function render(r,info){
    </div>
    <div class="tasks-head"><div class="ln"></div><span>九 維 詳 解</span><div class="ln"></div></div>
    ${cardsHtml}
+   ${advancedHtml}
    ${crossHtml}
    <div class="lock">
      <b>◇ 流年大運・深度命書 ◇</b>
