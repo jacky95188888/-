@@ -13,10 +13,13 @@ export default {
 
     try {
       if (url.pathname === '/health' && request.method === 'GET') {
-        return withCors(request, json({ ok: true, service: 'tianheng-ziwei-ai', model: MODEL }));
+        return withCors(request, json({ ok: true, service: 'tianheng-ziwei-ai', enabled: env.SERVICE_ENABLED === 'true', model: MODEL }));
       }
       if (url.pathname !== '/ziwei-report' || request.method !== 'POST') {
         return withCors(request, json({ ok: false, error: 'not_found' }, 404));
+      }
+      if (env.SERVICE_ENABLED !== 'true') {
+        return withCors(request, json({ ok: false, error: 'service_disabled', message: 'AI 深度命書正在優化中，暫未開放。' }, 503));
       }
       if (request.headers.get('origin') !== SITE_ORIGIN) {
         return json({ ok: false, error: 'origin_not_allowed' }, 403);

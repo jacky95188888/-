@@ -4,6 +4,9 @@
   "main": "tianheng-ziwei-ai-worker.js",
   "compatibility_date": "2026-08-28",
   "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "SERVICE_ENABLED": "false"
+  },
   "ai": {
     "binding": "AI"
   },
