@@ -1,0 +1,18 @@
+<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><title>天衡八字進階 v1 測試</title><body><pre id="out">running...</pre>
+<script src="./tianheng-bazi-advanced-v1.js"></script><script src="./tianheng-bazi-combinations-v1.js"></script><script src="./tianheng-bazi-geju-tiaohou-v1.js"></script><script src="./tianheng-bazi-quality-v1.js"></script><script src="./tianheng-bazi-engine-v1.js"></script>
+<script>(function(){var tests=[],pass=0;function t(name,fn){try{if(!fn())throw Error('assert false');tests.push('PASS '+name);pass++;}catch(e){tests.push('FAIL '+name+' :: '+e.message);}}
+var A=TianhengBaziAdvanced;
+t('子藏干只有癸本氣100%',function(){var x=A.getCangGan('子');return x.length===1&&x[0].gan==='癸'&&x[0].type==='本氣'&&x[0].weight===1;});
+t('丑藏干己癸辛=60/30/10',function(){var x=A.getCangGan('丑');return x.length===3&&x[0].gan==='己'&&x[0].weight===.6&&x[1].gan==='癸'&&x[1].weight===.3&&x[2].gan==='辛'&&x[2].weight===.1;});
+t('甲在亥為長生',function(){return A.getChangSheng('甲','亥')==='長生';});
+t('甲在卯為帝旺',function(){return A.getChangSheng('甲','卯')==='帝旺';});
+t('乙在午為長生（陰干逆行）',function(){return A.getChangSheng('乙','午')==='長生';});
+var p1=[{gan:'庚',zhi:'申'},{gan:'丙',zhi:'子'},{gan:'壬',zhi:'辰'},{gan:'甲',zhi:'申'}],r1=TianhengBaziEngine.analyze(p1);
+t('總整合器輸出七層資料',function(){return r1.cangGan&&r1.tongGen&&r1.changSheng&&r1.heHuiJu&&r1.geJu&&r1.tiaoHou&&r1.quality;});
+t('申子辰判定三合水局',function(){return r1.heHuiJu.sanHe.some(function(x){return x.name==='申子辰三合水局'&&x.power===1;});});
+t('子月調候需要丙丁',function(){return r1.tiaoHou.tiaohouXuqiu.join('')==='丙丁';});
+t('通根顯示分不超過100且保留rawScore',function(){return r1.tongGen.all.every(function(x){return x.score<=100&&typeof x.rawScore==='number';});});
+var p2=[{gan:'甲',zhi:'寅'},{gan:'丁',zhi:'卯'},{gan:'乙',zhi:'辰'},{gan:'庚',zhi:'午'}],r2=TianhengBaziEngine.safeAnalyze(p2);
+t('安全分析成功不拋出',function(){return r2.ok===true&&r2.data.legacyOverride===false;});
+var bad=TianhengBaziEngine.safeAnalyze([{gan:'甲',zhi:'子'}]);t('錯誤輸入由safeAnalyze攔截',function(){return bad.ok===false&&!!bad.error;});
+document.getElementById('out').textContent='天衡八字進階 v1 回歸測試\n'+pass+'/'+tests.length+' passed\n\n'+tests.join('\n');document.documentElement.dataset.pass=String(pass===tests.length);})();</script></body></html>
