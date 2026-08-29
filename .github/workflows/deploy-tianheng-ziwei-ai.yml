@@ -1,0 +1,32 @@
+name: Deploy Tianheng Ziwei AI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - tianheng-ziwei-ai-worker.js
+      - tianheng-ziwei-ai-wrangler.jsonc
+      - .github/workflows/deploy-tianheng-ziwei-ai.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-tianheng-ziwei-ai
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 22bd6a71b50e9eeaa0daa802615a3459
+          command: deploy --config tianheng-ziwei-ai-wrangler.jsonc
