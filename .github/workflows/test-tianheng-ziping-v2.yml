@@ -26,6 +26,8 @@ on:
       - 'tianheng-ziping-engine-tests-v2.js'
       - 'tianheng-ziping-integration-v2.js'
       - 'tianheng-ziping-integration-tests-v2.js'
+      - 'tianheng-bazi-explanations-v2.js'
+      - 'tianheng-bazi-explanations-tests-v2.js'
       - 'tianheng-bazi-integration-v1.js'
       - 'index.html'
       - '.github/workflows/test-tianheng-ziping-v2.yml'
@@ -60,3 +62,5 @@ jobs:
         run: node tianheng-ziping-engine-tests-v2.js
       - name: Run side-by-side integration tests
         run: node tianheng-ziping-integration-tests-v2.js
+      - name: Run complete explanation layer tests
+        run: node tianheng-bazi-explanations-tests-v2.js

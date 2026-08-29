@@ -1,0 +1,22 @@
+const fs=require('fs'),vm=require('vm');
+['tianheng-bazi-advanced-v1.js','tianheng-bazi-combinations-v1.js','tianheng-bazi-geju-tiaohou-v1.js','tianheng-bazi-quality-v1.js','tianheng-bazi-engine-v1.js','tianheng-ziping-pattern-v2.js','tianheng-ziping-flow-v2.js','tianheng-ziping-qi-v2.js','tianheng-ziping-officer-kill-v2.js','tianheng-ziping-fortune-combinations-v2.js','tianheng-ziping-combination-effect-v2.js','tianheng-ziping-fortune-v2.js','tianheng-ziping-advice-v2.js','tianheng-ziping-engine-v2.js','tianheng-bazi-explanations-v2.js'].forEach(f=>vm.runInThisContext(fs.readFileSync(f,'utf8'),{filename:f}));
+let pass=0,total=0;function t(n,f){total++;try{f();pass++;console.log('PASS '+n);}catch(e){console.error('FAIL '+n+'\n '+e.message);process.exitCode=1;}}function ok(x,m){if(!x)throw Error(m||'assert');}
+const p=[{gan:'己',zhi:'丑'},{gan:'癸',zhi:'丑'},{gan:'庚',zhi:'午'},{gan:'甲',zhi:'寅'}],a=TianhengBaziEngine.analyze(p),z=TianhengZipingEngine.analyzeFortune(p,{gan:'丙',zhi:'午'},{strength:'身弱',period:'2026 丙午'}),e=TianhengBaziExplanationsV2.analyze(p,a,z,{legacyStrength:'身強'});
+t('八個完整解讀區存在',()=>ok(['ziping','cangGan','tongGen','changSheng','geJu','heHuiJu','tiaoHou','quality'].every(k=>e[k]&&e[k].summary&&e[k].why&&e[k].impact)));
+t('藏干逐柱解釋實際十神',()=>ok(e.cangGan.details.length===4&&e.cangGan.details[0].text.includes('正印')));
+t('通根解釋實際分數與根源',()=>ok(e.tongGen.title.includes('7.2')&&e.tongGen.why.includes('年支 丑')));
+t('新舊身強矛盾保留並解釋',()=>ok(e.tongGen.impact.includes('舊站判為「身強」')&&e.tongGen.impact.includes('問題不同')));
+t('十二長生逐柱不是只列標籤',()=>ok(e.changSheng.details.every(x=>x.reading.length>25)));
+t('格局說明月令透干與運後變化',()=>ok(e.geJu.why.includes('丑')&&e.geJu.impact.includes('行運後')));
+t('合會解釋作用柱位與化神',()=>ok(e.heHuiJu.details[0].text.includes('日支')&&e.heHuiJu.details[0].text.includes('火')));
+t('調候解釋實際來源與矛盾',()=>ok(e.tiaoHou.why.includes('實際來源')&&e.tiaoHou.impact.includes('不可直接說越多越好')));
+t('格局高低保留基礎與破格原因',()=>ok(e.quality.summary.includes('57.16')&&e.quality.impact.includes('格神被沖')));
+t('各區都有可做與先避免',()=>ok(['ziping','cangGan','tongGen','changSheng','geJu','heHuiJu','tiaoHou','quality'].every(k=>e[k].actions.length&&e[k].avoid.length)));
+t('解讀由證據生成且不覆寫舊引擎',()=>ok(e.legacyOverride===false&&e.cangGan.generatedFromEvidence));
+t('錯誤輸入由安全入口攔截',()=>ok(!TianhengBaziExplanationsV2.safeAnalyze([],null).ok));
+t('不做保證式斷語',()=>ok(!/必然發生|一定成功/.test(JSON.stringify(e))));
+const p2=[{gan:'甲',zhi:'子'},{gan:'辛',zhi:'酉'},{gan:'甲',zhi:'卯'},{gan:'丙',zhi:'寅'}],a2=TianhengBaziEngine.analyze(p2),z2=TianhengZipingEngine.analyzeFortune(p2,{gan:'丁',zhi:'酉'},{strength:'身強',period:'2026 丁酉'}),e2=TianhengBaziExplanationsV2.analyze(p2,a2,z2,{legacyStrength:'身中和'});
+t('不同命盤產生不同通根與格局解讀',()=>ok(e.tongGen.title!==e2.tongGen.title&&e.geJu.title!==e2.geJu.title));
+t('不同命盤逐柱證據不共用罐頭',()=>ok(JSON.stringify(e.cangGan.details)!==JSON.stringify(e2.cangGan.details)&&JSON.stringify(e.changSheng.details)!==JSON.stringify(e2.changSheng.details)));
+t('完整輸出不含未定義佔位文字',()=>ok(!/undefined|null・null/.test(JSON.stringify(e)+JSON.stringify(e2))));
+console.log(`\nRESULT ${pass}/${total} passed`);
