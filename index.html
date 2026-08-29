@@ -1312,6 +1312,37 @@ function renderDaily(df,name){
   </div>`;
 }
 function pct(v){return Math.max(8,Math.min(100,v))+"%"}
+function buildRecentBaziGuidance(a,r){
+  const now=r.dayun&&r.dayun.ln&&r.dayun.ln[0]?r.dayun.ln[0]:null;
+  const yearGz=now&&now.gz?now.gz:'';
+  const yearGan=yearGz[0]||'', yearZhi=yearGz[1]||'';
+  const yearGod=yearGan&&window.TianhengBaziGeJuTiaoHou?TianhengBaziGeJuTiaoHou.getTenGod(r.gz.dGan,yearGan):'流年';
+  const godClass=SHISHEN_CLASS[yearGod]||'印星';
+  const tier=yearGz?tierOf(yearGz,r.weak):'平';
+  const relation=yearZhi?zhiRelation(r.gz.dZhi,yearZhi):{type:'平'};
+  const root=a.tongGen.riZhu.strength;
+  const breakNames=a.quality.poGeJianCe.map(x=>x.name);
+  const dayJoin=a.heHuiJu.conflicts.selected.find(x=>x.indices&&x.indices.includes(2));
+  const careerFocus={比劫:'合作、人脈與同業競爭',食傷:'作品、曝光與專業表達',財星:'客戶、收入與資源整合',官殺:'職責、升遷與制度考驗',印星:'學習、證照與貴人資源'}[godClass];
+  const careerMove={比劫:'合作可以談，但權責、分潤與帳目要先寫清楚',食傷:'把想法做成能被看見的作品或提案，比只講概念更有利',財星:'優先顧好現金流與既有客戶，再選一項最有把握的機會放大',官殺:'近期適合把成果量化、主動承擔可被看見的責任，但不要越級硬碰',印星:'先補齊能力、流程或證明，再借助前輩與專業資源往前推'}[godClass];
+  let careerEnergy=root==='身強'?'進階通根顯示承擔力較足，可以主動爭取，但仍要集中火力。':root==='身弱'?'進階通根偏弱，近期不宜同時扛太多戰線；借團隊、流程與專業工具會比硬撐有效。':'進階通根中和，適合穩定推進，以成果決定下一步是否擴張。';
+  let careerRisk='目前未見明顯破格，重點在執行節奏與取捨。';
+  if(breakNames.includes('傷官見官'))careerRisk='命局有「傷官見官」訊號，近期與主管、客戶或制度溝通時，內容可以直接，語氣與程序要更圓融。';
+  else if(breakNames.includes('官殺混雜'))careerRisk='官殺訊號同時出現，近期容易遇到多方要求；先確認真正拍板的人，避免同時迎合所有標準。';
+  else if(breakNames.includes('財壞印'))careerRisk='財與印互有牽制，近期不要為了短期收入犧牲信用、專業品質或長期學習。';
+  else if(breakNames.includes('梟神奪食'))careerRisk='想得多、出手慢的傾向較明顯，近期要替創意設定交付期限，避免一直修改卻沒有推出。';
+  const relationText={合:'今年流年與日支相合，人際互動較容易靠近，適合主動安排相處與修復關係。',沖:'今年流年沖動日支，感情與相處節奏較容易變動；重要決定要慢一拍，不要在情緒高點定案。',刑:'近期互動容易卡在語氣與立場，少用試探，多把需求說清楚。',害:'近期要避免猜測與冷處理，有疑問就確認，別讓小誤會累積。',自刑:'感情課題較多來自自己的反覆思量，不必替對方預設答案。',比:'近期更重視自我感受，適合建立共同生活節奏，也要留出彼此空間。',平:'近期感情走勢偏穩，關鍵不在突然的戲劇性變化，而在日常是否持續回應。'}[relation.type]||'';
+  const loveTone={比劫:'人際機會增加，但不要把競爭心帶進親密關係。',食傷:'表達慾變強，適合說心裡話；避免只顧輸出，忘了聽對方真正需要什麼。',財星:'會更在意關係是否實際、有未來，適合談生活安排與共同目標。',官殺:'容易重視承諾、名分與責任，但別把關心變成要求或考核。',印星:'內在需要被理解與安定，適合慢慢建立信任，不必急著逼出答案。'}[godClass];
+  const climate=a.tiaoHou.yongShenChongTu?'調候與身強弱取向不同，近期做決定要同時顧到「情緒舒服」與「現實負荷」，不要只憑一時感受。':'調候方向較一致，維持規律作息與穩定溝通，就能減少情緒起伏。';
+  const joinText=dayJoin?'本命日支參與「'+dayJoin.name+'」，關係中的互動會牽動整體行動節奏；越早說清楚共同方向，越不容易各走各的。':'';
+  const badgeColor=tier==='旺'?'#6aa47d':tier==='弱'?'#c06b5f':'#d0a85d';
+  return `<div style="border:1px solid rgba(217,182,106,.5);border-radius:12px;padding:18px 16px;margin:14px 0 18px;background:linear-gradient(145deg,rgba(48,34,29,.72),rgba(14,13,23,.88));box-shadow:0 10px 28px rgba(0,0,0,.25)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px"><div style="color:var(--gold-bright);font-size:17px;letter-spacing:.15em;font-weight:600">近期行動指南</div><span style="color:${badgeColor};border:1px solid ${badgeColor};border-radius:999px;padding:3px 9px;font-size:11px">${now?now.year+'・'+yearGz+'・'+tier:'近期'}</span></div>
+    <div style="border-left:3px solid #d9b66a;padding:2px 0 2px 13px;margin-bottom:18px"><div style="color:#e7c982;font-size:15px;font-weight:600;margin-bottom:8px">事業｜${careerFocus}</div><div style="color:#ddd2bc;font-size:13.5px;line-height:2">${yearGod}透出，${careerMove}。${careerEnergy}${careerRisk}</div><div style="margin-top:10px;color:#87b7a3;font-size:12.5px;line-height:1.8">本月行動：選定一個最重要成果、一次關鍵溝通，再刪掉一件低效工作。</div></div>
+    <div style="border-left:3px solid #b97b87;padding:2px 0 2px 13px"><div style="color:#e3a9b4;font-size:15px;font-weight:600;margin-bottom:8px">感情｜${relation.type==='平'?'穩定經營':relation.type+'象提醒'}</div><div style="color:#ddd2bc;font-size:13.5px;line-height:2">${relationText}${loveTone}${climate}${joinText}</div><div style="margin-top:10px;color:#d7a2ad;font-size:12.5px;line-height:1.8">本月行動：安排一次不被手機打斷的對話；單身者則多參與能持續見面的固定活動。</div></div>
+    <div style="margin-top:14px;color:#8f836d;font-size:11px;line-height:1.7">判斷依據：${yearGod}流年、日支${relation.type}象、${a.geJu.geJu}、${root}${dayJoin?'、'+dayJoin.name:''}${breakNames.length?'、'+breakNames.join('／'):''}。命理建議供生活規劃參考。</div>
+  </div>`;
+}
 function buildAdvancedBaziHtml(r){
   const gz=r&&r.gz;
   if(!gz||gz.hGan==="—"||gz.hZhi==="—"){
@@ -1332,7 +1363,10 @@ function buildAdvancedBaziHtml(r){
   const breaks=a.quality.poGeJianCe.map(x=>x.name+(x.huaJie?'（有'+x.huaJieShen+'化解）':'')).join('、')||'目前規則未檢出破格';
   const th=a.tiaoHou;
   const conflict=th.yongShenChongTu?`<div style="margin-top:8px;color:var(--cinnabar)">用神矛盾：${th.chongTuGan.join('、')} 與通根身強弱取向不同，兩套判斷均保留。</div>`:'';
+  const recentGuidance=buildRecentBaziGuidance(a,r);
   return `<div class="tasks-head"><div class="ln"></div><span>八 字 進 階 分 析</span><div class="ln"></div></div>
+    ${recentGuidance}
+    <div style="text-align:center;color:#8f836d;font-size:11px;letter-spacing:.18em;margin:20px 0 10px">老師專業資料・點擊展開</div>
     <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">進</span><span class="nm">藏干結構</span><span class="mini">本氣・中氣・餘氣</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${hidden}</div></div></div>
     <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">根</span><span class="nm">日主通根</span><span class="mini">${cmp.tongGenStrength.strength}・${cmp.tongGenStrength.score} 分</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in"><span class="tag">原站 ${cmp.legacyStrength||'未提供'}</span><span class="tag">進階 ${cmp.tongGenStrength.strength}</span><div style="margin-top:9px">通根原始分 <b style="color:var(--gold-bright)">${cmp.tongGenStrength.rawScore}</b>；顯示分 ${cmp.tongGenStrength.score}。原站與進階判斷分開保存，不互相覆蓋。</div></div></div></div>
     <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">生</span><span class="nm">十二長生</span><span class="mini">日干 ${a.changSheng.riGan}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${stages}</div></div></div>
