@@ -1,18 +1,16 @@
 <!doctype html><html lang="zh-Hant"><meta charset="utf-8"><title>天衡八字進階 v1 測試</title><body><pre id="out">running...</pre>
 <script src="./tianheng-bazi-advanced-v1.js"></script><script src="./tianheng-bazi-combinations-v1.js"></script><script src="./tianheng-bazi-geju-tiaohou-v1.js"></script><script src="./tianheng-bazi-quality-v1.js"></script><script src="./tianheng-bazi-engine-v1.js"></script>
-<script>(function(){var tests=[],pass=0;function t(name,fn){try{if(!fn())throw Error('assert false');tests.push('PASS '+name);pass++;}catch(e){tests.push('FAIL '+name+' :: '+e.message);}}
-var A=TianhengBaziAdvanced;
+<script>(function(){var tests=[],pass=0;function t(name,fn){try{if(!fn())throw Error('assert false');tests.push('PASS '+name);pass++;}catch(e){tests.push('FAIL '+name+' :: '+e.message);}}var A=TianhengBaziAdvanced,C=TianhengBaziCombinations;
+['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'].forEach(function(z){t(z+'藏干權重總和=1',function(){return Math.abs(A.getCangGan(z).reduce(function(s,x){return s+x.weight;},0)-1)<1e-9;});});
 t('子藏干只有癸本氣100%',function(){var x=A.getCangGan('子');return x.length===1&&x[0].gan==='癸'&&x[0].type==='本氣'&&x[0].weight===1;});
 t('丑藏干己癸辛=60/30/10',function(){var x=A.getCangGan('丑');return x.length===3&&x[0].gan==='己'&&x[0].weight===.6&&x[1].gan==='癸'&&x[1].weight===.3&&x[2].gan==='辛'&&x[2].weight===.1;});
-t('甲在亥為長生',function(){return A.getChangSheng('甲','亥')==='長生';});
-t('甲在卯為帝旺',function(){return A.getChangSheng('甲','卯')==='帝旺';});
-t('乙在午為長生（陰干逆行）',function(){return A.getChangSheng('乙','午')==='長生';});
+t('甲亥長生',function(){return A.getChangSheng('甲','亥')==='長生';});t('甲卯帝旺',function(){return A.getChangSheng('甲','卯')==='帝旺';});t('乙午長生陰干逆行',function(){return A.getChangSheng('乙','午')==='長生';});t('乙卯臨官陰干逆行',function(){return A.getChangSheng('乙','卯')==='臨官';});
 var p1=[{gan:'庚',zhi:'申'},{gan:'丙',zhi:'子'},{gan:'壬',zhi:'辰'},{gan:'甲',zhi:'申'}],r1=TianhengBaziEngine.analyze(p1);
-t('總整合器輸出七層資料',function(){return r1.cangGan&&r1.tongGen&&r1.changSheng&&r1.heHuiJu&&r1.geJu&&r1.tiaoHou&&r1.quality;});
-t('申子辰判定三合水局',function(){return r1.heHuiJu.sanHe.some(function(x){return x.name==='申子辰三合水局'&&x.power===1;});});
-t('子月調候需要丙丁',function(){return r1.tiaoHou.tiaohouXuqiu.join('')==='丙丁';});
-t('通根顯示分不超過100且保留rawScore',function(){return r1.tongGen.all.every(function(x){return x.score<=100&&typeof x.rawScore==='number';});});
-var p2=[{gan:'甲',zhi:'寅'},{gan:'丁',zhi:'卯'},{gan:'乙',zhi:'辰'},{gan:'庚',zhi:'午'}],r2=TianhengBaziEngine.safeAnalyze(p2);
-t('安全分析成功不拋出',function(){return r2.ok===true&&r2.data.legacyOverride===false;});
-var bad=TianhengBaziEngine.safeAnalyze([{gan:'甲',zhi:'子'}]);t('錯誤輸入由safeAnalyze攔截',function(){return bad.ok===false&&!!bad.error;});
+t('總整合器輸出七層資料',function(){return !!(r1.cangGan&&r1.tongGen&&r1.changSheng&&r1.heHuiJu&&r1.geJu&&r1.tiaoHou&&r1.quality);});t('申子辰三合水局100%',function(){return r1.heHuiJu.sanHe.some(function(x){return x.name==='申子辰三合水局'&&x.power===1;});});t('合化保留original與finalStrength',function(){return !!(r1.heHuiJu.strength.originalStrength&&r1.heHuiJu.strength.finalStrength);});t('子月調候丙丁',function(){return r1.tiaoHou.tiaohouXuqiu.join('')==='丙丁';});t('通根<=100且保留rawScore',function(){return r1.tongGen.all.every(function(x){return x.score<=100&&typeof x.rawScore==='number';});});
+var half=C.analyze([{gan:'甲',zhi:'申'},{gan:'乙',zhi:'子'},{gan:'丙',zhi:'午'},{gan:'丁',zhi:'酉'}]);t('申子半合水50%',function(){return half.sanHe.some(function(x){return x.type==='半合'&&x.huaQi==='水'&&x.power===.5;});});t('相鄰子午沖使合局有效權重降30%',function(){return half.conflicts.selected.some(function(x){return x.type==='半合'&&x.adjacentClash&&Math.abs(x.effectivePower-.35)<1e-9;});});
+var arch=C.analyze([{gan:'甲',zhi:'申'},{gan:'乙',zhi:'寅'},{gan:'丙',zhi:'辰'},{gan:'丁',zhi:'酉'}]);t('申辰拱合水30%',function(){return arch.sanHe.some(function(x){return x.type==='拱合'&&x.power===.3;});});
+var hui=C.analyze([{gan:'甲',zhi:'寅'},{gan:'乙',zhi:'卯'},{gan:'丙',zhi:'辰'},{gan:'丁',zhi:'酉'}]);t('寅卯辰三會木115%',function(){return hui.sanHui.some(function(x){return x.huaQi==='木'&&x.power===1.15;});});
+var lh=C.analyze([{gan:'甲',zhi:'寅'},{gan:'乙',zhi:'亥'},{gan:'丙',zhi:'辰'},{gan:'丁',zhi:'酉'}]);t('寅亥相鄰且木透可合化木',function(){return lh.liuHe.some(function(x){return x.pair.join('')==='寅亥'&&x.canTransform&&x.status==='合化';});});
+var wu=C.analyze([{gan:'甲',zhi:'子'},{gan:'乙',zhi:'午'},{gan:'丙',zhi:'未'},{gan:'丁',zhi:'酉'}]);t('午未只合絆不化氣',function(){return wu.liuHe.some(function(x){return x.pair.join('')==='午未'&&!x.canTransform&&x.status==='合絆';});});
+var p2=[{gan:'甲',zhi:'寅'},{gan:'丁',zhi:'卯'},{gan:'乙',zhi:'辰'},{gan:'庚',zhi:'午'}],r2=TianhengBaziEngine.safeAnalyze(p2);t('safeAnalyze成功且不覆蓋舊引擎',function(){return r2.ok===true&&r2.data.legacyOverride===false;});var bad=TianhengBaziEngine.safeAnalyze([{gan:'甲',zhi:'子'}]);t('錯誤輸入被攔截',function(){return bad.ok===false&&!!bad.error;});
 document.getElementById('out').textContent='天衡八字進階 v1 回歸測試\n'+pass+'/'+tests.length+' passed\n\n'+tests.join('\n');document.documentElement.dataset.pass=String(pass===tests.length);})();</script></body></html>
