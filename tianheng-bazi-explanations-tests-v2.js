@@ -19,4 +19,5 @@ const p2=[{gan:'甲',zhi:'子'},{gan:'辛',zhi:'酉'},{gan:'甲',zhi:'卯'},{gan
 t('不同命盤產生不同通根與格局解讀',()=>ok(e.tongGen.title!==e2.tongGen.title&&e.geJu.title!==e2.geJu.title));
 t('不同命盤逐柱證據不共用罐頭',()=>ok(JSON.stringify(e.cangGan.details)!==JSON.stringify(e2.cangGan.details)&&JSON.stringify(e.changSheng.details)!==JSON.stringify(e2.changSheng.details)));
 t('完整輸出不含未定義佔位文字',()=>ok(!/undefined|null・null/.test(JSON.stringify(e)+JSON.stringify(e2))));
+t('身強與身弱使用各自的避免提醒',()=>ok(e.tongGen.avoid[0].includes('身弱')&&e2.tongGen.avoid[0].includes('身強')&&!e2.tongGen.avoid[0].includes('身弱')));
 console.log(`\nRESULT ${pass}/${total} passed`);
