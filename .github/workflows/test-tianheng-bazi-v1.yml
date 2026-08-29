@@ -9,7 +9,9 @@ on:
       - 'tianheng-bazi-geju-tiaohou-v1.js'
       - 'tianheng-bazi-quality-v1.js'
       - 'tianheng-bazi-engine-v1.js'
+      - 'tianheng-bazi-integration-v1.js'
       - 'tianheng-bazi-tests-node-v1.js'
+      - 'tianheng-bazi-tests-v1.html'
       - '.github/workflows/test-tianheng-bazi-v1.yml'
 
 jobs:
