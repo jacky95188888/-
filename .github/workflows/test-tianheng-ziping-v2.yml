@@ -12,6 +12,8 @@ on:
       - 'tianheng-ziping-qi-tests-v2.js'
       - 'tianheng-ziping-flow-v2.js'
       - 'tianheng-ziping-flow-tests-v2.js'
+      - 'tianheng-ziping-fortune-v2.js'
+      - 'tianheng-ziping-fortune-tests-v2.js'
       - '.github/workflows/test-tianheng-ziping-v2.yml'
 
 jobs:
@@ -30,3 +32,5 @@ jobs:
         run: node tianheng-ziping-qi-tests-v2.js
       - name: Run source-flow chain tests
         run: node tianheng-ziping-flow-tests-v2.js
+      - name: Run fortune transition synthesis tests
+        run: node tianheng-ziping-fortune-tests-v2.js

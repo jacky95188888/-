@@ -14,4 +14,6 @@ assert('火土相生判兩氣成象',()=>fireEarth.pattern==='兩氣成象・火
 const mixed=Q.analyze([{gan:'甲',zhi:'子'},{gan:'丙',zhi:'午'},{gan:'戊',zhi:'辰'},{gan:'庚',zhi:'酉'}]);
 assert('五行混雜不強判成象',()=>mixed.qualifies===false&&mixed.pattern===null);
 assert('保留常格不覆寫聲明',()=>woodFire.conventionalOverride===false);
+const moved=Q.analyzeFortune([{gan:'甲',zhi:'午'},{gan:'丁',zhi:'卯'},{gan:'甲',zhi:'午'},{gan:'丁',zhi:'卯'}],{type:'大運',gan:'庚',zhi:'子'});
+assert('氣勢運前運後分開保存',()=>moved.before.pattern==='兩氣成象・木火'&&moved.after.pattern!==moved.before.pattern&&moved.legacyOverride===false);
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);

@@ -1,0 +1,18 @@
+/* 天衡・九維命理｜運程引動總裁決 v2.0-alpha
+ * 合併格局成敗、源流與氣勢前後狀態；只輸出證據，不直接生成吉凶罐頭。
+ */
+(function(root){'use strict';
+var GAN='甲乙丙丁戊己庚辛壬癸',ZHI='子丑寅卯辰巳午未申酉戌亥';
+var GOD_DOMAIN={正官:'制度／職責',七殺:'壓力／決斷',正財:'資源／收入',偏財:'機會／交易',正印:'學習／支持',偏印:'方法／轉型',食神:'產出／表達',傷官:'突破／表達',比肩:'自主／同儕',劫財:'競爭／合作'};
+function deps(){var p=root.TianhengZipingPattern,f=root.TianhengZipingFlow,q=root.TianhengZipingQi;if(!p||!f||!q)throw Error('需先載入 pattern、flow 與 qi 模組');return {p:p,f:f,q:q};}
+function valid(p,f){if(!Array.isArray(p)||p.length!==4||p.some(function(x){return !x||GAN.indexOf(x.gan)<0||ZHI.indexOf(x.zhi)<0;}))throw Error('需要有效完整四柱');if(!f||GAN.indexOf(f.gan)<0||ZHI.indexOf(f.zhi)<0)throw Error('運程干支無效');}
+function add(xs,x){if(xs.indexOf(x)<0)xs.push(x);}
+function dimensionEvidence(t){var career=[],relationship=[];t.transition.relations.forEach(function(r){if(r.targetPillarIndex===1)career.push({code:'MONTH_'+r.type,text:'運支'+r.type+'月支，工作環境與制度位置受動',relation:r});if(r.targetPillarIndex===2)relationship.push({code:'DAY_'+r.type,text:'運支'+r.type+'日支，伴侶／互動宮位受動',relation:r});});career.push({code:'FORTUNE_GOD',text:'運干十神為'+t.fortune.god+'，主要議題偏向'+(GOD_DOMAIN[t.fortune.god]||'待覆核'),god:t.fortune.god});return {career:career,relationship:relationship};}
+function analyze(pillars,fortune,options){valid(pillars,fortune);var d=deps(),pt=d.p.analyzeFortune(pillars,fortune,options||{}),ft=d.f.analyzeFortune(pillars,fortune),qt=d.q.analyzeFortune(pillars,fortune),qb=qt.before,qa=qt.after,types=pt.transition.types.slice(),qiEvent=null;
+ if(qb.qualifies&&(!qa.qualifies||qa.pattern!==qb.pattern)){add(types,'被破壞');qiEvent={type:'氣勢破象',before:qb.pattern,after:qa.pattern,reason:'運程加入後原有成象條件不再成立或改變'};}
+ else if(!qb.qualifies&&qa.qualifies){add(types,'被重塑');qiEvent={type:'氣勢成象',before:null,after:qa.pattern,reason:'運程加入後形成高純度相生氣勢'};}
+ else if(qb.qualifies&&qa.qualifies&&qa.pattern===qb.pattern)qiEvent={type:'氣勢延續',before:qb.pattern,after:qa.pattern,reason:'運程未破壞原有成象條件'};
+ var dims=dimensionEvidence(pt);return {engine:'TianhengZipingFortune',version:'2.0-alpha',mode:'evidence-first',fortune:pt.fortune,original:{pattern:pt.base,flow:ft.before,qi:qb},afterFortune:{pattern:pt.after,flow:ft.after,qi:qa},transition:{types:types,pattern:pt.transition,flow:{changed:ft.flowChanged,deltaStrength:ft.deltaStrength},qi:qiEvent},adviceEvidence:dims,adviceGenerated:false,legacyOverride:false,notes:['原局與運後資料分開保存','事業、感情欄目前只保存可追溯證據，文案層另行生成','運程引動不等同事件必然發生']};}
+function safeAnalyze(p,f,o){try{return {ok:true,result:analyze(p,f,o)};}catch(e){return {ok:false,error:e.message};}}
+var api=Object.freeze({analyze:analyze,safeAnalyze:safeAnalyze});if(!root.TianhengZipingFortune)root.TianhengZipingFortune=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);

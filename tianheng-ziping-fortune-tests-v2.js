@@ -1,0 +1,25 @@
+'use strict';
+require('./tianheng-bazi-advanced-v1.js');
+require('./tianheng-bazi-geju-tiaohou-v1.js');
+require('./tianheng-ziping-qi-v2.js');
+require('./tianheng-ziping-pattern-v2.js');
+require('./tianheng-ziping-flow-v2.js');
+require('./tianheng-ziping-fortune-v2.js');
+const F=globalThis.TianhengZipingFortune;
+let pass=0,fail=0;
+function assert(name,fn){try{if(!fn())throw Error('assert false');console.log('PASS',name);pass++;}catch(e){console.error('FAIL',name,'::',e.message);fail++;}}
+const officer=[{gan:'己',zhi:'亥'},{gan:'丙',zhi:'酉'},{gan:'甲',zhi:'辰'},{gan:'癸',zhi:'未'}];
+const broken=F.analyze(officer,{type:'流年',gan:'丁',zhi:'卯'},{strength:'身中和'});
+assert('傷官流年沖月令標示被破壞',()=>broken.transition.types.includes('被破壞')&&broken.transition.pattern.newFailures.some(x=>x.code==='FORTUNE_CLASH_MONTH'));
+assert('工作宮位受沖形成事業證據',()=>broken.adviceEvidence.career.some(x=>x.code==='MONTH_沖'));
+assert('原局與運後格局分開保存',()=>broken.original.pattern.status&&broken.afterFortune.pattern.status&&broken.original.pattern!==broken.afterFortune.pattern);
+assert('原局與運後源流分開保存',()=>broken.original.flow.nodes.length<broken.afterFortune.flow.nodes.length);
+const relation=F.analyze(officer,{type:'流年',gan:'庚',zhi:'戌'},{strength:'身中和'});
+assert('運支沖日支形成感情宮位證據',()=>relation.adviceEvidence.relationship.some(x=>x.code==='DAY_沖'));
+const image=[{gan:'甲',zhi:'午'},{gan:'丁',zhi:'卯'},{gan:'甲',zhi:'午'},{gan:'丁',zhi:'卯'}];
+const imageBroken=F.analyze(image,{type:'大運',gan:'庚',zhi:'子'},{strength:'身強'});
+assert('異質金水運可辨氣勢破象',()=>imageBroken.transition.qi&&imageBroken.transition.qi.type==='氣勢破象'&&imageBroken.transition.types.includes('被破壞'));
+assert('建議尚未由模板強制生成',()=>broken.adviceGenerated===false&&broken.notes.some(x=>x.includes('可追溯證據')));
+assert('不覆寫舊引擎',()=>broken.legacyOverride===false);
+assert('錯誤運程由 safeAnalyze 攔截',()=>F.safeAnalyze(officer,{gan:'X',zhi:'子'}).ok===false);
+console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);

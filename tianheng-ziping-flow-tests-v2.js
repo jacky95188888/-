@@ -16,6 +16,9 @@ assert('原始加權五行力量獨立保存',()=>Object.keys(a.weightedStrength
 assert('節點保留天干與藏干證據',()=>a.nodes.some(x=>x.layer==='天干')&&a.nodes.some(x=>x.layer==='本氣'));
 assert('主鏈保留起點終點與十神',()=>a.primaryChain.source&&a.primaryChain.sink&&a.primaryChain.nodes.every(x=>x.god));
 assert('不覆寫舊引擎',()=>a.legacyOverride===false);
+const moved=F.analyzeFortune(p([['壬','寅'],['甲','辰'],['丁','亥'],['己','酉']]),{type:'流年',gan:'庚',zhi:'子'});
+assert('運程加入前後源流分開保存',()=>moved.before.nodes.length<moved.after.nodes.length&&moved.legacyOverride===false);
+assert('運程五行增量獨立保存',()=>moved.deltaStrength.金>0&&moved.deltaStrength.水>0);
 assert('錯誤輸入由 safeAnalyze 攔截',()=>F.safeAnalyze([{gan:'甲',zhi:'子'}]).ok===false);
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);
 if(fail)process.exit(1);
