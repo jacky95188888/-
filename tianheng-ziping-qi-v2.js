@@ -11,7 +11,9 @@ function analyzeSet(p){var s=strengths(p),rank=Object.keys(s).sort(function(a,b)
  if(qualifies){pattern='兩氣成象・'+pair.join('');reason.push('前兩大五行占全局'+Math.round(share*100)+'%');reason.push(pair[0]+'生'+pair[1]+'，氣勢可順行');}
  var fireSeason='巳午未'.indexOf(month)>=0,woodFire=pair[0]==='木'&&pair[1]==='火',waterWeak=s.水<.5;
  if(qualifies&&dayWx==='火'&&fireSeason&&woodFire&&waterWeak){pattern='炎上格';reason.push('火日主得夏令，木從火勢，水不破局');}
- return {version:'2.0-alpha',strengths:s,ranking:rank,topPair:pair,topShare:+share.toFixed(4),minorMax:+minorMax.toFixed(4),generatingRelation:generating,qualifies:qualifies,pattern:pattern,reason:reason,conventionalOverride:false,note:'氣勢覆核與月令常格並存；僅在高純度、相生兩氣條件下提出成象候選。'};
+ var trend={code:'FOLLOW_QI_TREND',follows:pattern==='炎上格',dominant:rank[0],supporting:rank[1],reason:pattern==='炎上格'?'木氣順從夏令火勢，以火勢為主軸':'未達專旺從勢條件，不強判從勢'};
+ var breakers=pattern==='兩氣成象・木火'?['金','水']:pattern==='兩氣成象・火土'?['水','木']:pattern==='炎上格'?['水','金']:[];
+ return {version:'2.0-alpha',strengths:s,ranking:rank,topPair:pair,topShare:+share.toFixed(4),minorMax:+minorMax.toFixed(4),generatingRelation:generating,qualifies:qualifies,pattern:pattern,reason:reason,trendDecision:trend,imageVulnerability:{code:'FORTUNE_BREAKS_IMAGE',breakingElements:breakers,reason:breakers.length?'異質五行進局可能截斷或逆剋原有成象':'原局未形成需保護的特殊氣象'},capabilities:qualifies?['SPECIAL_QI_OVERRIDE'].concat(breakers.length?['FORTUNE_BREAKS_IMAGE']:[]).concat(trend.follows?['FOLLOW_QI_TREND']:[]):[],conventionalOverride:false,note:'氣勢覆核與月令常格並存；僅在高純度、相生兩氣條件下提出成象候選。'};
 }
 function analyze(p){if(!Array.isArray(p)||p.length!==4)throw Error('需要完整四柱');return analyzeSet(p);}
 function analyzeFortune(p,f){if(!Array.isArray(p)||p.length!==4)throw Error('需要完整四柱');if(!f||!WX[f.gan]||typeof f.zhi!=='string')throw Error('運程干支無效');return {fortune:{type:f.type||'流年',gan:f.gan,zhi:f.zhi},before:analyzeSet(p),after:analyzeSet(p.concat([{gan:f.gan,zhi:f.zhi}])),legacyOverride:false};}

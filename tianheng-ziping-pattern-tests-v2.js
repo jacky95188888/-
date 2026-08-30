@@ -61,6 +61,8 @@ const officerProtectsWealth=Z.analyze([{gan:'壬',zhi:'申'},{gan:'壬',zhi:'子
 assert('財星明透而順生官星時保留官護財證據',()=>has(officerProtectsWealth.formation,'EXPOSED_WEALTH_PROTECTED_BY_OFFICER')&&!has(officerProtectsWealth.failures,'WEALTH_ROBBED'));
 const singlePeer=Z.analyze([{gan:'壬',zhi:'寅'},{gan:'壬',zhi:'寅'},{gan:'庚',zhi:'辰'},{gan:'辛',zhi:'巳'}],{strength:'身強'});
 assert('一位比肩且有食神生財不直接判奪財',()=>has(singlePeer.formation,'SINGLE_PEER_NOT_ROBBING_WEALTH')&&has(singlePeer.formation,'FOOD_BIRTH_WEALTH')&&!has(singlePeer.failures,'WEALTH_ROBBED'));
+const crossFood=Z.analyze([{gan:'戊',zhi:'辰'},{gan:'戊',zhi:'午'},{gan:'壬',zhi:'辰'},{gan:'甲',zhi:'辰'}],{strength:'身中和'});
+assert('財格仍跨格保存食神制殺救應',()=>has(crossFood.failures,'WEALTH_FEEDS_KILL')&&has(crossFood.rescues,'CROSS_PATTERN_FOOD_CONTROLS_KILL'));
 
 assert('候選格局保留月令本中餘氣',()=>officer.candidates.length===1&&officer.candidates[0].layer==='本氣');
 assert('不以分數裁定格局',()=>officer.xiuZhengHouFen===undefined&&officer.score===undefined);
@@ -91,6 +93,10 @@ const hiddenByLuck=Z.analyzeFortune(
   {type:'大運',gan:'癸',zhi:'亥'},{strength:'身強'});
 assert('大運天干透出原局未明透藏干時標記伏神被引出',()=>hiddenByLuck.transition.types.includes('伏神被引出')&&hiddenByLuck.transition.hiddenActivations.some(x=>x.code==='FORTUNE_EXPOSES_ORIGINAL_HIDDEN_GOD'&&x.original.gan==='癸'&&x.original.zhi==='辰'));
 assert('伏神事件不回寫原局明透資料',()=>hiddenByLuck.base.variant!==undefined&&hiddenByLuck.transition.hiddenActivations.every(x=>x.original.layer&&x.effect.includes('重新裁定')));
+const hiddenBranchLuck=Z.analyzeFortune([{gan:'庚',zhi:'辰'},{gan:'己',zhi:'卯'},{gan:'壬',zhi:'辰'},{gan:'庚',zhi:'子'}],{type:'大運',gan:'壬',zhi:'午'},{strength:'身中和'});
+assert('運支午中丁己以藏神作用保存且不冒充透干',()=>hiddenBranchLuck.transition.hiddenFortuneGodEffects.some(x=>x.code==='HIDDEN_FORTUNE_GOD_EFFECT'&&x.gan==='丁'&&x.layer==='本氣'));
+const usefulHit=Z.analyzeFortune([{gan:'乙',zhi:'酉'},{gan:'戊',zhi:'寅'},{gan:'癸',zhi:'酉'},{gan:'癸',zhi:'丑'}],{type:'大運',gan:'癸',zhi:'酉'},{strength:'身中和'});
+assert('酉金制寅木格神明列用神受損且不誤稱六沖',()=>usefulHit.transition.usefulGodStrength.code==='FORTUNE_USEFUL_GOD_STRENGTH'&&usefulHit.transition.usefulGodStrength.status==='受制'&&usefulHit.transition.usefulGodStrength.clashes.length===0&&usefulHit.transition.types.includes('用神受損'));
 const badLuck=Z.safeAnalyzeFortune(officer.pillars,{gan:'X',zhi:'子'},{strength:'身中和'});
 assert('錯誤運程可安全攔截',()=>badLuck.ok===false&&badLuck.error.includes('運程干支無效'));
 

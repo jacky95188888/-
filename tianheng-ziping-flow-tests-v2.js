@@ -20,6 +20,7 @@ assert('不覆寫舊引擎',()=>a.legacyOverride===false);
 const moved=F.analyzeFortune(p([['壬','寅'],['甲','辰'],['丁','亥'],['己','酉']]),{type:'流年',gan:'庚',zhi:'子'});
 assert('運程加入前後源流分開保存',()=>moved.before.nodes.length<moved.after.nodes.length&&moved.legacyOverride===false);
 assert('運程五行增量獨立保存',()=>moved.deltaStrength.金>0&&moved.deltaStrength.水>0);
+assert('運程五行轉化事件與補斷點獨立保存',()=>moved.elementTransform.code==='FORTUNE_ELEMENT_TRANSFORM'&&moved.elementTransform.events.length>0&&Array.isArray(moved.elementTransform.completedTransitions));
 const latent=F.analyze(p([['辛','卯'],['辛','卯'],['丙','子'],['甲','午']]));
 assert('單一中氣不誤當有效通關',()=>latent.weightedStrength.土>.2&&latent.effectiveStrength.土===0&&latent.blockedTransitions.some(x=>x.from==='火'&&x.to==='土'));
 assert('錯誤輸入由 safeAnalyze 攔截',()=>F.safeAnalyze([{gan:'甲',zhi:'子'}]).ok===false);

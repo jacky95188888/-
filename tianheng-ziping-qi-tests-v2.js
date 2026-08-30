@@ -16,4 +16,6 @@ assert('五行混雜不強判成象',()=>mixed.qualifies===false&&mixed.pattern=
 assert('保留常格不覆寫聲明',()=>woodFire.conventionalOverride===false);
 const moved=Q.analyzeFortune([{gan:'甲',zhi:'午'},{gan:'丁',zhi:'卯'},{gan:'甲',zhi:'午'},{gan:'丁',zhi:'卯'}],{type:'大運',gan:'庚',zhi:'子'});
 assert('氣勢運前運後分開保存',()=>moved.before.pattern==='兩氣成象・木火'&&moved.after.pattern!==moved.before.pattern&&moved.legacyOverride===false);
+assert('兩氣成象列出歲運破象元素',()=>woodFire.capabilities.includes('FORTUNE_BREAKS_IMAGE')&&woodFire.imageVulnerability.breakingElements.length===2);
+assert('炎上格明列木從火勢裁決',()=>fireFollow.capabilities.includes('FOLLOW_QI_TREND')&&fireFollow.trendDecision.follows===true);
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);
