@@ -37,6 +37,9 @@ on:
       - 'tianheng-bazi-yongshen-fortune-v3.js'
       - 'tianheng-bazi-yongshen-fortune-explanation-v3.js'
       - 'tianheng-bazi-yongshen-fortune-tests-v3.js'
+      - 'tianheng-bazi-decade-v4.js'
+      - 'tianheng-bazi-decade-explanation-v4.js'
+      - 'tianheng-bazi-decade-tests-v4.js'
       - 'tianheng-bazi-integration-v1.js'
       - 'index.html'
       - '.github/workflows/test-tianheng-ziping-v2.yml'
@@ -81,3 +84,5 @@ jobs:
         run: node tianheng-bazi-yongshen-explanation-tests-v3.js
       - name: Run v3 useful-element fortune activation tests
         run: node tianheng-bazi-yongshen-fortune-tests-v3.js
+      - name: Run v4 decade timeline tests
+        run: node tianheng-bazi-decade-tests-v4.js

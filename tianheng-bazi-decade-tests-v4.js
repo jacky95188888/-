@@ -1,0 +1,24 @@
+const fs=require('fs'),vm=require('vm');
+['tianheng-bazi-advanced-v1.js','tianheng-bazi-combinations-v1.js','tianheng-bazi-geju-tiaohou-v1.js','tianheng-bazi-quality-v1.js','tianheng-bazi-engine-v1.js','tianheng-ziping-pattern-v2.js','tianheng-ziping-flow-v2.js','tianheng-ziping-qi-v2.js','tianheng-ziping-officer-kill-v2.js','tianheng-ziping-fortune-combinations-v2.js','tianheng-ziping-combination-effect-v2.js','tianheng-ziping-fortune-v2.js','tianheng-ziping-advice-v2.js','tianheng-ziping-engine-v2.js','tianheng-bazi-yongshen-v3.js','tianheng-bazi-yongshen-fortune-v3.js','tianheng-bazi-decade-v4.js','tianheng-bazi-decade-explanation-v4.js'].forEach(f=>vm.runInThisContext(fs.readFileSync(f,'utf8'),{filename:f}));
+let pass=0,total=0;function t(n,f){total++;try{f();pass++;console.log('PASS '+n);}catch(e){console.error('FAIL '+n+'\n '+e.message);process.exitCode=1;}}function ok(x,m){if(!x)throw Error(m||'assert');}
+const p=[{gan:'己',zhi:'丑'},{gan:'癸',zhi:'丑'},{gan:'庚',zhi:'午'},{gan:'甲',zhi:'寅'}],a=TianhengBaziEngine.analyze(p),z=TianhengZipingEngine.analyzeFortune(p,{gan:'丙',zhi:'午'},{strength:'身弱'}),y=TianhengBaziYongShenV3.analyze(p,a,z),dayun={list:[{gz:'丙午',startAge:30,startYear:2020},{gz:'丁未',startAge:40,startYear:2030},{gz:'戊申',startAge:50,startYear:2040}]},r=TianhengBaziDecadeV4.analyze(p,dayun,a,y,{startYear:2026}),e=TianhengBaziDecadeExplanationV4.explain(r);
+t('固定輸出連續十年',()=>ok(r.years.length===10&&r.years[0].year===2026&&r.years[9].year===2035));
+t('每年干支依曆年正確生成',()=>ok(r.years[0].gz==='丙午'&&r.years[1].gz==='丁未'&&r.years[9].gz==='乙卯'));
+t('十年中途換運分段保存',()=>ok(r.dayunSegments.length===2&&r.dayunSegments[0].gz==='丙午'&&r.dayunSegments[1].gz==='丁未'));
+t('換運前後年度引用正確大運',()=>ok(r.years.find(x=>x.year===2029).dayunGz==='丙午'&&r.years.find(x=>x.year===2030).dayunGz==='丁未'));
+t('本命用神與十年結果分開保存',()=>ok(r.natalYongShen.primary===y.primary&&r.years.every(x=>x.primaryStatus)));
+t('逐年保存格局轉態宮位與證據',()=>ok(r.years.every(x=>x.pattern&&Array.isArray(x.transitions)&&Array.isArray(x.palaceEvents)&&x.evidence.length>=3)));
+t('逐年結論不是單一固定分類',()=>ok(new Set(r.years.map(x=>x.category)).size>=2));
+t('支持窗口與壓力窗口依作用分排序',()=>ok(r.supportWindows.length===3&&r.pressureWindows.length===3&&r.years.find(x=>x.year===r.supportWindows[0]).combinedScore>=r.years.find(x=>x.year===r.pressureWindows[0]).combinedScore));
+t('轉折點包含換運年份',()=>ok(r.turningPoints.some(x=>x.year===2030&&x.type==='換運／轉折')));
+t('每年有事業感情財務行動證據',()=>ok(r.years.every(x=>x.actions.length===3&&x.avoid.length===3&&['事業','感情','財務'].includes(x.focus.key))));
+t('完整講解包含大運分段與十個年份',()=>ok(e.details.length===12&&e.details.filter(x=>/^20\d\d /.test(x.label)).length===10));
+t('完整講解含結論原因影響行動避免證據',()=>ok(e.title&&e.summary&&e.why&&e.impact&&e.actions.length&&e.avoid.length&&e.evidence.length));
+t('不做事件與投資獲利保證',()=>ok(e.impact.includes('不等同必然')&&e.avoid.some(x=>x.includes('不保證投資獲利'))));
+t('不同十年窗口產生不同內容',()=>{const r2=TianhengBaziDecadeV4.analyze(p,dayun,a,y,{startYear:2030}),e2=TianhengBaziDecadeExplanationV4.explain(r2);ok(e.title!==e2.title&&JSON.stringify(e.details)!==JSON.stringify(e2.details));});
+t('四階不得覆寫既有結果',()=>ok(r.legacyOverride===false&&e.legacyOverride===false));
+t('錯誤資料由安全入口攔截',()=>ok(!TianhengBaziDecadeV4.safeAnalyze([],{},null,null).ok&&!TianhengBaziDecadeExplanationV4.safeExplain(null).ok));
+const html=fs.readFileSync('index.html','utf8');
+t('正式首頁按相依順序載入四階模組',()=>ok(html.indexOf('tianheng-bazi-yongshen-fortune-v3.js')<html.indexOf('tianheng-bazi-decade-v4.js')&&html.indexOf('tianheng-bazi-decade-v4.js')<html.indexOf('tianheng-bazi-decade-explanation-v4.js')));
+t('正式首頁新增十年完整講解卡',()=>ok(html.includes('大運十年主軸')&&html.includes('renderBaziExplanation(decadeExplain)')&&html.includes('${yongFortuneCard}')&&html.includes('${decadeCard}')));
+console.log(`\nRESULT ${pass}/${total} passed`);
