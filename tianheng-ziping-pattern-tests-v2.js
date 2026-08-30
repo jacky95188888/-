@@ -52,6 +52,11 @@ const wealthSealClear=Z.analyze([{gan:'乙',zhi:'未'},{gan:'甲',zhi:'申'},{ga
 const wealthSealConflict=Z.analyze([{gan:'乙',zhi:'未'},{gan:'己',zhi:'卯'},{gan:'庚',zhi:'寅'},{gan:'辛',zhi:'巳'}],{strength:'身弱'});
 assert('財印隔位辨各得其位',()=>has(wealthSealClear.formation,'POSITIONAL_WEALTH_SEAL_NON_CONFLICT')&&!has(wealthSealClear.failures,'POSITIONAL_WEALTH_SEAL_CONFLICT'));
 assert('財印相鄰辨彼此相礙',()=>has(wealthSealConflict.failures,'POSITIONAL_WEALTH_SEAL_CONFLICT')&&!has(wealthSealConflict.formation,'POSITIONAL_WEALTH_SEAL_NON_CONFLICT'));
+const hiddenHurt=Z.analyze([{gan:'己',zhi:'卯'},{gan:'辛',zhi:'未'},{gan:'壬',zhi:'寅'},{gan:'辛',zhi:'亥'}],{strength:'身中和'});
+assert('亥卯未三合木可引出未中乙傷官',()=>hiddenHurt.branchStructure.hiddenGods.some(x=>x.event.includes('亥卯未')&&x.god==='傷官'&&x.gan==='乙')&&has(hiddenHurt.failures,'HIDDEN_COMBINATION_HURT'));
+assert('兩辛印透可制合局所引藏干傷官',()=>has(hiddenHurt.rescues,'SEAL_CONTROLS_HIDDEN_HURT')&&hiddenHurt.status.includes('救'));
+const exhaustedHurt=Z.analyze([{gan:'丁',zhi:'未'},{gan:'丁',zhi:'未'},{gan:'丙',zhi:'午'},{gan:'丙',zhi:'午'}],{strength:'身強'});
+assert('傷官傷盡但火過無財仍列破格原因',()=>exhaustedHurt.basePattern.pattern==='傷官格'&&has(exhaustedHurt.failures,'EXCESS_FIRE_NO_WEALTH_OUTLET')&&exhaustedHurt.status==='敗格'&&exhaustedHurt.ruleElementStrengths.火===6);
 
 assert('候選格局保留月令本中餘氣',()=>officer.candidates.length===1&&officer.candidates[0].layer==='本氣');
 assert('不以分數裁定格局',()=>officer.xiuZhengHouFen===undefined&&officer.score===undefined);

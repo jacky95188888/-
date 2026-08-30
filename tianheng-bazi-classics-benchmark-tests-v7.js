@@ -26,6 +26,8 @@ assert('雜氣正官依未受絆透干改取官格',()=>low.comparison.status===
 assert('財印相合失輔後保留孤官降層結論',()=>low.engineSnapshot.status==='格成而孤・層次受限'&&low.engineSnapshot.failures.some(x=>x.code==='STEM_COMBINATION_REMOVES_SUPPORT'));
 const li=B.run('ZP-OFFICER-005');
 assert('乙庚相合可辨合煞留官取清',()=>li.comparison.status==='match'&&li.engineSnapshot.rescues.some(x=>x.code==='STEM_COMBINATION_KEEP_OFFICER_REMOVE_KILL'));
+const hidden=B.run('ZP-OFFICER-004');
+assert('亥卯未引傷與印制隱傷兩層皆符合古例',()=>hidden.comparison.status==='match'&&hidden.engineSnapshot.failures.some(x=>x.code==='HIDDEN_COMBINATION_HURT')&&hidden.engineSnapshot.rescues.some(x=>x.code==='SEAL_CONTROLS_HIDDEN_HURT')&&hidden.engineSnapshot.branchStructure.hiddenGods.some(x=>x.god==='傷官'));
 const ge=B.run('ZP-WEALTH-006');
 assert('葛參政命辨財旺生官',()=>ge.comparison.patternMatch&&ge.comparison.matchedCodes.includes('WEALTH_BIRTH_OFFICER'));
 const good=B.run('ZP-WEALTH-008'),bad=B.run('ZP-WEALTH-009');
@@ -34,7 +36,7 @@ assert('財印分隔與財印相鄰兩例皆完成位置裁決',()=>good.compari
 const hurt=B.run('SM-HURT-010');
 assert('三命通會傷官反例保留傷官與氣勢兩層',()=>hurt.engineSnapshot.basePattern==='傷官格'&&hurt.engineSnapshot.resolvedPattern==='兩氣成象・火土');
 assert('傷官傷盡不自動判成格',()=>hurt.engineSnapshot.status!=='成格'&&hurt.humanAnnotation.expectation.antiRule.includes('不可把'));
-assert('火過無財規則缺口清楚列出',()=>hurt.comparison.status==='partial'&&hurt.comparison.missingCapabilities.includes('EXCESS_FIRE_NO_WEALTH_OUTLET'));
+assert('火過無財即使傷盡仍判破格並符合古例',()=>hurt.comparison.status==='match'&&hurt.engineSnapshot.failures.some(x=>x.code==='EXCESS_FIRE_NO_WEALTH_OUTLET')&&hurt.engineSnapshot.status==='敗格');
 const summary=B.summary();
 assert('校準報告不把 partial 與 mismatch 算成通過',()=>summary.total===22&&summary.counts.partial>0&&summary.counts.mismatch>0&&summary.notFullyMatched.length===summary.total-summary.counts.match);
 assert('校準層維持 add-only',()=>summary.legacyOverride===false&&B.run('ZP-OFFICER-001').engineSnapshot.legacyOverride===false);
