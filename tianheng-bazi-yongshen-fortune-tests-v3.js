@@ -12,6 +12,7 @@ t('事業感情財務三域都有行動與避免',()=>ok(['career','relationship
 t('財務不做獲利保證',()=>ok(earth.r.domains.finance.avoid.some(x=>x.includes('保證投資獲利')&&x.includes('不因命理'))));
 t('完整講解含結論原因影響行動證據',()=>ok(earth.e.title&&earth.e.summary&&earth.e.why&&earth.e.impact&&earth.e.actions.length&&earth.e.avoid.length&&earth.e.evidence.length));
 t('完整講解包含事業感情財務逐域說明',()=>ok(['事業','感情','財務'].every(x=>earth.e.details.some(d=>d.label.includes(x)&&d.reading.includes('證據')))));
+t('領域講解不產生重複句尾標點',()=>ok(!/。；|。。/.test(earth.e.details.map(x=>x.reading).join(''))));
 t('不同歲運不共用同一段罐頭結果',()=>ok(earth.e.title!==fire.e.title&&earth.e.impact!==fire.e.impact&&JSON.stringify(earth.e.details)!==JSON.stringify(fire.e.details)));
 t('歲運層不得覆寫既有引擎',()=>ok(earth.r.legacyOverride===false&&earth.e.legacyOverride===false));
 t('錯誤輸入安全攔截',()=>ok(!TianhengBaziYongShenFortuneV3.safeAnalyze([],{},null,null).ok&&!TianhengBaziYongShenFortuneExplanationV3.safeExplain(null).ok));
