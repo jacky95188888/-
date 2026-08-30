@@ -8,6 +8,7 @@ t('流日干支每日循序且六十日回甲子',()=>ok(TianhengBaziDailyV6.day
 t('寅月日期以約 2/4 至 3/5 產生',()=>ok(r.days[0].date==='2026-02-04'&&r.days.at(-1).date==='2026-03-05'&&r.days.length===30));
 t('子月與丑月跨到下一國曆年',()=>{const zi=TianhengBaziDailyV6.datesFor(2026,10),chou=TianhengBaziDailyV6.datesFor(2026,11);ok(zi[0]==='2026-12-07'&&zi.at(-1)==='2027-01-05'&&chou[0]==='2027-01-06'&&chou.at(-1)==='2027-02-03');});
 t('每一天保存五層證據',()=>ok(r.days.every(x=>['大運 ','流年 ','流月 ','流日 ','用途十神 '].every(prefix=>x.evidence.some(v=>v.startsWith(prefix))))));
+t('五層證據不出現 undefined',()=>ok(!JSON.stringify(r).includes('undefined')&&r.days.every(x=>x.evidence.includes('大運 '+monthly.dayunGz)&&x.evidence.some(v=>v.startsWith('流年 '+monthly.yearGz)))));
 t('每日保留用神狀態與本命沖合事件',()=>ok(r.days.every(x=>x.primaryStatus&&Array.isArray(x.events))&&r.days.some(x=>x.events.length)));
 t('用途不是共用排序',()=>{const rr=TianhengBaziDailyV6.analyze(p,monthly,a,y,0,'relationship');ok(r.purpose.label!==rr.purpose.label&&JSON.stringify(r.preferred.map(x=>x.date))!==JSON.stringify(rr.preferred.map(x=>x.date)));});
 t('四種用途皆可獨立運算',()=>ok(['career','contract','relationship','finance'].every(k=>TianhengBaziDailyV6.safeAnalyze(p,monthly,a,y,0,k).ok)));
