@@ -451,6 +451,17 @@
     font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.22em;padding-left:.22em;
     box-shadow:inset 0 1px 0 rgba(255,241,198,.24),0 12px 28px rgba(83,24,23,.36);cursor:pointer
   }
+  .th-luxe .stage-release{
+    display:inline-flex;align-items:center;gap:8px;margin-top:13px;padding:7px 13px;
+    border:1px solid rgba(217,182,106,.46);border-radius:999px;
+    background:linear-gradient(135deg,rgba(41,29,46,.78),rgba(12,10,18,.72));
+    color:#e4c77e;font-size:10.5px;letter-spacing:.08em;
+    box-shadow:0 8px 24px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.04)
+  }
+  .th-luxe .stage-release::before{
+    content:"";width:6px;height:6px;border-radius:50%;background:#77b295;
+    box-shadow:0 0 10px rgba(119,178,149,.85)
+  }
 </style>
 </head>
 <body class="th-luxe">
@@ -472,18 +483,18 @@
 <div class="update-modal" id="updateModal" role="dialog" aria-modal="true" aria-labelledby="updateTitle" hidden>
   <section class="update-panel">
     <button class="update-close" id="updateClose" type="button" aria-label="關閉更新公告">×</button>
-    <div class="update-kicker">2026.08.21・ENGINE &amp; DESIGN UPDATE</div>
+    <div class="update-kicker">2026.08.30・BAZI STAGE RELEASE</div>
     <div class="update-emblem" aria-hidden="true">衡</div>
-    <h2 id="updateTitle">天衡全面煥新</h2>
-    <p class="update-subtitle">命理更準確，閱讀更清楚，體驗更完整</p>
+    <h2 id="updateTitle">八字二階正式完成</h2>
+    <p class="update-subtitle">從命盤資料，走到格局成敗、歲運引動與近期建議</p>
     <div class="update-list">
-      <div class="update-item"><i>晶</i><div><b>五行穿戴全面校正</b><span>修正水晶、幸運色與忌方位的生剋方向，讓每日建議前後一致。</span></div></div>
-      <div class="update-item"><i>命</i><div><b>核心命盤引擎升級</b><span>校正命卦、子時換日、大運與姓名筆畫，八字五行不再混入姓名計算。</span></div></div>
-      <div class="update-item"><i>新</i><div><b>玄夜金玉全新介面</b><span>首頁、表單、每日運勢與九維詳解重新設計，手機閱讀更加精緻流暢。</span></div></div>
-      <div class="update-item"><i>心</i><div><b>隨喜支持正式上線</b><span>完整解析維持免費；若內容帶來幫助，可自由隨喜支持天衡持續優化。</span></div></div>
+      <div class="update-item"><i>格</i><div><b>子平動態格局完成</b><span>不只列出格局名稱，現在會分開說明格局怎麼成立、哪裡受損、又由什麼條件救回。</span></div></div>
+      <div class="update-item"><i>運</i><div><b>大運到流日逐層引動</b><span>原局、大運、流年、流月與流日分層保存，可查看格局被引動、破壞或重塑的證據。</span></div></div>
+      <div class="update-item"><i>解</i><div><b>完整講解取代技術標籤</b><span>藏干、通根、合會、調候、用神與破格都有原因、影響、可以做與先避免。</span></div></div>
+      <div class="update-item"><i>證</i><div><b>古籍校準與回歸全綠</b><span>三部命理古籍 22 例嚴格校準全部符合，完整自動回歸 311 項全部通過。</span></div></div>
     </div>
-    <p class="update-note">命理推演僅供文化研究與人生思考參考。隨喜與否不影響任何功能。</p>
-    <button class="update-start" id="updateStart" type="button">開 始 體 驗</button>
+    <p class="update-note">八字二階已進入穩定維護；下一階段「問事」正在研發。命理推演供文化研究與生活規劃參考。</p>
+    <button class="update-start" id="updateStart" type="button">查 看 新 版 分 析</button>
   </section>
 </div>
 <div id="app">
@@ -491,6 +502,7 @@
   <div class="sigil">天 ◇ 衡 ◇ 命 ◇ 盤</div>
   <h1 class="title">天衡</h1>
   <p class="subtitle">九 維 命 理 交 叉 推 演</p>
+  <div class="stage-release">八字二階完成・古籍校準 22 / 22</div><br>
   <div class="daily-entry" id="dailyEntry">☀ 今 日 運 勢</div>
   <a href="compat.html" class="daily-entry" style="text-decoration:none;margin-top:14px;">◇ 雙 人 合 度</a>
 </header>
@@ -586,9 +598,9 @@
 <script src="./tianheng-bazi-quality-v1.js"></script>
 <script src="./tianheng-bazi-engine-v1.js"></script>
 <script src="./tianheng-bazi-integration-v1.js"></script>
-<script src="./tianheng-ziping-pattern-v2.js"></script>
-<script src="./tianheng-ziping-flow-v2.js"></script>
-<script src="./tianheng-ziping-qi-v2.js"></script>
+<script src="./tianheng-ziping-pattern-v2.js?v=2.0.10"></script>
+<script src="./tianheng-ziping-flow-v2.js?v=2.0.10"></script>
+<script src="./tianheng-ziping-qi-v2.js?v=2.0.10"></script>
 <script src="./tianheng-ziping-officer-kill-v2.js"></script>
 <script src="./tianheng-ziping-fortune-combinations-v2.js"></script>
 <script src="./tianheng-ziping-combination-effect-v2.js"></script>
@@ -1897,8 +1909,7 @@ function showEngineNotice(){
     if(box.parentNode)box.parentNode.removeChild(box);
   });
 }
-document.addEventListener("DOMContentLoaded",showEngineNotice);
-if(document.readyState!=="loading")showEngineNotice();
+/* 舊版行內引擎公告已由 2026.08.30 階段發布視窗與常駐版本徽章取代。 */
 /* ---- 7. 命盤圖卡（canvas 生成，iOS 長按存圖）---- */
 (function(){
   var CARD_W=1080, CARD_H=1350;
@@ -2968,7 +2979,7 @@ function fallbackCopy(text,done){
 }
 
 (function(){
-  var key="tianheng_update_seen_20260821_v1";
+  var key="tianheng_update_seen_20260830_bazi_stage_v1";
   var modal=document.getElementById("updateModal");
   var start=document.getElementById("updateStart");
   var close=document.getElementById("updateClose");
