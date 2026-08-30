@@ -23,4 +23,5 @@ const html=fs.readFileSync('index.html','utf8');
 t('正式首頁按相依順序載入五階模組',()=>ok(html.indexOf('tianheng-bazi-decade-v4.js')<html.indexOf('tianheng-bazi-monthly-v5.js')&&html.indexOf('tianheng-bazi-monthly-v5.js')<html.indexOf('tianheng-bazi-monthly-explanation-v5.js')));
 t('正式首頁新增十二流月完整講解卡',()=>ok(html.includes('十二流月精細引動')&&html.includes('renderBaziMonthlyContent(monthly,monthlyExplain)')));
 t('十個年份採點選後延遲運算',()=>ok(html.includes('switchBaziMonthlyYear')&&html.includes('data-year=')&&html.includes('safeAnalyzeYear(ctx.pillars')));
+t('年份按鈕以捕獲事件阻止卡片誤收合',()=>ok(html.includes("monthEvent.target.closest('.bazi-month-year')")&&html.includes('monthEvent.stopPropagation()')&&html.includes('},true);')&&!html.includes('onclick="event.stopPropagation();switchBaziMonthlyYear')));
 console.log(`\nRESULT ${pass}/${total} passed`);
