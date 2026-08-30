@@ -1,0 +1,26 @@
+const fs=require('fs'),vm=require('vm');
+['tianheng-bazi-advanced-v1.js','tianheng-bazi-combinations-v1.js','tianheng-bazi-geju-tiaohou-v1.js','tianheng-bazi-quality-v1.js','tianheng-bazi-engine-v1.js','tianheng-ziping-pattern-v2.js','tianheng-ziping-flow-v2.js','tianheng-ziping-qi-v2.js','tianheng-ziping-officer-kill-v2.js','tianheng-ziping-fortune-combinations-v2.js','tianheng-ziping-combination-effect-v2.js','tianheng-ziping-fortune-v2.js','tianheng-ziping-advice-v2.js','tianheng-ziping-engine-v2.js','tianheng-bazi-yongshen-v3.js','tianheng-bazi-yongshen-fortune-v3.js','tianheng-bazi-decade-v4.js','tianheng-bazi-monthly-v5.js','tianheng-bazi-monthly-explanation-v5.js'].forEach(f=>vm.runInThisContext(fs.readFileSync(f,'utf8'),{filename:f}));
+let pass=0,total=0;function t(n,f){total++;try{f();pass++;console.log('PASS '+n);}catch(e){console.error('FAIL '+n+'\n '+e.message);process.exitCode=1;}}function ok(x,m){if(!x)throw Error(m||'assert');}
+const p=[{gan:'己',zhi:'丑'},{gan:'癸',zhi:'丑'},{gan:'庚',zhi:'午'},{gan:'甲',zhi:'寅'}],a=TianhengBaziEngine.analyze(p),z=TianhengZipingEngine.analyzeFortune(p,{gan:'丙',zhi:'午'},{strength:'身弱'}),y=TianhengBaziYongShenV3.analyze(p,a,z),dayun={list:[{gz:'丙午',startAge:30,startYear:2020},{gz:'丁未',startAge:40,startYear:2030},{gz:'戊申',startAge:50,startYear:2040}]},decade=TianhengBaziDecadeV4.analyze(p,dayun,a,y,{startYear:2026}),r=TianhengBaziMonthlyV5.analyzeYear(p,decade,a,y,2026),e=TianhengBaziMonthlyExplanationV5.explain(r);
+t('固定輸出十二個節氣月',()=>ok(r.months.length===12&&r.months[0].name==='寅月'&&r.months[11].name==='丑月'));
+t('丙年寅月與丑月干支正確',()=>ok(r.months[0].gz==='庚寅'&&r.months[11].gz==='辛丑'));
+t('流月以立春起寅月而非國曆一月',()=>ok(r.months[0].span.includes('2/4')&&r.disclaimer.includes('節氣月')));
+t('子丑月正確跨到翌年日期提示',()=>ok(r.months[10].span.includes('翌年')&&r.months[11].span.includes('翌年')));
+t('每月保存大運流年流月三層證據',()=>ok(r.months.every(x=>x.evidence.some(v=>v.startsWith('大運 '))&&x.evidence.some(v=>v.startsWith('流年 '))&&x.evidence.some(v=>v.startsWith('流月 ')))));
+t('每月保存用神宮位與跨層作用',()=>ok(r.months.every(x=>x.primaryStatus&&Array.isArray(x.palaceEvents)&&Array.isArray(x.crossLayerEvents))));
+t('十二月不是單一固定分類',()=>ok(new Set(r.months.map(x=>x.category)).size>=2));
+t('推進與風險窗口依綜合分排序',()=>ok(r.pushMonths.length===3&&r.cautionMonths.length===3&&r.months.find(x=>x.name===r.pushMonths[0]).combinedScore>=r.months.find(x=>x.name===r.cautionMonths[0]).combinedScore));
+t('月支能辨識與流年大運沖合伏吟',()=>ok(r.months.some(x=>x.crossLayerEvents.length>0)));
+t('每月有生活領域行動與避免',()=>ok(r.months.every(x=>['事業','感情','財務'].includes(x.focus.key)&&x.actions.length>=2&&x.avoid.length>=2)));
+t('完整講解包含十二個月而非標籤',()=>ok(e.details.length===12&&e.details.every(x=>x.text.length>25&&x.reading.includes('證據'))));
+t('完整講解含原因影響行動風險證據',()=>ok(e.title&&e.summary&&e.why&&e.impact&&e.actions.length&&e.avoid.length&&e.evidence.length));
+t('不同年份重新運算而非共用文案',()=>{const r2=TianhengBaziMonthlyV5.analyzeYear(p,decade,a,y,2027),e2=TianhengBaziMonthlyExplanationV5.explain(r2);ok(e.title!==e2.title&&JSON.stringify(e.details)!==JSON.stringify(e2.details)&&r2.months[0].gz==='壬寅');});
+t('不使用錯誤月界與獲利保證',()=>ok(e.avoid.some(x=>x.includes('不要把農曆初一'))&&e.avoid.some(x=>x.includes('不保證投資獲利'))));
+t('逐月文字沒有重複句尾標點',()=>ok(!/。；|。。/.test(e.details.map(x=>x.reading).join(''))));
+t('五階不覆寫既有結果',()=>ok(r.natalYongShen.primary===y.primary&&r.legacyOverride===false&&e.legacyOverride===false));
+t('錯誤年份由安全入口攔截',()=>ok(!TianhengBaziMonthlyV5.safeAnalyzeYear(p,decade,a,y,2049).ok&&!TianhengBaziMonthlyExplanationV5.safeExplain(null).ok));
+const html=fs.readFileSync('index.html','utf8');
+t('正式首頁按相依順序載入五階模組',()=>ok(html.indexOf('tianheng-bazi-decade-v4.js')<html.indexOf('tianheng-bazi-monthly-v5.js')&&html.indexOf('tianheng-bazi-monthly-v5.js')<html.indexOf('tianheng-bazi-monthly-explanation-v5.js')));
+t('正式首頁新增十二流月完整講解卡',()=>ok(html.includes('十二流月精細引動')&&html.includes('renderBaziMonthlyContent(monthly,monthlyExplain)')));
+t('十個年份採點選後延遲運算',()=>ok(html.includes('switchBaziMonthlyYear')&&html.includes('data-year=')&&html.includes('safeAnalyzeYear(ctx.pillars')));
+console.log(`\nRESULT ${pass}/${total} passed`);
