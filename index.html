@@ -600,12 +600,14 @@
 <script src="./tianheng-bazi-yongshen-fortune-v3.js?v=3.1.0"></script>
 <script src="./tianheng-bazi-decade-v4.js?v=4.0.1"></script>
 <script src="./tianheng-bazi-monthly-v5.js?v=5.0.0"></script>
+<script src="./tianheng-bazi-daily-v6.js?v=6.0.0"></script>
 <script src="./tianheng-bazi-integration-v3.js?v=3.0.0"></script>
 <script src="./tianheng-bazi-explanations-v2.js?v=2.0.1"></script>
 <script src="./tianheng-bazi-yongshen-explanation-v3.js?v=3.0.0"></script>
 <script src="./tianheng-bazi-yongshen-fortune-explanation-v3.js?v=3.1.1"></script>
 <script src="./tianheng-bazi-decade-explanation-v4.js?v=4.0.1"></script>
 <script src="./tianheng-bazi-monthly-explanation-v5.js?v=5.0.0"></script>
+<script src="./tianheng-bazi-daily-explanation-v6.js?v=6.0.0"></script>
 <script>
 /* ===== 天衡 · 九維命理交叉推演 核心引擎 ===== */
 const GAN=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
@@ -1420,6 +1422,37 @@ document.addEventListener('click',function(monthEvent){
   monthEvent.stopPropagation();
   switchBaziMonthlyYear(Number(monthButton.dataset.year),monthButton);
 },true);
+function renderBaziDailyContent(daily,explain){
+  if(!daily||!explain)return `<div style="color:#a99877;line-height:1.9">此月份的重要日期資料暫時無法產生，本命、十年與流月結果仍完整保留。</div>`;
+  const top=daily.preferred.slice(0,5).map((x,i)=>`<div style="padding:12px 0;border-bottom:1px solid rgba(176,133,66,.16)"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px"><div style="color:#e7c982;font-size:13px;font-weight:600">${i+1}. ${escapeZipingText(x.date)}・${escapeZipingText(x.gz)}</div><span style="color:${x.category==='優先窗口'?'#87b7a3':'#d0a85d'};font-size:11px;white-space:nowrap">${escapeZipingText(x.category)} ${x.score}</span></div><div style="color:#d8cbb0;font-size:12.5px;line-height:1.85;margin-top:6px">${escapeZipingText(x.reading)}</div><div style="color:#87b7a3;font-size:12px;line-height:1.8;margin-top:6px">可以做：${escapeZipingText(x.action)}</div><div style="color:#c98b82;font-size:12px;line-height:1.8;margin-top:3px">先避免：${escapeZipingText(x.avoid)}</div><div style="color:#a99877;font-size:11.5px;line-height:1.8;margin-top:5px">時段窗口：${x.hours.map(h=>escapeZipingText(h.span+' '+h.gz)).join('、')}<br>依據：${x.evidence.slice(0,7).map(escapeZipingText).join('；')}</div></div>`).join('');
+  return `${renderBaziExplanation(explain)}<div style="margin-top:16px"><div style="color:var(--gold-bright);font-size:13px;font-weight:600;letter-spacing:.1em;margin-bottom:4px">本月前五個相對窗口</div>${top}</div><div style="margin-top:14px;padding:11px 12px;border:1px dashed rgba(176,133,66,.26);border-radius:7px;color:#9b8e74;font-size:11.2px;line-height:1.8">${escapeZipingText(daily.disclaimer)}</div>`;
+}
+function styleBaziDailyControls(card,group,value){
+  card.querySelectorAll(`.bazi-daily-control[data-daily-${group}]`).forEach(x=>{const active=String(x.dataset['daily'+group[0].toUpperCase()+group.slice(1)])===String(value);x.style.background=active?'rgba(217,182,106,.18)':'rgba(15,13,22,.55)';x.style.color=active?'#e7c982':'#a99877';x.style.borderColor=active?'rgba(217,182,106,.72)':'rgba(176,133,66,.28)';x.setAttribute('aria-pressed',active?'true':'false');});
+}
+function switchBaziDailyWindow(button){
+  const ctx=window.__tianhengDailyContext,card=button&&button.closest('.card'),target=card&&card.querySelector('.bazi-daily-content');
+  if(!ctx||!card||!target||!window.TianhengBaziDailyV6||!window.TianhengBaziDailyExplanationV6)return;
+  if(button.dataset.dailyYear)styleBaziDailyControls(card,'year',button.dataset.dailyYear);
+  if(button.dataset.dailyMonth!=null)styleBaziDailyControls(card,'month',button.dataset.dailyMonth);
+  if(button.dataset.dailyPurpose)styleBaziDailyControls(card,'purpose',button.dataset.dailyPurpose);
+  const active=key=>card.querySelector(`.bazi-daily-control[data-daily-${key}][aria-pressed="true"]`);
+  const year=Number(active('year').dataset.dailyYear),monthIndex=Number(active('month').dataset.dailyMonth),purpose=active('purpose').dataset.dailyPurpose;
+  const monthlyPack=TianhengBaziMonthlyV5.safeAnalyzeYear(ctx.pillars,ctx.decade,ctx.advanced,ctx.yongShen,year);
+  if(!monthlyPack.ok){target.innerHTML='<div style="color:#c98b82;line-height:1.9">此年份的流月底盤暫時無法產生。</div>';return;}
+  const dailyPack=TianhengBaziDailyV6.safeAnalyze(ctx.pillars,monthlyPack.result,ctx.advanced,ctx.yongShen,monthIndex,purpose);
+  if(!dailyPack.ok){target.innerHTML='<div style="color:#c98b82;line-height:1.9">此用途的日期窗口暫時無法產生。</div>';return;}
+  const explainPack=TianhengBaziDailyExplanationV6.safeExplain(dailyPack.result);
+  target.innerHTML=renderBaziDailyContent(dailyPack.result,explainPack.ok?explainPack.result:null);
+  const mini=card.querySelector('.mini');if(mini)mini.textContent=year+'・'+dailyPack.result.month.name+'・'+dailyPack.result.purpose.label;
+}
+document.addEventListener('click',function(dailyEvent){
+  const dailyButton=dailyEvent.target&&dailyEvent.target.closest&&dailyEvent.target.closest('.bazi-daily-control');
+  if(!dailyButton)return;
+  dailyEvent.preventDefault();
+  dailyEvent.stopPropagation();
+  switchBaziDailyWindow(dailyButton);
+},true);
 function buildAdvancedBaziHtml(r){
   const gz=r&&r.gz;
   if(!gz||gz.hGan==="—"||gz.hZhi==="—"){
@@ -1464,7 +1497,11 @@ function buildAdvancedBaziHtml(r){
   const monthly=monthlyPack.ok?monthlyPack.result:null;
   const monthlyExplainPack=monthly&&window.TianhengBaziMonthlyExplanationV5?TianhengBaziMonthlyExplanationV5.safeExplain(monthly):{ok:false};
   const monthlyExplain=monthlyExplainPack.ok?monthlyExplainPack.result:null;
-  if(decade&&yong)window.__tianhengMonthlyContext={pillars:pillars,decade:decade,advanced:a,yongShen:yong};
+  const dailyPack=monthly&&window.TianhengBaziDailyV6?TianhengBaziDailyV6.safeAnalyze(pillars,monthly,a,yong,0,'career'):{ok:false};
+  const daily=dailyPack.ok?dailyPack.result:null;
+  const dailyExplainPack=daily&&window.TianhengBaziDailyExplanationV6?TianhengBaziDailyExplanationV6.safeExplain(daily):{ok:false};
+  const dailyExplain=dailyExplainPack.ok?dailyExplainPack.result:null;
+  if(decade&&yong){window.__tianhengMonthlyContext={pillars:pillars,decade:decade,advanced:a,yongShen:yong};window.__tianhengDailyContext={pillars:pillars,decade:decade,advanced:a,yongShen:yong};}
   const evidenceBox=html=>`<div style="margin-top:16px;padding:11px 12px;border:1px dashed rgba(176,133,66,.26);border-radius:7px;color:#9b8e74;font-size:11.5px;line-height:1.8"><b style="color:#bda678">原始命盤證據</b><div style="margin-top:6px">${html}</div></div>`;
   const zipingCard=zipingPattern?`<div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">子</span><span class="nm">子平二階動態格局</span><span class="mini">${escapeZipingText(zipingPattern.pattern)}・${escapeZipingText(zipingPattern.status)}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(explain.ziping)}${evidenceBox(`<span class="tag">骨架 ${escapeZipingText(zipingPattern.pattern)}</span><span class="tag">變格 ${escapeZipingText(zipingPattern.variant)}</span><span class="tag">運程 ${escapeZipingText(ziping.fortune.transition.types.join('、'))}</span>`)}</div></div></div>`:'';
   const yongCard=yong&&yongExplain?`<div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">用</span><span class="nm">三階用神裁決</span><span class="mini">第一 ${escapeZipingText(yong.primary.element)}${yong.secondary?'・第二 '+escapeZipingText(yong.secondary.element):''}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(yongExplain)}${evidenceBox(`<span class="tag">第一 ${escapeZipingText(yong.primary.element)} ${yong.primary.score}分</span>${yong.secondary?`<span class="tag">第二 ${escapeZipingText(yong.secondary.element)} ${yong.secondary.score}分</span>`:''}<span class="tag">信度 ${escapeZipingText(yong.confidence.level)}</span><div style="margin-top:7px">六路：${Object.values(yong.schools).map(x=>escapeZipingText(x.name)).join('、')}</div>${yong.conflicts.length?`<div style="margin-top:7px;color:var(--cinnabar)">衝突裁決：${yong.conflicts.map(x=>escapeZipingText(x.element+'・'+x.resolution)).join('；')}</div>`:''}`)}</div></div></div>`:'';
@@ -1472,6 +1509,11 @@ function buildAdvancedBaziHtml(r){
   const decadeCard=decade&&decadeExplain?`<div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">勢</span><span class="nm">大運十年主軸</span><span class="mini">${decade.window.startYear}–${decade.window.endYear}・${decade.dayunSegments.length} 段大運</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(decadeExplain)}${evidenceBox(`<span class="tag">支持年 ${decade.overview.supportCount}</span><span class="tag">壓力年 ${decade.overview.pressureCount}</span><span class="tag">轉折 ${decade.turningPoints.length}</span><div style="margin-top:7px">大運主軸：${escapeZipingText(decade.overview.mainAxis)}</div><div style="margin-top:7px">支持窗口：${decade.supportWindows.join('、')}；壓力窗口：${decade.pressureWindows.join('、')}</div>`)}</div></div></div>`:'';
   const monthlyButtons=decade?decade.years.map((x,i)=>`<button type="button" class="bazi-month-year" data-year="${x.year}" aria-pressed="${i===0?'true':'false'}" style="border:1px solid ${i===0?'rgba(217,182,106,.72)':'rgba(176,133,66,.28)'};border-radius:999px;padding:6px 10px;background:${i===0?'rgba(217,182,106,.18)':'rgba(15,13,22,.55)'};color:${i===0?'#e7c982':'#a99877'};font-family:inherit;font-size:11px;cursor:pointer">${x.year}</button>`).join(''):'';
   const monthlyCard=monthly&&monthlyExplain?`<div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">月</span><span class="nm">十二流月精細引動</span><span class="mini">${monthly.year}・${monthly.pushMonths.slice(0,2).join('、')}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in"><div style="color:#a99877;font-size:11.5px;line-height:1.8;margin-bottom:10px">選擇十年時間線中的年份，系統才運算該年十二節氣月：</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px">${monthlyButtons}</div><div class="bazi-monthly-content">${renderBaziMonthlyContent(monthly,monthlyExplain)}</div></div></div></div>`:'';
+  const dailyStyle=i=>`border:1px solid ${i===0?'rgba(217,182,106,.72)':'rgba(176,133,66,.28)'};border-radius:999px;padding:6px 10px;background:${i===0?'rgba(217,182,106,.18)':'rgba(15,13,22,.55)'};color:${i===0?'#e7c982':'#a99877'};font-family:inherit;font-size:11px;cursor:pointer`;
+  const dailyYears=decade?decade.years.map((x,i)=>`<button type="button" class="bazi-daily-control" data-daily-year="${x.year}" aria-pressed="${i===0?'true':'false'}" style="${dailyStyle(i)}">${x.year}</button>`).join(''):'';
+  const dailyMonths=monthly?monthly.months.map((x,i)=>`<button type="button" class="bazi-daily-control" data-daily-month="${i}" aria-pressed="${i===0?'true':'false'}" style="${dailyStyle(i)}">${x.name}</button>`).join(''):'';
+  const dailyPurposes=[['career','面試／事業'],['contract','簽約／決策'],['relationship','感情／溝通'],['finance','財務／配置']].map((x,i)=>`<button type="button" class="bazi-daily-control" data-daily-purpose="${x[0]}" aria-pressed="${i===0?'true':'false'}" style="${dailyStyle(i)}">${x[1]}</button>`).join('');
+  const dailyCard=daily&&dailyExplain?`<div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">日</span><span class="nm">重要日期與時段窗口</span><span class="mini">${daily.year}・${daily.month.name}・${daily.purpose.label}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in"><div style="color:#a99877;font-size:11.5px;line-height:1.8;margin-bottom:7px">先選年份、節氣月與真正用途；系統才逐日重算，不用同一份吉日套所有事情。</div><div style="color:#bda678;font-size:11px;margin:9px 0 5px">年份</div><div style="display:flex;flex-wrap:wrap;gap:7px">${dailyYears}</div><div style="color:#bda678;font-size:11px;margin:12px 0 5px">節氣月</div><div style="display:flex;flex-wrap:wrap;gap:7px">${dailyMonths}</div><div style="color:#bda678;font-size:11px;margin:12px 0 5px">用途</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px">${dailyPurposes}</div><div class="bazi-daily-content">${renderBaziDailyContent(daily,dailyExplain)}</div></div></div></div>`:'';
   return `<div class="tasks-head"><div class="ln"></div><span>八 字 進 階 分 析</span><div class="ln"></div></div>
     ${recentGuidance}
     <div style="text-align:center;color:#8f836d;font-size:11px;letter-spacing:.18em;margin:20px 0 10px">老師專業資料・點擊展開</div>
@@ -1480,6 +1522,7 @@ function buildAdvancedBaziHtml(r){
     ${yongFortuneCard}
     ${decadeCard}
     ${monthlyCard}
+    ${dailyCard}
     <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">進</span><span class="nm">藏干結構</span><span class="mini">本氣・中氣・餘氣</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(explain.cangGan)}${evidenceBox(hidden)}</div></div></div>
     <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">根</span><span class="nm">日主通根</span><span class="mini">${cmp.tongGenStrength.strength}・${cmp.tongGenStrength.score} 分</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(explain.tongGen)}${evidenceBox(`<span class="tag">原站 ${cmp.legacyStrength||'未提供'}</span><span class="tag">進階 ${cmp.tongGenStrength.strength}</span><div style="margin-top:7px">原始分 ${cmp.tongGenStrength.rawScore}；顯示分 ${cmp.tongGenStrength.score}</div>`)}</div></div></div>
     <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">生</span><span class="nm">十二長生</span><span class="mini">日干 ${a.changSheng.riGan}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(explain.changSheng)}${evidenceBox(stages)}</div></div></div>

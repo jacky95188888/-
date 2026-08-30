@@ -1,0 +1,27 @@
+const fs=require('fs'),vm=require('vm');
+['tianheng-bazi-advanced-v1.js','tianheng-bazi-combinations-v1.js','tianheng-bazi-geju-tiaohou-v1.js','tianheng-bazi-quality-v1.js','tianheng-bazi-engine-v1.js','tianheng-ziping-pattern-v2.js','tianheng-ziping-flow-v2.js','tianheng-ziping-qi-v2.js','tianheng-ziping-officer-kill-v2.js','tianheng-ziping-fortune-combinations-v2.js','tianheng-ziping-combination-effect-v2.js','tianheng-ziping-fortune-v2.js','tianheng-ziping-advice-v2.js','tianheng-ziping-engine-v2.js','tianheng-bazi-yongshen-v3.js','tianheng-bazi-yongshen-fortune-v3.js','tianheng-bazi-decade-v4.js','tianheng-bazi-monthly-v5.js','tianheng-bazi-daily-v6.js','tianheng-bazi-daily-explanation-v6.js'].forEach(f=>vm.runInThisContext(fs.readFileSync(f,'utf8'),{filename:f}));
+let pass=0,total=0;function t(n,f){total++;try{f();pass++;console.log('PASS '+n);}catch(e){console.error('FAIL '+n+'\n '+e.message);process.exitCode=1;}}function ok(x,m){if(!x)throw Error(m||'assert');}
+const p=[{gan:'己',zhi:'丑'},{gan:'癸',zhi:'丑'},{gan:'庚',zhi:'午'},{gan:'甲',zhi:'寅'}],a=TianhengBaziEngine.analyze(p),z=TianhengZipingEngine.analyzeFortune(p,{gan:'丙',zhi:'午'},{strength:'身弱'}),y=TianhengBaziYongShenV3.analyze(p,a,z),dayun={list:[{gz:'丙午',startAge:30,startYear:2020},{gz:'丁未',startAge:40,startYear:2030},{gz:'戊申',startAge:50,startYear:2040}]},decade=TianhengBaziDecadeV4.analyze(p,dayun,a,y,{startYear:2026}),monthly=TianhengBaziMonthlyV5.analyzeYear(p,decade,a,y,2026),r=TianhengBaziDailyV6.analyze(p,monthly,a,y,0,'career'),e=TianhengBaziDailyExplanationV6.explain(r);
+t('2019-01-27 校準為甲子日',()=>ok(TianhengBaziDailyV6.dayGz('2019-01-27')==='甲子'));
+t('1949-10-01 交叉校準為甲子日',()=>ok(TianhengBaziDailyV6.dayGz('1949-10-01')==='甲子'));
+t('流日干支每日循序且六十日回甲子',()=>ok(TianhengBaziDailyV6.dayGz('2019-01-28')==='乙丑'&&TianhengBaziDailyV6.dayGz('2019-03-27')==='癸亥'&&TianhengBaziDailyV6.dayGz('2019-03-28')==='甲子'));
+t('寅月日期以約 2/4 至 3/5 產生',()=>ok(r.days[0].date==='2026-02-04'&&r.days.at(-1).date==='2026-03-05'&&r.days.length===30));
+t('子月與丑月跨到下一國曆年',()=>{const zi=TianhengBaziDailyV6.datesFor(2026,10),chou=TianhengBaziDailyV6.datesFor(2026,11);ok(zi[0]==='2026-12-07'&&zi.at(-1)==='2027-01-05'&&chou[0]==='2027-01-06'&&chou.at(-1)==='2027-02-03');});
+t('每一天保存五層證據',()=>ok(r.days.every(x=>['大運 ','流年 ','流月 ','流日 ','用途十神 '].every(prefix=>x.evidence.some(v=>v.startsWith(prefix))))));
+t('每日保留用神狀態與本命沖合事件',()=>ok(r.days.every(x=>x.primaryStatus&&Array.isArray(x.events))&&r.days.some(x=>x.events.length)));
+t('用途不是共用排序',()=>{const rr=TianhengBaziDailyV6.analyze(p,monthly,a,y,0,'relationship');ok(r.purpose.label!==rr.purpose.label&&JSON.stringify(r.preferred.map(x=>x.date))!==JSON.stringify(rr.preferred.map(x=>x.date)));});
+t('四種用途皆可獨立運算',()=>ok(['career','contract','relationship','finance'].every(k=>TianhengBaziDailyV6.safeAnalyze(p,monthly,a,y,0,k).ok)));
+t('每天提供兩個時段窗口與時柱',()=>ok(r.days.every(x=>x.hours.length===2&&x.hours.every(h=>/^\d{2}:00–\d{2}:00$/.test(h.span)&&h.gz.length===2))));
+t('甲己日起甲子時規則正確',()=>ok(TianhengBaziDailyV6.hourGz('甲','子')==='甲子'&&TianhengBaziDailyV6.hourGz('己','子')==='甲子'));
+t('乙庚日起丙子時規則正確',()=>ok(TianhengBaziDailyV6.hourGz('乙','子')==='丙子'&&TianhengBaziDailyV6.hourGz('庚','子')==='丙子'));
+t('前五日與風險三日依分數排序',()=>ok(r.preferred.length===5&&r.caution.length===3&&r.preferred[0].score>=r.preferred[4].score&&r.preferred[4].score>=r.caution[0].score));
+t('每個日期包含行動、避免與完整解讀',()=>ok(r.days.every(x=>x.action&&x.avoid&&x.reading.length>=20&&x.evidence.length>=5&&x.hours.length===2)&&e.details.length===5));
+t('完整講解含原因影響行動風險證據',()=>ok(e.title&&e.summary&&e.why&&e.impact&&e.actions.length&&e.avoid.length&&e.evidence.length));
+t('不宣稱萬事皆吉或獲利保證',()=>ok(e.summary.includes('不是通用黃曆')&&e.avoid.some(x=>x.includes('萬事皆吉'))&&r.disclaimer.includes('不是事件保證')));
+t('本命用神與舊結果不被覆寫',()=>ok(r.natalYongShen.primary===y.primary&&r.legacyOverride===false&&e.legacyOverride===false));
+t('錯誤月份用途由安全入口攔截',()=>ok(!TianhengBaziDailyV6.safeAnalyze(p,monthly,a,y,12,'career').ok&&!TianhengBaziDailyV6.safeAnalyze(p,monthly,a,y,0,'unknown').ok&&!TianhengBaziDailyExplanationV6.safeExplain(null).ok));
+const html=fs.readFileSync('index.html','utf8');
+t('正式首頁按相依順序載入六階模組',()=>ok(html.indexOf('tianheng-bazi-monthly-v5.js')<html.indexOf('tianheng-bazi-daily-v6.js')&&html.indexOf('tianheng-bazi-daily-v6.js')<html.indexOf('tianheng-bazi-daily-explanation-v6.js')));
+t('正式首頁具有用途與月份延遲運算入口',()=>ok(html.includes('重要日期與時段窗口')&&html.includes('switchBaziDailyWindow')&&html.includes('data-daily-purpose')&&html.includes('data-daily-month')));
+t('六階互動使用捕獲事件避免誤收卡片',()=>ok(html.includes("closest('.bazi-daily-control')")&&html.includes('dailyEvent.stopPropagation()')));
+console.log(`\nRESULT ${pass}/${total} passed`);
