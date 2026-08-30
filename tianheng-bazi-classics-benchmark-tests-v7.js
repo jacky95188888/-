@@ -29,7 +29,9 @@ assert('乙庚相合可辨合煞留官取清',()=>li.comparison.status==='match'
 const hidden=B.run('ZP-OFFICER-004');
 assert('亥卯未引傷與印制隱傷兩層皆符合古例',()=>hidden.comparison.status==='match'&&hidden.engineSnapshot.failures.some(x=>x.code==='HIDDEN_COMBINATION_HURT')&&hidden.engineSnapshot.rescues.some(x=>x.code==='SEAL_CONTROLS_HIDDEN_HURT')&&hidden.engineSnapshot.branchStructure.hiddenGods.some(x=>x.god==='傷官'));
 const ge=B.run('ZP-WEALTH-006');
-assert('葛參政命辨財旺生官',()=>ge.comparison.patternMatch&&ge.comparison.matchedCodes.includes('WEALTH_BIRTH_OFFICER'));
+assert('葛參政命辨財旺生官且財露有官保護',()=>ge.comparison.status==='match'&&ge.comparison.matchedCodes.includes('WEALTH_BIRTH_OFFICER')&&ge.engineSnapshot.formation.some(x=>x.code==='EXPOSED_WEALTH_PROTECTED_BY_OFFICER'));
+const yang=B.run('ZP-WEALTH-007');
+assert('楊侍郎命一位比肩有食神通化不作奪財',()=>yang.comparison.status==='match'&&yang.engineSnapshot.formation.some(x=>x.code==='SINGLE_PEER_NOT_ROBBING_WEALTH')&&!yang.engineSnapshot.failures.some(x=>x.code==='WEALTH_ROBBED'));
 const good=B.run('ZP-WEALTH-008'),bad=B.run('ZP-WEALTH-009');
 assert('財印有情與財印相礙不被合併成同一結論',()=>good.humanAnnotation.expectation.requiredCapabilities[0]!==bad.humanAnnotation.expectation.requiredCapabilities[0]);
 assert('財印分隔與財印相鄰兩例皆完成位置裁決',()=>good.comparison.status==='match'&&bad.comparison.status==='match'&&good.engineSnapshot.formation.some(x=>x.code==='POSITIONAL_WEALTH_SEAL_NON_CONFLICT')&&bad.engineSnapshot.failures.some(x=>x.code==='POSITIONAL_WEALTH_SEAL_CONFLICT'));

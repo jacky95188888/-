@@ -57,6 +57,10 @@ assert('亥卯未三合木可引出未中乙傷官',()=>hiddenHurt.branchStructu
 assert('兩辛印透可制合局所引藏干傷官',()=>has(hiddenHurt.rescues,'SEAL_CONTROLS_HIDDEN_HURT')&&hiddenHurt.status.includes('救'));
 const exhaustedHurt=Z.analyze([{gan:'丁',zhi:'未'},{gan:'丁',zhi:'未'},{gan:'丙',zhi:'午'},{gan:'丙',zhi:'午'}],{strength:'身強'});
 assert('傷官傷盡但火過無財仍列破格原因',()=>exhaustedHurt.basePattern.pattern==='傷官格'&&has(exhaustedHurt.failures,'EXCESS_FIRE_NO_WEALTH_OUTLET')&&exhaustedHurt.status==='敗格'&&exhaustedHurt.ruleElementStrengths.火===6);
+const officerProtectsWealth=Z.analyze([{gan:'壬',zhi:'申'},{gan:'壬',zhi:'子'},{gan:'戊',zhi:'午'},{gan:'乙',zhi:'卯'}],{strength:'身強'});
+assert('財星明透而順生官星時保留官護財證據',()=>has(officerProtectsWealth.formation,'EXPOSED_WEALTH_PROTECTED_BY_OFFICER')&&!has(officerProtectsWealth.failures,'WEALTH_ROBBED'));
+const singlePeer=Z.analyze([{gan:'壬',zhi:'寅'},{gan:'壬',zhi:'寅'},{gan:'庚',zhi:'辰'},{gan:'辛',zhi:'巳'}],{strength:'身強'});
+assert('一位比肩且有食神生財不直接判奪財',()=>has(singlePeer.formation,'SINGLE_PEER_NOT_ROBBING_WEALTH')&&has(singlePeer.formation,'FOOD_BIRTH_WEALTH')&&!has(singlePeer.failures,'WEALTH_ROBBED'));
 
 assert('候選格局保留月令本中餘氣',()=>officer.candidates.length===1&&officer.candidates[0].layer==='本氣');
 assert('不以分數裁定格局',()=>officer.xiuZhengHouFen===undefined&&officer.score===undefined);
@@ -82,6 +86,11 @@ const activatedByLuck=Z.analyzeFortune(
   {type:'大運',gan:'己',zhi:'酉'},{strength:'身強'});
 assert('大運財星引動食神生財',()=>activatedByLuck.transition.types.includes('被引動')&&has(activatedByLuck.transition.newFormation,'FOOD_BIRTH_WEALTH'));
 assert('格局變體因運程被重塑',()=>activatedByLuck.transition.types.includes('被重塑')&&activatedByLuck.after.variant==='食神生財');
+const hiddenByLuck=Z.analyzeFortune(
+  [{gan:'甲',zhi:'午'},{gan:'丙',zhi:'寅'},{gan:'戊',zhi:'辰'},{gan:'丁',zhi:'巳'}],
+  {type:'大運',gan:'癸',zhi:'亥'},{strength:'身強'});
+assert('大運天干透出原局未明透藏干時標記伏神被引出',()=>hiddenByLuck.transition.types.includes('伏神被引出')&&hiddenByLuck.transition.hiddenActivations.some(x=>x.code==='FORTUNE_EXPOSES_ORIGINAL_HIDDEN_GOD'&&x.original.gan==='癸'&&x.original.zhi==='辰'));
+assert('伏神事件不回寫原局明透資料',()=>hiddenByLuck.base.variant!==undefined&&hiddenByLuck.transition.hiddenActivations.every(x=>x.original.layer&&x.effect.includes('重新裁定')));
 const badLuck=Z.safeAnalyzeFortune(officer.pillars,{gan:'X',zhi:'子'},{strength:'身中和'});
 assert('錯誤運程可安全攔截',()=>badLuck.ok===false&&badLuck.error.includes('運程干支無效'));
 
