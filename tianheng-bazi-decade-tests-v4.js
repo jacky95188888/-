@@ -11,9 +11,11 @@ t('逐年保存格局轉態宮位與證據',()=>ok(r.years.every(x=>x.pattern&&A
 t('逐年結論不是單一固定分類',()=>ok(new Set(r.years.map(x=>x.category)).size>=2));
 t('支持窗口與壓力窗口依作用分排序',()=>ok(r.supportWindows.length===3&&r.pressureWindows.length===3&&r.years.find(x=>x.year===r.supportWindows[0]).combinedScore>=r.years.find(x=>x.year===r.pressureWindows[0]).combinedScore));
 t('轉折點包含換運年份',()=>ok(r.turningPoints.some(x=>x.year===2030&&x.type==='換運／轉折')));
+t('時間線首年不誤標為換運',()=>ok(r.turningPoints.find(x=>x.year===2026).type!=='換運／轉折'));
 t('每年有事業感情財務行動證據',()=>ok(r.years.every(x=>x.actions.length===3&&x.avoid.length===3&&['事業','感情','財務'].includes(x.focus.key))));
 t('完整講解包含大運分段與十個年份',()=>ok(e.details.length===12&&e.details.filter(x=>/^20\d\d /.test(x.label)).length===10));
 t('完整講解含結論原因影響行動避免證據',()=>ok(e.title&&e.summary&&e.why&&e.impact&&e.actions.length&&e.avoid.length&&e.evidence.length));
+t('逐年講解不產生重複句尾標點',()=>ok(!/。；|。。/.test(e.details.map(x=>x.reading).join(''))));
 t('不做事件與投資獲利保證',()=>ok(e.impact.includes('不等同必然')&&e.avoid.some(x=>x.includes('不保證投資獲利'))));
 t('不同十年窗口產生不同內容',()=>{const r2=TianhengBaziDecadeV4.analyze(p,dayun,a,y,{startYear:2030}),e2=TianhengBaziDecadeExplanationV4.explain(r2);ok(e.title!==e2.title&&JSON.stringify(e.details)!==JSON.stringify(e2.details));});
 t('四階不得覆寫既有結果',()=>ok(r.legacyOverride===false&&e.legacyOverride===false));
