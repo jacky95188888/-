@@ -8,6 +8,8 @@ on:
       - 'tianheng-ziping-pattern-tests-v2.js'
       - 'tianheng-ziping-classics-v2.js'
       - 'tianheng-ziping-classics-tests-v2.js'
+      - 'tianheng-bazi-classics-benchmark-v7.js'
+      - 'tianheng-bazi-classics-benchmark-tests-v7.js'
       - 'tianheng-ziping-qi-v2.js'
       - 'tianheng-ziping-qi-tests-v2.js'
       - 'tianheng-ziping-flow-v2.js'
@@ -62,6 +64,8 @@ jobs:
         run: node tianheng-ziping-pattern-tests-v2.js
       - name: Run verified classics case tests
         run: node tianheng-ziping-classics-tests-v2.js
+      - name: Run v7 classics calibration and counterexample tests
+        run: node tianheng-bazi-classics-benchmark-tests-v7.js
       - name: Run qi-structure override tests
         run: node tianheng-ziping-qi-tests-v2.js
       - name: Run source-flow chain tests

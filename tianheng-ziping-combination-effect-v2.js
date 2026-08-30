@@ -14,7 +14,7 @@ function verdict(pattern,role,strong,weak){var help=[],harm=[];
  else if(pattern==='食神格'){help=['財'];harm=['印'];}
  else if(pattern==='煞格'){help=['食傷','印'];harm=['財'];}
  else if(pattern==='傷官格'){help=strong?['財']:weak?['印']:['財'];harm=strong?['印','官殺']:['官殺'];}
- else if(pattern==='陽刃格'||pattern==='建祿月劫格'){help=['官殺'];harm=['比劫'];}
+ else if(pattern==='陽刃格'||pattern==='建祿月劫格'){help=['官殺'];harm=strong?['比劫','印']:['比劫'];}
  if(help.indexOf(role)>=0)return '助格';if(harm.indexOf(role)>=0)return '增忌';return '待裁';}
 function analyze(p,f,options){var d=deps(),strength=options&&options.strength||'未裁定',strong=strength==='身強'||strength==='極強',weak=strength==='身弱'||strength==='極弱',base=d.p.analyze(p,options||{}),comb=d.c.analyze(p,f),pattern=base.basePattern.pattern,events=comb.completedGroups.concat(comb.addedEvents.filter(function(x){return !x.fortuneCompletes;})).concat(comb.stemCombinations.filter(function(x){return x.status==='合化候選';})),seen={},effects=[];
  events.forEach(function(e){var key=e.type+'|'+(e.name||'')+'|'+e.huaQi;if(seen[key]||!e.huaQi||e.huaQi.indexOf('/')>=0)return;seen[key]=1;var role=family(p[2].gan,e.huaQi),v=verdict(pattern,role,strong,weak),codes=[];if(v==='助格')codes.push('COMBINATION_SUPPORTS_PATTERN');if(v==='增忌')codes.push('COMBINATION_STRENGTHENS_ADVERSE_ROLE');effects.push({event:e,transformedElement:e.huaQi,roleFamily:role,pattern:pattern,strengthInput:strength,verdict:v,codes:codes});});

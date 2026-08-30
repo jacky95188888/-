@@ -31,6 +31,13 @@ assert('傷官格身弱佩印',()=>hurtSeal.basePattern.pattern==='傷官格'&&h
 const blade=Z.analyze([{gan:'辛',zhi:'子'},{gan:'丙',zhi:'卯'},{gan:'甲',zhi:'辰'},{gan:'己',zhi:'未'}],{strength:'身強'});
 assert('陽日主劫財月令判陽刃',()=>blade.basePattern.pattern==='陽刃格');
 assert('陽刃得官制',()=>has(blade.formation,'OFFICER_KILL_CONTROLS_BLADE'));
+const earthBlade=Z.analyze([{gan:'壬',zhi:'戌'},{gan:'丁',zhi:'午'},{gan:'戊',zhi:'申'},{gan:'乙',zhi:'卯'}],{strength:'身強'});
+const earthRob=Z.analyze([{gan:'壬',zhi:'戌'},{gan:'丁',zhi:'未'},{gan:'戊',zhi:'申'},{gan:'乙',zhi:'卯'}],{strength:'身強'});
+assert('戊日只有午月劫財可判陽刃',()=>earthBlade.basePattern.pattern==='陽刃格');
+assert('戊日未月不得誤判陽刃',()=>earthRob.basePattern.pattern==='建祿月劫格');
+assert('戊午以中氣己土為刃神而非誤取丁印',()=>earthBlade.basePattern.monthMainGan==='己'&&earthBlade.basePattern.layer==='中氣');
+const fiveBlades=[['甲','卯'],['丙','午'],['戊','午'],['庚','酉'],['壬','子']].map(([gan,zhi])=>Z.analyze([{gan:'辛',zhi:'亥'},{gan:'癸',zhi},{gan,zhi:'辰'},{gan:'己',zhi:'未'}],{strength:'身強'}));
+assert('五個陽干固定刃位全部可辨',()=>fiveBlades.every(x=>x.basePattern.pattern==='陽刃格'&&x.basePattern.monthMainGod==='劫財'));
 
 const lu=Z.analyze([{gan:'辛',zhi:'子'},{gan:'癸',zhi:'寅'},{gan:'甲',zhi:'辰'},{gan:'己',zhi:'未'}],{strength:'身強'});
 assert('比肩月令判建祿月劫',()=>lu.basePattern.pattern==='建祿月劫格');

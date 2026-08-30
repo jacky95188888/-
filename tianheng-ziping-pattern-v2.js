@@ -6,6 +6,7 @@
 var GAN='甲乙丙丁戊己庚辛壬癸',ZHI='子丑寅卯辰巳午未申酉戌亥';
 var CHONG={子:'午',午:'子',丑:'未',未:'丑',寅:'申',申:'寅',卯:'酉',酉:'卯',辰:'戌',戌:'辰',巳:'亥',亥:'巳'};
 var LIUHE={子:'丑',丑:'子',寅:'亥',亥:'寅',卯:'戌',戌:'卯',辰:'酉',酉:'辰',巳:'申',申:'巳',午:'未',未:'午'};
+var YANG_BLADE_BRANCH={甲:'卯',丙:'午',戊:'午',庚:'酉',壬:'子'};
 var GROUP={正官:'官格',七殺:'煞格',正財:'財格',偏財:'財格',正印:'印格',偏印:'印格',食神:'食神格',傷官:'傷官格',比肩:'建祿月劫格',劫財:'建祿月劫格'};
 function deps(){var a=root.TianhengBaziAdvanced,g=root.TianhengBaziGeJuTiaoHou;if(!a||!g)throw Error('需先載入 advanced 與 geju-tiaohou');return {a:a,g:g};}
 function validate(p){if(!Array.isArray(p)||p.length!==4)throw Error('需要完整四柱');p.forEach(function(x,i){if(!x||GAN.indexOf(x.gan)<0||ZHI.indexOf(x.zhi)<0)throw Error('第'+(i+1)+'柱干支無效');});return p;}
@@ -86,7 +87,7 @@ function evaluate(pattern,p,fs,strength){var ok=[],bad=[],save=[],variant='';
  }
  return {variant:variant||pattern,supports:ok,failures:bad,rescues:save};
 }
-function chooseBase(p,candidates){var d=deps(),dm=p[2].gan,main=candidates[0],god=main.god,pattern=GROUP[god]||main.pattern;if(god==='劫財')pattern=(dm==='甲'||dm==='丙'||dm==='戊'||dm==='庚'||dm==='壬')?'陽刃格':'建祿月劫格';else if(god==='比肩')pattern='建祿月劫格';return {monthBranch:p[1].zhi,monthMainGan:main.gan,monthMainGod:god,pattern:pattern,layer:main.layer,visible:main.visible};}
+function chooseBase(p,candidates){var d=deps(),dm=p[2].gan,main=candidates[0],god=main.god,pattern=GROUP[god]||main.pattern,blade;if(YANG_BLADE_BRANCH[dm]===p[1].zhi){blade=candidates.find(function(x){return x.god==='劫財';});if(blade){main=blade;god=blade.god;pattern='陽刃格';}}else if(god==='劫財'||god==='比肩')pattern='建祿月劫格';return {monthBranch:p[1].zhi,monthMainGan:main.gan,monthMainGod:god,pattern:pattern,layer:main.layer,visible:main.visible};}
 function statusOf(ev){var o=ev.supports.length>0,b=ev.failures.length>0,s=ev.rescues.length>0;if(o&&!b)return '成格';if(o&&b&&s)return '成中有敗・敗中有救';if(o&&b)return '成中有敗';if(!o&&b&&s)return '敗中有救';if(!o&&b)return '敗格';return '格局待定';}
 function analyze(pillars,options){var p=validate(pillars),fs=facts(p),candidates=candidateList(p,fs),base=chooseBase(p,candidates),strength=options&&options.strength||'未裁定',ev=evaluate(base.pattern,p,fs,strength),status=statusOf(ev),qi=root.TianhengZipingQi?root.TianhengZipingQi.analyze(p):null,resolved=qi&&qi.qualifies&&qi.pattern?qi.pattern:base.pattern;return {engine:'TianhengZipingPattern',version:'2.0-alpha',mode:'add-only',sourceFramework:['子平真詮・月令用神','子平真詮・成敗救應','滴天髓・形象氣勢覆核'],pillars:p.map(function(x){return {gan:x.gan,zhi:x.zhi};}),strengthInput:strength,candidates:candidates,basePattern:base,resolvedPattern:resolved,resolution:qi&&qi.qualifies?'氣勢成象覆核':'月令常格',qiStructure:qi,variant:ev.variant,status:status,formation:ev.supports,failures:ev.failures,rescues:ev.rescues,patternGod:{god:base.monthMainGod,gan:base.monthMainGan},dynamicSkeleton:{monthCommand:base.monthBranch,base:base.pattern,resolved:resolved,variant:ev.variant,condition:status},evidence:fs,legacyOverride:false,notes:['月令常格 basePattern 與氣勢覆核 resolvedPattern 分開保存','不以單一分數判定上格或下格','所有成立、失敗與救應均保留規則代碼供回歸測試與老師覆核']};}
 function codeSet(xs){var o={};xs.forEach(function(x){o[x.code]=1;});return o;}

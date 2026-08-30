@@ -10,7 +10,7 @@ const E=globalThis.TianhengZipingCombinationEffect;
 let pass=0,fail=0;
 function assert(name,fn){try{if(!fn())throw Error('assert false');console.log('PASS',name);pass++;}catch(e){console.error('FAIL',name,'::',e.message);fail++;}}
 const owl=E.analyze([{gan:'庚',zhi:'寅'},{gan:'壬',zhi:'午'},{gan:'戊',zhi:'午'},{gan:'丁',zhi:'巳'}],{type:'大運',gan:'丙',zhi:'戌'},{strength:'身強'});
-assert('印格身強再成火印局判增忌',()=>owl.basePattern==='印格'&&owl.harmfulEffects.some(x=>x.event.type==='三合'&&x.roleFamily==='印'));
+assert('身強陽刃再成火印局判增忌',()=>owl.basePattern==='陽刃格'&&owl.harmfulEffects.some(x=>x.event.type==='三合'&&x.roleFamily==='印'));
 assert('偏印得局制食神辨梟神奪食',()=>owl.effects.some(x=>x.codes.includes('OWL_STEALS_FOOD'))&&owl.overall==='增忌破格');
 const support=E.analyze([{gan:'甲',zhi:'亥'},{gan:'壬',zhi:'子'},{gan:'丙',zhi:'午'},{gan:'丁',zhi:'卯'}],{type:'流年',gan:'己',zhi:'未'},{strength:'身中和'});
 assert('官格得亥卯未木印局判助格',()=>support.basePattern==='官格'&&support.helpfulEffects.some(x=>x.transformedElement==='木'&&x.roleFamily==='印'));
