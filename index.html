@@ -600,14 +600,14 @@
 <script src="./tianheng-bazi-yongshen-fortune-v3.js?v=3.1.0"></script>
 <script src="./tianheng-bazi-decade-v4.js?v=4.0.1"></script>
 <script src="./tianheng-bazi-monthly-v5.js?v=5.0.0"></script>
-<script src="./tianheng-bazi-daily-v6.js?v=6.0.0"></script>
+<script src="./tianheng-bazi-daily-v6.js?v=6.0.1"></script>
 <script src="./tianheng-bazi-integration-v3.js?v=3.0.0"></script>
 <script src="./tianheng-bazi-explanations-v2.js?v=2.0.1"></script>
 <script src="./tianheng-bazi-yongshen-explanation-v3.js?v=3.0.0"></script>
 <script src="./tianheng-bazi-yongshen-fortune-explanation-v3.js?v=3.1.1"></script>
 <script src="./tianheng-bazi-decade-explanation-v4.js?v=4.0.1"></script>
 <script src="./tianheng-bazi-monthly-explanation-v5.js?v=5.0.0"></script>
-<script src="./tianheng-bazi-daily-explanation-v6.js?v=6.0.0"></script>
+<script src="./tianheng-bazi-daily-explanation-v6.js?v=6.0.1"></script>
 <script>
 /* ===== 天衡 · 九維命理交叉推演 核心引擎 ===== */
 const GAN=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
@@ -1438,13 +1438,14 @@ function switchBaziDailyWindow(button){
   if(button.dataset.dailyPurpose)styleBaziDailyControls(card,'purpose',button.dataset.dailyPurpose);
   const active=key=>card.querySelector(`.bazi-daily-control[data-daily-${key}][aria-pressed="true"]`);
   const year=Number(active('year').dataset.dailyYear),monthIndex=Number(active('month').dataset.dailyMonth),purpose=active('purpose').dataset.dailyPurpose;
-  const monthlyPack=TianhengBaziMonthlyV5.safeAnalyzeYear(ctx.pillars,ctx.decade,ctx.advanced,ctx.yongShen,year);
-  if(!monthlyPack.ok){target.innerHTML='<div style="color:#c98b82;line-height:1.9">此年份的流月底盤暫時無法產生。</div>';return;}
-  const dailyPack=TianhengBaziDailyV6.safeAnalyze(ctx.pillars,monthlyPack.result,ctx.advanced,ctx.yongShen,monthIndex,purpose);
-  if(!dailyPack.ok){target.innerHTML='<div style="color:#c98b82;line-height:1.9">此用途的日期窗口暫時無法產生。</div>';return;}
-  const explainPack=TianhengBaziDailyExplanationV6.safeExplain(dailyPack.result);
-  target.innerHTML=renderBaziDailyContent(dailyPack.result,explainPack.ok?explainPack.result:null);
-  const mini=card.querySelector('.mini');if(mini)mini.textContent=year+'・'+dailyPack.result.month.name+'・'+dailyPack.result.purpose.label;
+  let monthly=ctx.monthlyByYear[year];
+  if(!monthly){const monthlyPack=TianhengBaziMonthlyV5.safeAnalyzeYear(ctx.pillars,ctx.decade,ctx.advanced,ctx.yongShen,year);if(!monthlyPack.ok){target.innerHTML='<div style="color:#c98b82;line-height:1.9">此年份的流月底盤暫時無法產生。</div>';return;}monthly=ctx.monthlyByYear[year]=monthlyPack.result;}
+  const cacheKey=year+':'+monthIndex+':'+purpose;
+  let daily=ctx.dailyByKey[cacheKey];
+  if(!daily){const dailyPack=TianhengBaziDailyV6.safeAnalyze(ctx.pillars,monthly,ctx.advanced,ctx.yongShen,monthIndex,purpose);if(!dailyPack.ok){target.innerHTML='<div style="color:#c98b82;line-height:1.9">此用途的日期窗口暫時無法產生。</div>';return;}daily=ctx.dailyByKey[cacheKey]=dailyPack.result;}
+  const explainPack=TianhengBaziDailyExplanationV6.safeExplain(daily);
+  target.innerHTML=renderBaziDailyContent(daily,explainPack.ok?explainPack.result:null);
+  const mini=card.querySelector('.mini');if(mini)mini.textContent=year+'・'+daily.month.name+'・'+daily.purpose.label;
 }
 document.addEventListener('click',function(dailyEvent){
   const dailyButton=dailyEvent.target&&dailyEvent.target.closest&&dailyEvent.target.closest('.bazi-daily-control');
@@ -1501,7 +1502,8 @@ function buildAdvancedBaziHtml(r){
   const daily=dailyPack.ok?dailyPack.result:null;
   const dailyExplainPack=daily&&window.TianhengBaziDailyExplanationV6?TianhengBaziDailyExplanationV6.safeExplain(daily):{ok:false};
   const dailyExplain=dailyExplainPack.ok?dailyExplainPack.result:null;
-  if(decade&&yong){window.__tianhengMonthlyContext={pillars:pillars,decade:decade,advanced:a,yongShen:yong};window.__tianhengDailyContext={pillars:pillars,decade:decade,advanced:a,yongShen:yong};}
+  if(decade&&yong)window.__tianhengMonthlyContext={pillars:pillars,decade:decade,advanced:a,yongShen:yong};
+  if(decade&&yong&&monthly&&daily)window.__tianhengDailyContext={pillars:pillars,decade:decade,advanced:a,yongShen:yong,monthlyByYear:{[monthly.year]:monthly},dailyByKey:{[monthly.year+':0:career']:daily}};
   const evidenceBox=html=>`<div style="margin-top:16px;padding:11px 12px;border:1px dashed rgba(176,133,66,.26);border-radius:7px;color:#9b8e74;font-size:11.5px;line-height:1.8"><b style="color:#bda678">原始命盤證據</b><div style="margin-top:6px">${html}</div></div>`;
   const zipingCard=zipingPattern?`<div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">子</span><span class="nm">子平二階動態格局</span><span class="mini">${escapeZipingText(zipingPattern.pattern)}・${escapeZipingText(zipingPattern.status)}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(explain.ziping)}${evidenceBox(`<span class="tag">骨架 ${escapeZipingText(zipingPattern.pattern)}</span><span class="tag">變格 ${escapeZipingText(zipingPattern.variant)}</span><span class="tag">運程 ${escapeZipingText(ziping.fortune.transition.types.join('、'))}</span>`)}</div></div></div>`:'';
   const yongCard=yong&&yongExplain?`<div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">用</span><span class="nm">三階用神裁決</span><span class="mini">第一 ${escapeZipingText(yong.primary.element)}${yong.secondary?'・第二 '+escapeZipingText(yong.secondary.element):''}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(yongExplain)}${evidenceBox(`<span class="tag">第一 ${escapeZipingText(yong.primary.element)} ${yong.primary.score}分</span>${yong.secondary?`<span class="tag">第二 ${escapeZipingText(yong.secondary.element)} ${yong.secondary.score}分</span>`:''}<span class="tag">信度 ${escapeZipingText(yong.confidence.level)}</span><div style="margin-top:7px">六路：${Object.values(yong.schools).map(x=>escapeZipingText(x.name)).join('、')}</div>${yong.conflicts.length?`<div style="margin-top:7px;color:var(--cinnabar)">衝突裁決：${yong.conflicts.map(x=>escapeZipingText(x.element+'・'+x.resolution)).join('；')}</div>`:''}`)}</div></div></div>`:'';

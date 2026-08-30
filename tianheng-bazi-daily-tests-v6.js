@@ -25,4 +25,5 @@ const html=fs.readFileSync('index.html','utf8');
 t('正式首頁按相依順序載入六階模組',()=>ok(html.indexOf('tianheng-bazi-monthly-v5.js')<html.indexOf('tianheng-bazi-daily-v6.js')&&html.indexOf('tianheng-bazi-daily-v6.js')<html.indexOf('tianheng-bazi-daily-explanation-v6.js')));
 t('正式首頁具有用途與月份延遲運算入口',()=>ok(html.includes('重要日期與時段窗口')&&html.includes('switchBaziDailyWindow')&&html.includes('data-daily-purpose')&&html.includes('data-daily-month')));
 t('六階互動使用捕獲事件避免誤收卡片',()=>ok(html.includes("closest('.bazi-daily-control')")&&html.includes('dailyEvent.stopPropagation()')));
+t('六階資產更新為 6.0.1 並快取重複計算',()=>ok(r.version==='6.0.1'&&html.includes('tianheng-bazi-daily-v6.js?v=6.0.1')&&html.includes('monthlyByYear')&&html.includes('dailyByKey')));
 console.log(`\nRESULT ${pass}/${total} passed`);
