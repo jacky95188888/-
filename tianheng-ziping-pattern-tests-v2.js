@@ -34,7 +34,7 @@ assert('陽刃得官制',()=>has(blade.formation,'OFFICER_KILL_CONTROLS_BLADE'))
 const earthBlade=Z.analyze([{gan:'壬',zhi:'戌'},{gan:'丁',zhi:'午'},{gan:'戊',zhi:'申'},{gan:'乙',zhi:'卯'}],{strength:'身強'});
 const earthRob=Z.analyze([{gan:'壬',zhi:'戌'},{gan:'丁',zhi:'未'},{gan:'戊',zhi:'申'},{gan:'乙',zhi:'卯'}],{strength:'身強'});
 assert('戊日只有午月劫財可判陽刃',()=>earthBlade.basePattern.pattern==='陽刃格');
-assert('戊日未月不得誤判陽刃',()=>earthRob.basePattern.pattern==='建祿月劫格');
+assert('戊日未月不得誤判陽刃並可依雜氣透干取官',()=>earthRob.basePattern.pattern==='官格'&&earthRob.basePattern.selectionReason==='雜氣月令取未受合絆之透干');
 assert('戊午以中氣己土為刃神而非誤取丁印',()=>earthBlade.basePattern.monthMainGan==='己'&&earthBlade.basePattern.layer==='中氣');
 const fiveBlades=[['甲','卯'],['丙','午'],['戊','午'],['庚','酉'],['壬','子']].map(([gan,zhi])=>Z.analyze([{gan:'辛',zhi:'亥'},{gan:'癸',zhi},{gan,zhi:'辰'},{gan:'己',zhi:'未'}],{strength:'身強'}));
 assert('五個陽干固定刃位全部可辨',()=>fiveBlades.every(x=>x.basePattern.pattern==='陽刃格'&&x.basePattern.monthMainGod==='劫財'));
@@ -42,6 +42,16 @@ assert('五個陽干固定刃位全部可辨',()=>fiveBlades.every(x=>x.basePatt
 const lu=Z.analyze([{gan:'辛',zhi:'子'},{gan:'癸',zhi:'寅'},{gan:'甲',zhi:'辰'},{gan:'己',zhi:'未'}],{strength:'身強'});
 assert('比肩月令判建祿月劫',()=>lu.basePattern.pattern==='建祿月劫格');
 assert('建祿透官逢財印',()=>has(lu.formation,'LU_MONTH_USE_OFFICER'));
+
+const mixedOfficer=Z.analyze([{gan:'壬',zhi:'戌'},{gan:'丁',zhi:'未'},{gan:'戊',zhi:'申'},{gan:'乙',zhi:'卯'}],{strength:'身中和'});
+assert('雜氣月令排除被丁壬合絆之印而取乙官',()=>mixedOfficer.basePattern.pattern==='官格'&&mixedOfficer.patternGod.gan==='乙'&&mixedOfficer.selectionEvidence.some(x=>x.code==='MIXED_QI_VISIBLE_SELECTION'));
+assert('財印相合失輔不再同時算財官印相生',()=>has(mixedOfficer.failures,'STEM_COMBINATION_REMOVES_SUPPORT')&&!has(mixedOfficer.formation,'OFFICER_WITH_WEALTH')&&!has(mixedOfficer.formation,'OFFICER_WITH_SEAL')&&mixedOfficer.status==='格成而孤・層次受限');
+const keepOfficer=Z.analyze([{gan:'庚',zhi:'寅'},{gan:'乙',zhi:'酉'},{gan:'甲',zhi:'子'},{gan:'戊',zhi:'辰'}],{strength:'身中和'});
+assert('乙庚相鄰合煞留官列入救應',()=>has(keepOfficer.rescues,'STEM_COMBINATION_KEEP_OFFICER_REMOVE_KILL')&&!has(keepOfficer.failures,'OFFICER_KILL_MIXED'));
+const wealthSealClear=Z.analyze([{gan:'乙',zhi:'未'},{gan:'甲',zhi:'申'},{gan:'丙',zhi:'申'},{gan:'庚',zhi:'寅'}],{strength:'身弱'});
+const wealthSealConflict=Z.analyze([{gan:'乙',zhi:'未'},{gan:'己',zhi:'卯'},{gan:'庚',zhi:'寅'},{gan:'辛',zhi:'巳'}],{strength:'身弱'});
+assert('財印隔位辨各得其位',()=>has(wealthSealClear.formation,'POSITIONAL_WEALTH_SEAL_NON_CONFLICT')&&!has(wealthSealClear.failures,'POSITIONAL_WEALTH_SEAL_CONFLICT'));
+assert('財印相鄰辨彼此相礙',()=>has(wealthSealConflict.failures,'POSITIONAL_WEALTH_SEAL_CONFLICT')&&!has(wealthSealConflict.formation,'POSITIONAL_WEALTH_SEAL_NON_CONFLICT'));
 
 assert('候選格局保留月令本中餘氣',()=>officer.candidates.length===1&&officer.candidates[0].layer==='本氣');
 assert('不以分數裁定格局',()=>officer.xiuZhengHouFen===undefined&&officer.score===undefined);
