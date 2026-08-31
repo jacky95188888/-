@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('fs');const html=fs.readFileSync('tianheng-wenshi-qa-v1.html','utf8');let pass=0,fail=0;
+function assert(name,fn){try{if(!fn())throw new Error('assert false');console.log('PASS',name);pass++;}catch(e){console.error('FAIL',name,'::',e.message);fail++;}}
+assert('獨立 QA 頁不修改正式首頁',()=>html.includes('獨立開發・尚未接正式網站'));
+assert('九個問事模組依序載入',()=>['validation','liuyao-v1','liuyao-structure','liuyao-evidence','liuyao-adjudication','liuyao-interactions','liuyao-synthesis','wenshi-engine','history-study'].every(x=>html.includes(x)));
+assert('六次起卦由初爻至上爻輸入',()=>html.includes('初爻到上爻')&&html.includes('Array.from({length:6}'));
+assert('題型不靠關鍵字猜測',()=>html.includes('value="career_job"')&&html.includes('value="relationship"')&&html.includes('value="family_peer"'));
+assert('日月干支與曆法來源必填介面存在',()=>['monthZhi','dayGan','dayZhi','calendarSource'].every(id=>html.includes(`id="${id}"`)));
+assert('腳本未執行時干支選項仍由純 HTML 提供',()=>html.includes('<select id="monthZhi"><option value="子">子</option>')&&html.includes('<select id="dayGan"><option value="甲">甲</option>')&&html.includes('<select id="dayZhi"><option value="子">子</option>'));
+assert('預覽器封鎖腳本時顯示明確錯誤而非空白假象',()=>html.includes('頁面程式尚未啟動')&&html.includes("$('runtimeNotice').classList.add('hidden')"));
+assert('逐爻證據欄位完整',()=>['納甲','六親','月令','旬空','月破','日沖'].every(x=>html.includes(x)));
+assert('支持阻力未定分欄顯示',()=>['id="support"','id="resistance"','id="unresolved"'].every(x=>html.includes(x)));
+assert('近期建議分成可做避免與查證',()=>['id="canDo"','id="avoid"','id="verify"'].every(x=>html.includes(x)));
+assert('可匯出完整判讀 JSON',()=>html.includes('application/json')&&html.includes('JSON.stringify(lastResult'));
+assert('健康法律投資安全提醒存在',()=>html.includes('醫療、法律、投資'));
+assert('HTML 不含付款或舊引擎覆蓋操作',()=>!html.includes('NT$99')&&!html.includes('legacyOverride=true'));
+console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);

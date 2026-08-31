@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>天衡・九維命理｜問事 v1 獨立 QA</title>
+  <style>
+    :root{color-scheme:dark;--bg:#09070c;--panel:#15101a;--line:#745d37;--gold:#d8b774;--text:#eee5d6;--muted:#a99d8e;--green:#73b6a0;--red:#d47777;--blue:#83a9ce}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#23182a 0,#09070c 38rem);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Noto Serif TC",sans-serif}
+    main{width:min(1100px,calc(100% - 28px));margin:auto;padding:34px 0 80px}h1,h2,h3{color:var(--gold);font-weight:600;letter-spacing:.08em}h1{font-size:clamp(1.55rem,5vw,2.35rem);margin:.2rem 0}.lead{color:var(--muted);margin:0 0 22px}.notice{border-left:3px solid var(--gold);padding:10px 14px;background:#d8b77410;margin:18px 0}
+    .panel{background:#15101ae8;border:1px solid var(--line);border-radius:18px;padding:20px;margin:18px 0;box-shadow:0 16px 50px #0007}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}label{display:block;color:var(--muted);font-size:.88rem}input,select,textarea,button{width:100%;border:1px solid #5f5039;background:#0e0a11;color:var(--text);border-radius:9px;padding:10px 11px;font:inherit}textarea{min-height:86px;resize:vertical}button{cursor:pointer;background:linear-gradient(135deg,#6c522d,#a68143);color:#fff9eb;font-weight:700}button.secondary{background:#15101a;color:var(--gold)}.casts{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.casts label{text-align:center}.casts small{display:block;color:#807566}
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{border:1px solid #4f4435;border-radius:12px;padding:12px;background:#0c0910}.card b{display:block;color:var(--gold);font-size:1.05rem}.tag{display:inline-block;border:1px solid currentColor;border-radius:999px;padding:2px 9px;margin:2px 4px 2px 0;font-size:.82rem}.support{color:var(--green)}.resistance{color:var(--red)}.unresolved{color:var(--blue)}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:9px;border-bottom:1px solid #332b24;text-align:left;white-space:nowrap}th{color:var(--gold)}.scroll{overflow:auto}.list{padding-left:1.2rem}.error{color:#ff9c9c;border:1px solid #8b4343;background:#481f1f55;padding:12px;border-radius:10px}.hidden{display:none}.empty{color:var(--muted)}code{color:#d8c59e}.actions{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-top:16px}
+    @media(max-width:720px){.grid,.grid.three,.summary{grid-template-columns:1fr}.casts{grid-template-columns:repeat(3,1fr)}.actions{grid-template-columns:1fr}main{width:min(100% - 20px,1100px);padding-top:18px}.panel{padding:15px}}
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="tag">獨立開發・尚未接正式網站</div>
+    <h1>天衡・六爻問事 v1 QA</h1>
+    <p class="lead">由問題、原始起卦、日月證據到暫定結果逐層保存，不以單一吉凶句取代證據。</p>
+    <div id="runtimeNotice" class="error">頁面程式尚未啟動。若這段提示持續顯示，代表目前的檔案預覽器封鎖了 JavaScript；請勿把此頁的空白欄位當成系統結果。</div>
+  </header>
+
+  <section class="panel">
+    <h2>一、問題與起卦資料</h2>
+    <div class="notice">請輸入一件具體、有期限、結果可核實的事情。六次銅錢依「初爻到上爻」排列。</div>
+    <label>具體問題<textarea id="question" placeholder="例如：我在 9 月 15 日前能否收到這間公司的第二輪面試通知？"></textarea></label>
+    <div class="grid">
+      <label>題型<select id="topic">
+        <option value="career_job">求職／工作</option><option value="career_promotion">升遷／職位</option>
+        <option value="finance_income">收入／收款</option><option value="cooperation">合作／客戶</option>
+        <option value="contract">合約／文件</option><option value="relationship">感情／人際</option>
+        <option value="family_peer">兄弟姊妹／同輩家人</option><option value="decision">選擇／決策</option>
+      </select></label>
+      <label>提問時間<input id="askedAt" type="datetime-local"></label>
+      <label>時區<input id="timezone" value="Asia/Taipei"></label>
+      <label>案例編號（選填）<input id="caseId" placeholder="例如：QA-20260830-001"></label>
+    </div>
+    <h3>三枚銅錢六次結果</h3>
+    <div class="casts" id="casts"></div>
+    <h3>當時曆法</h3>
+    <div class="grid three">
+      <label>月建<select id="monthZhi"><option value="子">子</option><option value="丑">丑</option><option value="寅">寅</option><option value="卯">卯</option><option value="辰">辰</option><option value="巳">巳</option><option value="午">午</option><option value="未">未</option><option value="申">申</option><option value="酉">酉</option><option value="戌">戌</option><option value="亥">亥</option></select></label>
+      <label>日干<select id="dayGan"><option value="甲">甲</option><option value="乙">乙</option><option value="丙">丙</option><option value="丁">丁</option><option value="戊">戊</option><option value="己">己</option><option value="庚">庚</option><option value="辛">辛</option><option value="壬">壬</option><option value="癸">癸</option></select></label>
+      <label>日支<select id="dayZhi"><option value="子">子</option><option value="丑">丑</option><option value="寅">寅</option><option value="卯">卯</option><option value="辰">辰</option><option value="巳">巳</option><option value="午">午</option><option value="未">未</option><option value="申">申</option><option value="酉">酉</option><option value="戌">戌</option><option value="亥">亥</option></select></label>
+    </div>
+    <label>曆法來源<input id="calendarSource" value="QA 人工核對干支曆"></label>
+    <div class="actions"><button id="analyze">執行分層判讀</button><button class="secondary" id="reset">清除結果</button></div>
+  </section>
+
+  <div id="error" class="error hidden"></div>
+  <section id="result" class="hidden">
+    <div class="panel"><h2>二、卦局摘要</h2><div id="summary" class="summary"></div></div>
+    <div class="panel"><h2>三、六爻證據表</h2><div class="scroll"><table><thead><tr><th>爻位</th><th>世應</th><th>動靜</th><th>納甲</th><th>六親</th><th>月令</th><th>旬空</th><th>月破</th><th>日沖</th></tr></thead><tbody id="lineRows"></tbody></table></div></div>
+    <div class="panel"><h2>四、用神與作用事件</h2><div id="useful"></div><h3>動變</h3><div id="changes"></div><h3>伏神與沖合</h3><div id="interactions"></div></div>
+    <div class="panel"><h2>五、支持、阻力與未定處</h2><div class="grid three"><div><h3 class="support">支持</h3><div id="support"></div></div><div><h3 class="resistance">阻力</h3><div id="resistance"></div></div><div><h3 class="unresolved">尚未裁定</h3><div id="unresolved"></div></div></div></div>
+    <div class="panel"><h2>六、暫定結論與近期做法</h2><div id="explanation"></div><div class="grid three"><div><h3>可以做</h3><div id="canDo"></div></div><div><h3>先避免</h3><div id="avoid"></div></div><div><h3>需要查證</h3><div id="verify"></div></div></div><h3>時間條件</h3><div id="timing"></div><div class="notice">此結果尚未完成真實歷史盲測校準，不能代替醫療、法律、投資或其他專業判斷。</div><button class="secondary" id="export">匯出本次判讀 JSON</button></div>
+  </section>
+</main>
+<script src="tianheng-wenshi-validation-v1.js?v=1.0.0"></script>
+<script src="tianheng-wenshi-liuyao-v1.js?v=1.0.0"></script>
+<script src="tianheng-wenshi-liuyao-structure-v1.js?v=1.0.0"></script>
+<script src="tianheng-wenshi-liuyao-evidence-v1.js?v=1.0.0"></script>
+<script src="tianheng-wenshi-liuyao-adjudication-v1.js?v=1.0.0"></script>
+<script src="tianheng-wenshi-liuyao-interactions-v1.js?v=1.0.0"></script>
+<script src="tianheng-wenshi-liuyao-synthesis-v1.js?v=1.0.0"></script>
+<script src="tianheng-wenshi-engine-v1.js?v=1.0.0"></script>
+<script src="tianheng-wenshi-history-study-v1.js?v=1.0.0"></script>
+<script>
+(()=>{
+  'use strict';
+  const $=id=>document.getElementById(id);let lastResult=null;
+  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const list=(items,empty='無')=>items?.length?`<ul class="list">${items.map(x=>`<li>${esc(typeof x==='string'?x:x.text||JSON.stringify(x))}</li>`).join('')}</ul>`:`<p class="empty">${empty}</p>`;
+  const topicLabels={career_job:'事業／工作',career_promotion:'事業／工作',finance_income:'財務／交易',cooperation:'合作／客戶',contract:'合約／文件',relationship:'感情／人際',family_peer:'家庭／生活',decision:'選擇／決策'};
+  $('runtimeNotice').classList.add('hidden');
+  $('casts').innerHTML=Array.from({length:6},(_,i)=>`<label>${i===0?'初爻':i===5?'上爻':`${i+1}爻`}<select class="cast"><option value="6">6 老陰・動</option><option value="7" selected>7 少陽・靜</option><option value="8">8 少陰・靜</option><option value="9">9 老陽・動</option></select><small>由下往上</small></label>`).join('');
+  const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());$('askedAt').value=now.toISOString().slice(0,16);
+
+  function render(engine){
+    const s=engine.result;const a=s.interactions.adjudication;const structure=a.evidence.structure;const selected=a.usefulGod.selected;
+    $('summary').innerHTML=[['主卦',`${structure.casting.primary.fullName}・${structure.casting.primary.number}`],['變卦',`${structure.casting.changed.fullName}・${structure.casting.changed.number}`],['八宮',`${structure.palace.palace}宮・${structure.palace.stage}`],['暫定結果',`${s.outcome.label}・${s.outcome.confidence}`]].map(([k,v])=>`<div class="card"><span>${k}</span><b>${esc(v)}</b></div>`).join('');
+    $('lineRows').innerHTML=a.lines.slice().reverse().map(line=>`<tr><td>${esc(line.label)}</td><td>${line.shi?'世':line.ying?'應':'—'}</td><td>${line.moving?'動':'靜'}</td><td>${esc(line.najia)}</td><td>${esc(line.relation)}</td><td>${esc(line.calendar.seasonalState)}</td><td>${line.adjudicationFacts.xunEmpty?'是':'—'}</td><td>${line.adjudicationFacts.monthBreak?'是':'—'}</td><td>${line.adjudicationFacts.dayClash?'是':'—'}</td></tr>`).join('');
+    $('useful').innerHTML=selected?`<p>本題取 <span class="tag">${esc(a.usefulGod.definition.value)}</span>，目前選取第 ${selected.position} 爻 <b>${esc(selected.najia)} ${esc(selected.relation)}</b>。候選沒有被刪除，仍保留於原始資料。</p>`:`<p class="unresolved">本卦用神未明現或候選同級：${esc(a.usefulGod.unresolvedReason||'需查伏神')}</p>`;
+    $('changes').innerHTML=list(a.changeEvents.map(x=>`第${x.position}爻：${x.from.najia}${x.from.relation} → ${x.to.najia}${x.to.relation}（${x.events.join('、')}）`));
+    const hidden=s.interactions.hiddenGod;const pair=s.interactions.interactions.branchPairs;const trines=s.interactions.interactions.trines;
+    $('interactions').innerHTML=list([hidden?.found?`伏神：${hidden.candidates.map(x=>`${x.hidden.najia}${x.hidden.relation}伏於第${x.position}爻，${x.relation}`).join('；')}`:null,...pair.map(x=>`${x.type}${x.pair.join('')}・第${x.positions.join('、')}爻${x.active?'（已引動）':'（靜態）'}`),...trines.map(x=>`三合${x.branches.join('')}化${x.element}・${x.active?'有動爻引動':'支序齊備但未引動'}`)].filter(Boolean));
+    $('support').innerHTML=list(s.evidenceLedger.support);$('resistance').innerHTML=list(s.evidenceLedger.resistance);$('unresolved').innerHTML=list(s.evidenceLedger.unresolved);
+    $('explanation').innerHTML=`<p>${esc(s.explanation.basis)}</p><p class="support">支持：${esc(s.explanation.support)}</p><p class="resistance">阻力：${esc(s.explanation.resistance)}</p><p><b>${esc(s.explanation.conclusion)}</b></p>`;
+    $('canDo').innerHTML=list(s.advice.canDo);$('avoid').innerHTML=list(s.advice.avoid);$('verify').innerHTML=list(s.advice.verify);$('timing').innerHTML=list(s.timing.conditions);
+    $('result').classList.remove('hidden');
+  }
+
+  $('analyze').addEventListener('click',()=>{
+    $('error').classList.add('hidden');
+    const topic=$('topic').value;const local=$('askedAt').value;
+    const input={question:$('question').value,category:topicLabels[topic],topic,askedAt:local?new Date(local).toISOString():'',timezone:$('timezone').value,casts:[...document.querySelectorAll('.cast')].map(x=>Number(x.value)),calendar:{monthZhi:$('monthZhi').value,dayGan:$('dayGan').value,dayZhi:$('dayZhi').value,source:$('calendarSource').value,timezone:$('timezone').value}};
+    const analyzed=window.TianhengWenshiEngine.safeAnalyze(input);
+    if(!analyzed.ok){$('error').textContent=analyzed.error;$('error').classList.remove('hidden');$('result').classList.add('hidden');return;}
+    lastResult={caseId:$('caseId').value||null,generatedAt:new Date().toISOString(),input,analysis:analyzed.result};render(analyzed.result);
+  });
+  $('reset').addEventListener('click',()=>{$('result').classList.add('hidden');$('error').classList.add('hidden');lastResult=null;});
+  $('export').addEventListener('click',()=>{
+    if(!lastResult)return;const blob=new Blob([JSON.stringify(lastResult,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`tianheng-wenshi-${lastResult.caseId||Date.now()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
+})();
+</script>
+</body>
+</html>
