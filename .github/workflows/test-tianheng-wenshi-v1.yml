@@ -1,0 +1,40 @@
+name: Test Tianheng Wenshi v1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tianheng-wenshi-*.js'
+      - 'TIANHENG_WENSHI_*.md'
+      - '.github/workflows/test-tianheng-wenshi-v1.yml'
+
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run Wenshi validation foundation tests
+        run: node tianheng-wenshi-validation-tests-v1.js
+      - name: Run Liuyao casting core tests
+        run: node tianheng-wenshi-liuyao-tests-v1.js
+      - name: Run Liuyao palace, Najia and six-relations tests
+        run: node tianheng-wenshi-liuyao-structure-tests-v1.js
+      - name: Run Liuyao topic and calendar evidence tests
+        run: node tianheng-wenshi-liuyao-evidence-tests-v1.js
+      - name: Run Liuyao adjudication event tests
+        run: node tianheng-wenshi-liuyao-adjudication-tests-v1.js
+      - name: Run Liuyao hidden-god and interaction tests
+        run: node tianheng-wenshi-liuyao-interactions-tests-v1.js
+      - name: Run conservative synthesis and advice tests
+        run: node tianheng-wenshi-liuyao-synthesis-tests-v1.js
+      - name: Run Wenshi total engine and blind-seal tests
+        run: node tianheng-wenshi-engine-tests-v1.js
+      - name: Run verified classics counterexample tests
+        run: node tianheng-wenshi-classics-benchmark-tests-v1.js
+      - name: Run retrospective blind-study workflow tests
+        run: node tianheng-wenshi-history-study-tests-v1.js
+      - name: Run standalone Wenshi QA page checks
+        run: node tianheng-wenshi-qa-tests-v1.js
