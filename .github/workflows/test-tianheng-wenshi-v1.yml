@@ -6,6 +6,7 @@ on:
     paths:
       - 'tianheng-wenshi-*.js'
       - 'TIANHENG_WENSHI_*.md'
+      - 'index.html'
       - '.github/workflows/test-tianheng-wenshi-v1.yml'
 
 jobs:
@@ -38,3 +39,5 @@ jobs:
         run: node tianheng-wenshi-history-study-tests-v1.js
       - name: Run standalone Wenshi QA page checks
         run: node tianheng-wenshi-qa-tests-v1.js
+      - name: Run formal homepage safe-entry checks
+        run: node tianheng-wenshi-home-integration-tests-v1.js
