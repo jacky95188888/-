@@ -29,7 +29,7 @@ test("首頁保留今日運勢與雙人合度入口", () => {
 });
 
 test("首頁提供六爻問事入口", () => {
-  const target = './tianheng-wenshi-qa-v1.html?v=20260831-wenshi-main';
+  const target = './tianheng-wenshi-qa-v1.html?v=20260831-wenshi-beauty';
   assert.ok(html.split(target).length - 1 >= 2, "頂部入口與更新公告均應連到獨立問事頁");
   assert.ok(html.includes("六爻問事開放驗證"));
 });

@@ -1,7 +1,8 @@
 'use strict';
 const fs=require('fs');const html=fs.readFileSync('tianheng-wenshi-qa-v1.html','utf8');let pass=0,fail=0;
 function assert(name,fn){try{if(!fn())throw new Error('assert false');console.log('PASS',name);pass++;}catch(e){console.error('FAIL',name,'::',e.message);fail++;}}
-assert('獨立 QA 頁不修改正式首頁',()=>html.includes('獨立開發・尚未接正式網站'));
+assert('正式入口仍以獨立頁安全接入',()=>html.includes('正式入口・公開驗證中')&&html.includes('href="./?v=20260831-wenshi-beauty"'));
+assert('問事頁套用天衡黑金紫視覺系統',()=>html.includes('BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png')&&html.includes('class="hero-sigil"')&&html.includes('class="steps"'));
 assert('九個問事模組依序載入',()=>['validation','liuyao-v1','liuyao-structure','liuyao-evidence','liuyao-adjudication','liuyao-interactions','liuyao-synthesis','wenshi-engine','history-study'].every(x=>html.includes(x)));
 assert('六次起卦由初爻至上爻輸入',()=>html.includes('初爻到上爻')&&html.includes('Array.from({length:6}'));
 assert('題型不靠關鍵字猜測',()=>html.includes('value="career_job"')&&html.includes('value="relationship"')&&html.includes('value="family_peer"'));
