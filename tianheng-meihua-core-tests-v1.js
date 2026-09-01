@@ -47,8 +47,9 @@ assert('本卦互卦變卦與原始起卦分層保存', () => {
 assert('年月日時法拒絕沒有曆法來源', () => !Core.safeAnalyze(base({ method: 'lunar_time', calendar: { yearZhi: '辰', lunarMonth: 12, lunarDay: 17, hourZhi: '申' } })).ok);
 assert('年月日時法拒絕不合理農曆日期', () => !Core.safeAnalyze(base({ method: 'lunar_time', calendar: { yearZhi: '辰', lunarMonth: 13, lunarDay: 31, hourZhi: '申', source: '錯誤測試' } })).ok);
 assert('錯誤方法由 safeAnalyze 攔截', () => !Core.safeAnalyze(base({ method: 'random_magic' })).ok);
+assert('缺少 askedAt 不得用目前時間偷偷補值', () => { const x=base({ method:'two_numbers',numbers:{first:1,second:2} }); delete x.askedAt; return !Core.safeAnalyze(x).ok; });
+assert('缺少 timezone 會攔截', () => { const x=base({ method:'two_numbers',numbers:{first:1,second:2} }); delete x.timezone; return !Core.safeAnalyze(x).ok; });
 assert('梅花核心不覆蓋舊命理結果', () => Core.legacyOverride === false && Core.analyze(base({ method: 'two_numbers', numbers: { first: 1, second: 2 } })).legacyOverride === false);
 
 console.log(`\nRESULT ${pass}/${pass + fail} passed`);
 if (fail) process.exit(1);
-

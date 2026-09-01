@@ -41,6 +41,7 @@
   function monthContext(input, core) {
     const explicit = input.monthZhi || (input.calendar && input.calendar.monthZhi);
     const derived = core.casting.method === 'lunar_time' ? LUNAR_MONTH_ZHI[core.casting.original.lunarMonth - 1] : null;
+    if (explicit && !MONTH_SEASON[explicit]) throw new Error('monthZhi 必須是十二地支');
     const monthZhi = explicit || derived;
     if (!monthZhi || !MONTH_SEASON[monthZhi]) {
       return { available: false, monthZhi: null, season: null, source: null, states: null, warning: '未提供月支，旺衰層保留未判' };
@@ -120,6 +121,14 @@
     return result;
   }
 
+  function normalizeExternalResponse(value) {
+    if (value == null) return null;
+    if (typeof value !== 'object' || Array.isArray(value)) throw new Error('externalResponse 必須是物件');
+    if (typeof value.note !== 'string' || !value.note.trim()) throw new Error('externalResponse.note 不可空白');
+    if (value.recordedAt != null && !Number.isFinite(Date.parse(value.recordedAt))) throw new Error('externalResponse.recordedAt 必須是有效時間');
+    return { ...value, note: value.note.trim() };
+  }
+
   function outcome(events, strength) {
     const supportEvents = events.filter(x => x.polarity === 'support');
     const resistanceEvents = events.filter(x => x.polarity === 'resistance');
@@ -156,6 +165,7 @@
     const use = core.bodyUse.use;
     const changedUse = core.changed[core.bodyUse.usePart];
     const month = monthContext(input, core);
+    const externalResponse = normalizeExternalResponse(input.externalResponse);
     const events = [
       event('本卦起段', '本卦用', use, body, 1.2),
       event('互卦中段', '下互', core.mutual.lower, body, 0.65),
@@ -170,8 +180,8 @@
     const support = events.filter(x => x.polarity === 'support').map(x => x.evidence).concat(strength.support);
     const resistance = events.filter(x => x.polarity === 'resistance').map(x => x.evidence).concat(strength.resistance);
     const unresolved = strength.unresolved.slice();
-    if (input.externalResponse && typeof input.externalResponse.note === 'string' && input.externalResponse.note.trim()) {
-      unresolved.push(`外應另存：${input.externalResponse.note.trim()}（尚未納入自動定向）`);
+    if (externalResponse) {
+      unresolved.push(`外應另存：${externalResponse.note}（尚未納入自動定向）`);
     }
     return {
       engine: 'tianheng-meihua-judgment',
@@ -199,7 +209,7 @@
         verify: [adviceBase.verify],
         timing: result.direction === 'conditional' ? ['先等待一個可驗證節點成立，再決定是否擴大行動'] : ['依提問期限記錄結果；v1 尚不硬給未校準精確日期']
       },
-      externalResponse: input.externalResponse || null,
+      externalResponse,
       disclaimer: '梅花易數推演供文化研究與生活規劃參考，不替代醫療、法律、投資或其他專業判斷。'
     };
   }
@@ -213,4 +223,3 @@
   root.TianhengMeihuaJudgment = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
-

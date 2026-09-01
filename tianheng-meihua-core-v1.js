@@ -53,7 +53,7 @@
 
   function positiveInteger(value, label) {
     const number = Number(value);
-    if (!Number.isInteger(number) || number <= 0) throw new Error(`${label} 必須是正整數`);
+    if (!Number.isSafeInteger(number) || number <= 0) throw new Error(`${label} 必須是安全範圍內的正整數`);
     return number;
   }
 
@@ -72,13 +72,15 @@
     assertObject(input, '梅花易數輸入');
     assertText(input.question, 'question');
     assertText(input.category, 'category');
-    const askedAt = input.askedAt || new Date().toISOString();
+    assertText(input.askedAt, 'askedAt');
+    assertText(input.timezone, 'timezone');
+    const askedAt = input.askedAt;
     if (!Number.isFinite(Date.parse(askedAt))) throw new Error('askedAt 必須是有效時間');
     return {
       question: input.question.trim(),
       category: input.category.trim(),
       askedAt: new Date(askedAt).toISOString(),
-      timezone: input.timezone || 'Asia/Taipei',
+      timezone: input.timezone.trim(),
       deadline: input.deadline || null
     };
   }
@@ -230,4 +232,3 @@
   root.TianhengMeihuaCore = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
-

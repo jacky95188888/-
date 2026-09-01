@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('fs');const html=fs.readFileSync('tianheng-meihua-qa-v1.html','utf8');let pass=0,fail=0;
 function assert(name,fn){try{if(!fn())throw new Error('assert false');console.log('PASS',name);pass++;}catch(e){console.error('FAIL',name,'::',e.message);fail++;}}
-assert('梅花頁維持獨立 QA 尚未接主頁',()=>html.includes('獨立 QA・尚未接主頁')&&html.includes('href="./"'));
+assert('梅花頁標示正式入口並可返回主頁',()=>html.includes('正式入口・公開驗證中')&&html.includes('href="./?v=20260901-meihua-home"'));
 assert('套用天衡黑金紫手機視覺',()=>html.includes('BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png')&&html.includes('class="sigil"')&&html.includes('class="steps"'));
 assert('四個梅花模組依序載入',()=>['meihua-core','meihua-judgment','meihua-validation','meihua-engine'].every(x=>html.includes(x)));
 assert('三種起卦方法都有獨立介面',()=>['lunar_time','two_numbers','manual_verified'].every(x=>html.includes(`data-method="${x}"`)));
@@ -19,4 +19,3 @@ assert('完整判讀可匯出 JSON',()=>html.includes('application/json')&&html.
 assert('不宣稱準確率並保留專業安全提醒',()=>html.includes('不宣稱正式準確率')&&html.includes('醫療、法律、投資'));
 assert('HTML 不含付款或覆蓋舊引擎操作',()=>!html.includes('NT$99')&&!html.includes('legacyOverride=true'));
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);
-
