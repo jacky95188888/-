@@ -4,6 +4,7 @@ function assert(name,fn){try{if(!fn())throw new Error('assert false');console.lo
 assert('梅花頁標示正式入口並可返回主頁',()=>html.includes('正式入口・公開驗證中')&&html.includes('href="./?v=20260901-meihua-home"'));
 assert('套用天衡黑金紫手機視覺',()=>html.includes('BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png')&&html.includes('class="sigil"')&&html.includes('class="steps"'));
 assert('四個梅花模組依序載入',()=>['meihua-core','meihua-judgment','meihua-validation','meihua-engine'].every(x=>html.includes(x)));
+assert('正式接入版本會避開舊手機快取',()=>html.match(/v=20260901-home1/g)?.length===4&&!html.includes('tianheng-meihua-core-v1.js?v=1.0.0'));
 assert('三種起卦方法都有獨立介面',()=>['lunar_time','two_numbers','manual_verified'].every(x=>html.includes(`data-method="${x}"`)));
 assert('年月日時明示農曆且要求曆法來源',()=>['yearZhi','lunarMonth','lunarDay','hourZhi','calendarSource'].every(id=>html.includes(`id="${id}"`))&&html.includes('不可用國曆月份代替'));
 assert('兩數法保存兩個原始數字欄位',()=>html.includes('id="firstNumber"')&&html.includes('id="secondNumber"')&&html.includes('原始數字會完整保留'));
