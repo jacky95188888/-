@@ -170,7 +170,7 @@
   .card-h .arr{color:#9a8b6d;transition:.3s;font-size:12px}
   .card.open .arr{transform:rotate(90deg)}
   .card-b{max-height:0;overflow:hidden;transition:max-height .4s ease}
-  .card.open .card-b{max-height:1400px}
+  .card.open .card-b{max-height:none;overflow:visible}
   .card-b-in{padding:4px 16px 18px;font-size:14px;color:#d3c6ac;line-height:1.95;
     border-top:1px solid var(--panel-line)}
   .card-b-in .tag{display:inline-block;font-size:12px;color:var(--jade);
@@ -464,6 +464,30 @@
     box-shadow:0 0 10px rgba(119,178,149,.85)
   }
 
+  /* 長篇推演完整顯示＋八字進階人工密碼解鎖 */
+  .th-luxe .card.open>.card-b{max-height:none;overflow:visible}
+  .th-luxe .lnopen>.lnbody{max-height:none!important;overflow:visible!important}
+  .bazi-advanced-premium[hidden]{display:none!important}
+  .bazi-access-gate{
+    margin:18px 0 20px;padding:22px 18px;border:1px solid rgba(217,182,106,.48);border-radius:16px;
+    background:radial-gradient(circle at 50% 0,rgba(217,182,106,.10),transparent 36%),linear-gradient(155deg,rgba(31,22,37,.95),rgba(9,7,14,.97));
+    box-shadow:0 16px 38px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.04);text-align:center
+  }
+  .bazi-access-mark{width:48px;height:48px;margin:0 auto 10px;display:grid;place-items:center;border:1px solid #d9b66a;border-radius:50%;color:#efd38a;font-size:20px;box-shadow:0 0 24px rgba(217,182,106,.16)}
+  .bazi-access-gate h3{margin:0;color:#f2deb0;font-size:19px;letter-spacing:.12em}
+  .bazi-access-gate>p{margin:8px 0 15px;color:#b2a38a;font-size:12px;line-height:1.85}
+  .bazi-access-flow{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin-bottom:15px}
+  .bazi-access-flow span{padding:5px 9px;border:1px solid rgba(217,182,106,.22);border-radius:999px;color:#cdb686;font-size:10px;background:rgba(217,182,106,.04)}
+  .bazi-access-line{display:block;margin:0 0 13px;padding:10px 12px;border:1px solid rgba(6,199,85,.42);border-radius:10px;color:#d9f4df;background:rgba(6,199,85,.09);text-decoration:none;font-size:12px}
+  .bazi-access-input{width:100%;min-height:50px;text-align:center;text-transform:uppercase;letter-spacing:.10em;font-family:Cinzel,monospace!important}
+  .bazi-access-button{width:100%;min-height:50px;margin-top:9px;border:1px solid #e0bd6c;border-radius:999px;background:linear-gradient(135deg,#a64331,#762923 54%,#4a1a20);color:#fff2d0;font-family:inherit;font-weight:700;letter-spacing:.18em;cursor:pointer}
+  .bazi-access-button:disabled{opacity:.6}
+  .bazi-access-status{min-height:19px;margin-top:8px;color:#d18b82;font-size:11px}
+  .bazi-access-note{margin-top:5px;color:#817563;font-size:10px;line-height:1.7}
+  .bazi-access-success{display:flex;align-items:center;justify-content:center;gap:11px;text-align:left}
+  .bazi-access-success>span{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:#579a75;color:#08130d;font-weight:900}
+  .bazi-access-success b{display:block;color:#d9e8dd;font-size:14px}.bazi-access-success small{display:block;color:#9fafa4;font-size:10px;margin-top:2px}
+
   /* ===== 2026.09 首頁視覺升級：主功能卡與四格入口 ===== */
   .th-luxe .hero{
     min-height:auto;padding:88px 18px 31px
@@ -726,6 +750,7 @@
 <script src="./tianheng-bazi-monthly-v5.js?v=5.0.0"></script>
 <script src="./tianheng-bazi-daily-v6.js?v=6.0.1"></script>
 <script src="./tianheng-bazi-integration-v3.js?v=3.0.0"></script>
+<script src="./tianheng-bazi-access-v1.js?v=1.0.0"></script>
 <script src="./tianheng-bazi-explanations-v2.js?v=2.0.1"></script>
 <script src="./tianheng-bazi-yongshen-explanation-v3.js?v=3.0.0"></script>
 <script src="./tianheng-bazi-yongshen-fortune-explanation-v3.js?v=3.1.1"></script>
@@ -1640,7 +1665,20 @@ function buildAdvancedBaziHtml(r){
   const dailyMonths=monthly?monthly.months.map((x,i)=>`<button type="button" class="bazi-daily-control" data-daily-month="${i}" aria-pressed="${i===0?'true':'false'}" style="${dailyStyle(i)}">${x.name}</button>`).join(''):'';
   const dailyPurposes=[['career','面試／事業'],['contract','簽約／決策'],['relationship','感情／溝通'],['finance','財務／配置']].map((x,i)=>`<button type="button" class="bazi-daily-control" data-daily-purpose="${x[0]}" aria-pressed="${i===0?'true':'false'}" style="${dailyStyle(i)}">${x[1]}</button>`).join('');
   const dailyCard=daily&&dailyExplain?`<div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">日</span><span class="nm">重要日期與時段窗口</span><span class="mini">${daily.year}・${daily.month.name}・${daily.purpose.label}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in"><div style="color:#a99877;font-size:11.5px;line-height:1.8;margin-bottom:7px">先選年份、節氣月與真正用途；系統才逐日重算，不用同一份吉日套所有事情。</div><div style="color:#bda678;font-size:11px;margin:9px 0 5px">年份</div><div style="display:flex;flex-wrap:wrap;gap:7px">${dailyYears}</div><div style="color:#bda678;font-size:11px;margin:12px 0 5px">節氣月</div><div style="display:flex;flex-wrap:wrap;gap:7px">${dailyMonths}</div><div style="color:#bda678;font-size:11px;margin:12px 0 5px">用途</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px">${dailyPurposes}</div><div class="bazi-daily-content">${renderBaziDailyContent(daily,dailyExplain)}</div></div></div></div>`:'';
-  return `<div class="tasks-head"><div class="ln"></div><span>八 字 進 階 分 析</span><div class="ln"></div></div>
+  return `<section class="bazi-advanced-zone" data-bazi-advanced-zone>
+    <div class="tasks-head"><div class="ln"></div><span>八 字 進 階 分 析</span><div class="ln"></div></div>
+    <div class="bazi-access-gate" data-bazi-access-gate>
+      <div class="bazi-access-mark">鑰</div>
+      <h3>完整進階分析</h3>
+      <p>原本九維命盤免費保留。完整八字進階包含動態格局、用神、十年大運、十二流月、重要日期與七層命理證據。</p>
+      <div class="bazi-access-flow"><span>① 完成轉帳</span><span>② LINE 傳截圖</span><span>③ 取得解鎖碼</span></div>
+      <a class="bazi-access-line" href="https://line.me/R/ti/p/@788ldzke" target="_blank" rel="noopener">LINE：三寶爸的命理分析・@788ldzke</a>
+      <input class="bazi-access-input" data-bazi-code type="text" inputmode="text" autocomplete="off" autocapitalize="characters" placeholder="輸入專屬解鎖碼" maxlength="15" aria-label="八字進階解鎖碼">
+      <button class="bazi-access-button" data-bazi-unlock type="button">解 鎖 完 整 分 析</button>
+      <div class="bazi-access-status" data-bazi-status aria-live="polite"></div>
+      <div class="bazi-access-note">解鎖碼只在本機核對，不會傳送姓名、生日或命盤資料；解鎖後本裝置有效 30 天。</div>
+    </div>
+    <div class="bazi-advanced-premium" data-bazi-advanced-content hidden>
     ${recentGuidance}
     <div style="text-align:center;color:#8f836d;font-size:11px;letter-spacing:.18em;margin:20px 0 10px">老師專業資料・點擊展開</div>
     ${zipingCard}
@@ -1655,7 +1693,9 @@ function buildAdvancedBaziHtml(r){
     <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">格</span><span class="nm">月令格局</span><span class="mini">${a.geJu.geJu}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(explain.geJu)}${evidenceBox(`<span class="tag">${a.geJu.strength}</span>${a.geJu.touGanGan?`<span class="tag">${a.geJu.touGanGan}・${a.geJu.touGanCeng}透干</span>`:''}`)}</div></div></div>
     <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">合</span><span class="nm">合會局引化</span><span class="mini">${a.heHuiJu.conflicts.selected.length?'檢出 '+a.heHuiJu.conflicts.selected.length+' 局':'未成有效局'}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(explain.heHuiJu)}${evidenceBox(`${selected}${rejected?`<div style="margin-top:7px">競局未取：${rejected}</div>`:''}`)}</div></div></div>
     <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">候</span><span class="nm">調候用神</span><span class="mini">${th.qihouShuxing}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(explain.tiaoHou)}${evidenceBox(`<span class="tag">需要 ${th.tiaohouXuqiu.join('、')||'視格局而定'}</span><span class="tag">已有 ${th.yiJuBei.join('、')||'無'}</span><span class="tag">缺 ${th.queShi.join('、')||'無'}</span><div style="margin-top:7px">${th.desc}</div>${conflict}`)}</div></div></div>
-    <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">品</span><span class="nm">格局高低與破格</span><span class="mini">${a.quality.gaoDiPingJi}・${a.quality.xiuZhengHouFen} 分</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(explain.quality)}${evidenceBox(`<span class="tag">基礎 ${a.quality.jiBenFen}</span><span class="tag">修正係數 ${a.quality.xiuZhengXiShu}</span><div style="margin-top:7px">破格提醒：${breaks}</div>`)}</div></div></div>`;
+    <div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">品</span><span class="nm">格局高低與破格</span><span class="mini">${a.quality.gaoDiPingJi}・${a.quality.xiuZhengHouFen} 分</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in">${renderBaziExplanation(explain.quality)}${evidenceBox(`<span class="tag">基礎 ${a.quality.jiBenFen}</span><span class="tag">修正係數 ${a.quality.xiuZhengXiShu}</span><div style="margin-top:7px">破格提醒：${breaks}</div>`)}</div></div></div>
+    </div>
+  </section>`;
 }
 function render(r,info){
   const t=r.tally;
