@@ -56,6 +56,7 @@ function randomCode() {
 function publicRecord(record) {
   return {
     id: record.id,
+    hash: record.hash,
     label: record.label || '',
     status: record.status,
     createdAt: record.createdAt,
