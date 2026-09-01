@@ -11,6 +11,7 @@ on:
       - 'tianheng-bazi-engine-v1.js'
       - 'tianheng-bazi-integration-v1.js'
       - 'tianheng-bazi-access-v1.js'
+      - 'tianheng-bazi-codes-admin.html'
       - 'tianheng-bazi-access-tests-v1.js'
       - 'index.html'
       - 'tianheng-bazi-tests-node-v1.js'
