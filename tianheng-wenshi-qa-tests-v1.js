@@ -3,7 +3,8 @@ const fs=require('fs');const html=fs.readFileSync('tianheng-wenshi-qa-v1.html','
 function assert(name,fn){try{if(!fn())throw new Error('assert false');console.log('PASS',name);pass++;}catch(e){console.error('FAIL',name,'::',e.message);fail++;}}
 assert('正式入口仍以獨立頁安全接入',()=>html.includes('正式入口・公開驗證中')&&html.includes('href="./?v=20260831-wenshi-beauty"'));
 assert('問事頁套用天衡黑金紫視覺系統',()=>html.includes('BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png')&&html.includes('class="hero-sigil"')&&html.includes('class="steps"'));
-assert('九個問事模組依序載入',()=>['validation','liuyao-v1','liuyao-structure','liuyao-evidence','liuyao-adjudication','liuyao-interactions','liuyao-synthesis','wenshi-engine','history-study'].every(x=>html.includes(x)));
+assert('十個問事模組含本地敘事層依序載入',()=>['validation','liuyao-v1','liuyao-structure','liuyao-evidence','liuyao-adjudication','liuyao-interactions','liuyao-synthesis','wenshi-narrative','wenshi-engine','history-study'].every(x=>html.includes(x)));
+assert('本地敘事版會避開舊手機快取',()=>html.match(/v=20260901-narrative1/g)?.length===10&&!html.includes('v=1.0.0'));
 assert('六次起卦由初爻至上爻輸入',()=>html.includes('初爻到上爻')&&html.includes('Array.from({length:6}'));
 assert('題型不靠關鍵字猜測',()=>html.includes('value="career_job"')&&html.includes('value="relationship"')&&html.includes('value="family_peer"'));
 assert('日月干支與曆法來源必填介面存在',()=>['monthZhi','dayGan','dayZhi','calendarSource'].every(id=>html.includes(`id="${id}"`)));
@@ -12,6 +13,7 @@ assert('預覽器封鎖腳本時顯示明確錯誤而非空白假象',()=>html.i
 assert('逐爻證據欄位完整',()=>['納甲','六親','月令','旬空','月破','日沖'].every(x=>html.includes(x)));
 assert('支持阻力未定分欄顯示',()=>['id="support"','id="resistance"','id="unresolved"'].every(x=>html.includes(x)));
 assert('近期建議分成可做避免與查證',()=>['id="canDo"','id="avoid"','id="verify"'].every(x=>html.includes(x)));
+assert('完整敘事逐段顯示證據且不呼叫 API',()=>html.includes('n.paragraphs.map')&&html.includes('依據：')&&html.includes('未呼叫外部 API'));
 assert('可匯出完整判讀 JSON',()=>html.includes('application/json')&&html.includes('JSON.stringify(lastResult'));
 assert('健康法律投資安全提醒存在',()=>html.includes('醫療、法律、投資'));
 assert('HTML 不含付款或舊引擎覆蓋操作',()=>!html.includes('NT$99')&&!html.includes('legacyOverride=true'));

@@ -2,13 +2,16 @@
 
 (function attachMeihuaEngine(root) {
   const Judgment = root.TianhengMeihuaJudgment || (typeof require === 'function' ? require('./tianheng-meihua-judgment-v1.js') : null);
+  const Narrative = root.TianhengMeihuaNarrative || (typeof require === 'function' ? require('./tianheng-meihua-narrative-v1.js') : null);
   const Validation = root.TianhengMeihuaValidation || (typeof require === 'function' ? require('./tianheng-meihua-validation-v1.js') : null);
   const VERSION = '1.0.0';
   const OUTCOME_MAP = { favorable: 'positive', blocked: 'negative', conditional: 'mixed' };
 
   function analyze(input) {
-    if (!Judgment) throw new Error('缺少梅花易數判斷層');
-    const result = Judgment.analyze(input);
+    if (!Judgment || !Narrative) throw new Error('缺少梅花易數判斷或敘事層');
+    const judgment = Judgment.analyze(input);
+    const narrative = Narrative.compose(judgment, input);
+    const result = { ...judgment, narrative };
     return {
       engine: 'tianheng-meihua-engine',
       version: VERSION,
@@ -25,7 +28,9 @@
         monthStrength: result.strength,
         evidence: result.evidenceLedger,
         provisionalOutcome: result.outcome,
-        advice: result.advice
+        narrative,
+        originalAdvice: judgment.advice,
+        advice: narrative.advice
       },
       release: {
         formalAccuracyClaim: false,

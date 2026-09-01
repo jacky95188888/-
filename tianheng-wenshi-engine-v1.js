@@ -2,15 +2,19 @@
 
 (function attachWenshiEngine(root){
   const Synthesis=root.TianhengWenshiLiuYaoSynthesis||(typeof require==='function'?require('./tianheng-wenshi-liuyao-synthesis-v1.js'):null);
+  const Narrative=root.TianhengWenshiNarrative||(typeof require==='function'?require('./tianheng-wenshi-narrative-v1.js'):null);
   const Validation=root.TianhengWenshiValidation||(typeof require==='function'?require('./tianheng-wenshi-validation-v1.js'):null);
   const VERSION='1.0.0';
   const OUTCOME_MAP={favorable:'positive',blocked:'negative',conditional:'mixed',unresolved:'unresolved'};
 
   function analyze(input){
+    if(!Synthesis||!Narrative)throw new Error('缺少六爻綜合或敘事層');
     const synthesis=Synthesis.analyze(input);
+    const narrative=Narrative.compose(synthesis,input);
+    const result={...synthesis,narrative};
     return{
       engine:'tianheng-wenshi-engine',version:VERSION,method:'liuyao_three_coins',legacyOverride:false,
-      result:synthesis,
+      result,
       layers:{
         question:synthesis.interactions.adjudication.evidence.structure.casting.request,
         casting:synthesis.interactions.adjudication.evidence.structure.casting.casting,
@@ -18,7 +22,9 @@
         adjudication:synthesis.interactions.adjudication,
         interactions:synthesis.interactions,
         provisionalOutcome:synthesis.outcome,
-        advice:synthesis.advice
+        narrative,
+        originalAdvice:synthesis.advice,
+        advice:narrative.advice
       },
       release:{formalAccuracyClaim:false,siteIntegrationReady:false,reason:'等待歷史盲測與前瞻驗證'}
     };
@@ -55,8 +61,8 @@
         confidence,
         timingWindow:metadata.timingWindow||null,
         evidence:{support:analysis.result.evidenceLedger.support,resistance:analysis.result.evidenceLedger.resistance},
-        actions:analysis.result.advice.canDo,
-        avoid:analysis.result.advice.avoid,
+        actions:analysis.layers.advice.canDo,
+        avoid:analysis.layers.advice.avoid,
         engineDirection:analysis.result.outcome.direction,
         engineVersion:VERSION
       }
@@ -75,4 +81,3 @@
   root.TianhengWenshiEngine=api;
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
-

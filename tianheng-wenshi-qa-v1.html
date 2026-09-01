@@ -69,6 +69,7 @@
     .scroll{overflow:auto;border:1px solid var(--line-soft);border-radius:15px;background:rgba(5,5,9,.45);-webkit-overflow-scrolling:touch}
     table{width:100%;border-collapse:collapse;min-width:720px;font-size:12px}th,td{padding:11px 10px;border-bottom:1px solid rgba(216,183,116,.1);text-align:left;white-space:nowrap}th{position:sticky;top:0;color:#d8bd83;background:#17111d;letter-spacing:.06em}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:rgba(216,183,116,.035)}tbody tr.is-moving{background:rgba(116,73,137,.18)}tbody tr.is-moving td:first-child{color:#efd18b;font-weight:700}
     #useful,#changes,#interactions,#explanation,#timing{color:#d8cbb6;font-size:13px}#explanation b{color:#efd48f}
+    .narrative-part{margin:0 0 13px;padding:14px 15px;border:1px solid var(--line-soft);border-left:3px solid #b38bce;border-radius:0 14px 14px 0;background:linear-gradient(100deg,rgba(101,58,120,.18),rgba(7,6,12,.28))}.narrative-part h3{margin:0 0 6px;color:#e7c986;font-size:14px;letter-spacing:.08em}.narrative-part p{margin:0;color:#ddd0bc;line-height:1.95}.narrative-part small{display:block;margin-top:8px;color:#817566;font-size:9px;word-break:break-all}
     .error{position:relative;z-index:2;color:#ffaaa3;border:1px solid rgba(216,83,83,.54);background:rgba(72,31,31,.82);padding:14px 16px;border-radius:13px;margin:14px 0}.hidden{display:none!important}
     #export{margin-top:16px;min-height:50px}.page-foot{text-align:center;margin:24px 10px 0;color:#756e64;font-size:10px;line-height:1.8;letter-spacing:.04em}
     @media(max-width:720px){
@@ -134,15 +135,16 @@
   </section>
   <footer class="page-foot">天衡・九維命理｜六爻問事公開驗證版<br>推演供文化研究與生活規劃參考，重大決策仍應依現實資訊判斷。</footer>
 </main>
-<script src="tianheng-wenshi-validation-v1.js?v=1.0.0"></script>
-<script src="tianheng-wenshi-liuyao-v1.js?v=1.0.0"></script>
-<script src="tianheng-wenshi-liuyao-structure-v1.js?v=1.0.0"></script>
-<script src="tianheng-wenshi-liuyao-evidence-v1.js?v=1.0.0"></script>
-<script src="tianheng-wenshi-liuyao-adjudication-v1.js?v=1.0.0"></script>
-<script src="tianheng-wenshi-liuyao-interactions-v1.js?v=1.0.0"></script>
-<script src="tianheng-wenshi-liuyao-synthesis-v1.js?v=1.0.0"></script>
-<script src="tianheng-wenshi-engine-v1.js?v=1.0.0"></script>
-<script src="tianheng-wenshi-history-study-v1.js?v=1.0.0"></script>
+<script src="tianheng-wenshi-validation-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-wenshi-liuyao-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-wenshi-liuyao-structure-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-wenshi-liuyao-evidence-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-wenshi-liuyao-adjudication-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-wenshi-liuyao-interactions-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-wenshi-liuyao-synthesis-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-wenshi-narrative-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-wenshi-engine-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-wenshi-history-study-v1.js?v=20260901-narrative1"></script>
 <script>
 (()=>{
   'use strict';
@@ -163,8 +165,8 @@
     const hidden=s.interactions.hiddenGod;const pair=s.interactions.interactions.branchPairs;const trines=s.interactions.interactions.trines;
     $('interactions').innerHTML=list([hidden?.found?`伏神：${hidden.candidates.map(x=>`${x.hidden.najia}${x.hidden.relation}伏於第${x.position}爻，${x.relation}`).join('；')}`:null,...pair.map(x=>`${x.type}${x.pair.join('')}・第${x.positions.join('、')}爻${x.active?'（已引動）':'（靜態）'}`),...trines.map(x=>`三合${x.branches.join('')}化${x.element}・${x.active?'有動爻引動':'支序齊備但未引動'}`)].filter(Boolean));
     $('support').innerHTML=list(s.evidenceLedger.support);$('resistance').innerHTML=list(s.evidenceLedger.resistance);$('unresolved').innerHTML=list(s.evidenceLedger.unresolved);
-    $('explanation').innerHTML=`<p>${esc(s.explanation.basis)}</p><p class="support">支持：${esc(s.explanation.support)}</p><p class="resistance">阻力：${esc(s.explanation.resistance)}</p><p><b>${esc(s.explanation.conclusion)}</b></p>`;
-    $('canDo').innerHTML=list(s.advice.canDo);$('avoid').innerHTML=list(s.advice.avoid);$('verify').innerHTML=list(s.advice.verify);$('timing').innerHTML=list(s.timing.conditions);
+    const n=s.narrative;$('explanation').innerHTML=n.paragraphs.map(x=>`<section class="narrative-part"><h3>${esc(x.title)}</h3><p>${esc(x.text)}</p><small>依據：${esc(x.evidenceRefs.join('・'))}</small></section>`).join('')+`<p class="empty">全段由本地規則與證據鏈產生，未呼叫外部 API。</p>`;
+    $('canDo').innerHTML=list(n.advice.canDo);$('avoid').innerHTML=list(n.advice.avoid);$('verify').innerHTML=list(n.advice.verify);$('timing').innerHTML=list(n.advice.timing);
     $('result').classList.remove('hidden');
     setTimeout(()=>$('result').scrollIntoView({behavior:'smooth',block:'start'}),80);
   }

@@ -5,7 +5,7 @@ function assert(name,fn){try{if(!fn())throw new Error('assert false');console.lo
 function input(){return{question:'這次面試能否取得下一輪通知？',category:'事業／工作',topic:'career_job',askedAt:'2025-01-02T09:00:00+08:00',timezone:'Asia/Taipei',casts:[7,7,7,7,7,7],calendar:{monthZhi:'巳',dayGan:'甲',dayZhi:'午',source:'固定測試曆例'}};}
 function metadata(){return{caseId:'BLIND-001',mode:'retrospective_blind',createdAt:'2026-01-11T09:00:00+08:00',probability:.7,confidence:'medium',timingWindow:null,blindProtocol:{outcomeSealed:true,operatorHadOutcomeAccess:false,caseFrozenAt:'2026-01-10T09:00:00+08:00',outcomeRevealedAt:'2026-01-12T09:00:00+08:00'}};}
 assert('總引擎完整保留問題起卦結構裁決互動與建議層',()=>{
- const r=E.analyze(input());return r.layers.question&&r.layers.casting&&r.layers.structure&&r.layers.adjudication&&r.layers.interactions&&r.layers.provisionalOutcome&&r.layers.advice;
+ const r=E.analyze(input());return r.layers.question&&r.layers.casting&&r.layers.structure&&r.layers.adjudication&&r.layers.interactions&&r.layers.provisionalOutcome&&r.layers.narrative&&r.layers.originalAdvice&&r.layers.advice;
 });
 assert('未驗證前不宣稱正式準確率或接站完成',()=>{
  const r=E.analyze(input());return !r.release.formalAccuracyClaim&&!r.release.siteIntegrationReady;
@@ -24,4 +24,3 @@ assert('歷史盲測可在封存後揭盲計分',()=>{
 assert('safeAnalyze 攔截不完整起卦輸入',()=>!E.safeAnalyze({question:'x'}).ok);
 assert('問事總引擎不覆蓋八字或舊命理結果',()=>E.legacyOverride===false&&E.analyze(input()).legacyOverride===false);
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);
-

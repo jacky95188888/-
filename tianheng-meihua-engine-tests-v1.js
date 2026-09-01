@@ -13,7 +13,7 @@ function input() {
 
 assert('總引擎保存問題起卦本互變體用旺衰證據結果與建議', () => {
   const l = E.analyze(input()).layers;
-  return l.question && l.casting && l.primary && l.mutual && l.changed && l.bodyUse && l.monthStrength && l.evidence && l.provisionalOutcome && l.advice;
+  return l.question && l.casting && l.primary && l.mutual && l.changed && l.bodyUse && l.monthStrength && l.evidence && l.provisionalOutcome && l.narrative && l.originalAdvice && l.advice;
 });
 assert('未完成實證前不宣稱準確率或可接正式站', () => {
   const r = E.analyze(input());
@@ -32,4 +32,3 @@ assert('梅花總引擎不覆蓋舊命理結果', () => E.legacyOverride === fal
 
 console.log(`\nRESULT ${pass}/${pass + fail} passed`);
 if (fail) process.exit(1);
-

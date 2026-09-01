@@ -47,6 +47,13 @@ assert('全384局判斷分數皆為有限數且事件固定四條',()=>{
   }
   return true;
 });
+assert('全384局皆可產生完整本地證據敘事',()=>{
+  for(const upper of names)for(const lower of names)for(let movingLine=1;movingLine<=6;movingLine++){
+    const r=E.analyze(base({manual:{upper,lower,movingLine,source:'敘事窮舉'}})).result.narrative;
+    if(r.usesExternalApi!==false||r.paragraphs.length<5||r.paragraphs.some(x=>!x.text||!x.evidenceRefs.length))return false;
+  }
+  return true;
+});
 assert('五行25種配對皆有且只有一種體用關係',()=>{
   const valid=new Set(['用生體','比和','體克用','體生用','用克體']);
   return elements.every(actor=>elements.every(body=>valid.has(J.relation(actor,body).name)));
@@ -86,4 +93,3 @@ assert('未完成實證前正式準確率與接站旗標皆為否',()=>{const r=
 assert('所有層級維持legacyOverride false',()=>Core.legacyOverride===false&&J.legacyOverride===false&&E.legacyOverride===false&&E.analyze(base()).legacyOverride===false);
 
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);
-
