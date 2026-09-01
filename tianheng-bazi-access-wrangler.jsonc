@@ -1,0 +1,11 @@
+{
+  "name": "tianheng-bazi-access",
+  "main": "tianheng-bazi-access-worker-v1.js",
+  "compatibility_date": "2026-08-31",
+  "vars": {
+    "ALLOW_ORIGIN": "https://jacky95188888.github.io"
+  },
+  "kv_namespaces": [
+    { "binding": "BAZI_CODES", "id": "REPLACE_WITH_KV_NAMESPACE_ID" }
+  ]
+}
