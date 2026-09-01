@@ -31,6 +31,8 @@ jobs:
         run: node tianheng-wenshi-liuyao-interactions-tests-v1.js
       - name: Run conservative synthesis and advice tests
         run: node tianheng-wenshi-liuyao-synthesis-tests-v1.js
+      - name: Run deterministic evidence narrative tests
+        run: node tianheng-wenshi-narrative-tests-v1.js
       - name: Run Wenshi total engine and blind-seal tests
         run: node tianheng-wenshi-engine-tests-v1.js
       - name: Run verified classics counterexample tests

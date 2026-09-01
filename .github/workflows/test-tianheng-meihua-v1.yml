@@ -29,5 +29,7 @@ jobs:
         run: node tianheng-meihua-qa-tests-v1.js
       - name: Run exhaustive Meihua pre-homepage audit
         run: node tianheng-meihua-audit-tests-v1.js
+      - name: Run deterministic evidence narrative tests
+        run: node tianheng-meihua-narrative-tests-v1.js
       - name: Run homepage integration checks
         run: node tianheng-meihua-home-integration-tests-v1.js
