@@ -1,0 +1,28 @@
+name: Test Tianheng Meihua v1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tianheng-meihua-*.js'
+      - 'TIANHENG_MEIHUA_*.md'
+      - '.github/workflows/test-tianheng-meihua-v1.yml'
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run Meihua casting and classics tests
+        run: node tianheng-meihua-core-tests-v1.js
+      - name: Run Meihua body-use evidence tests
+        run: node tianheng-meihua-judgment-tests-v1.js
+      - name: Run Meihua total engine and seal tests
+        run: node tianheng-meihua-engine-tests-v1.js
+      - name: Run Meihua blind and prospective validation tests
+        run: node tianheng-meihua-validation-tests-v1.js
+      - name: Run standalone Meihua QA page checks
+        run: node tianheng-meihua-qa-tests-v1.js

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>天衡・九維命理｜梅花易數 QA</title>
+  <meta name="theme-color" content="#08070d">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Noto+Serif+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{color-scheme:dark;--bg:#07060c;--panel:rgba(18,14,25,.93);--line:rgba(192,151,77,.46);--soft:rgba(216,183,116,.17);--gold:#d8b774;--gold2:#f0d58e;--text:#f0e7d8;--muted:#a99b86;--green:#78b99f;--red:#d87d78;--blue:#8eb3d4;--purple:#75468c}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--text);font:16px/1.8 "Noto Serif TC","Songti TC",serif;background:#07060c;overflow-x:hidden}
+    body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:url("BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png") center top/cover no-repeat;filter:saturate(.82) brightness(.66)}
+    body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(6,5,12,.14),rgba(6,5,12,.5) 42%,rgba(6,5,12,.86)),radial-gradient(circle at 50% 8%,rgba(213,173,87,.15),transparent 30rem)}
+    main{position:relative;z-index:1;width:min(800px,calc(100% - 22px));margin:auto;padding:15px 0 max(82px,env(safe-area-inset-bottom))}.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 3px 22px}.home,.status{display:inline-flex;align-items:center;min-height:36px;border:1px solid var(--soft);border-radius:999px;background:rgba(10,8,16,.72);padding:7px 12px;color:#cdbb96;text-decoration:none;font-size:10px;letter-spacing:.1em;backdrop-filter:blur(10px)}.home::before{content:"‹";font-size:20px;line-height:1;margin-right:6px;color:var(--gold2)}.status{color:#9bd0bb}.status::before{content:"";width:6px;height:6px;border-radius:50%;background:#74b798;box-shadow:0 0 10px #74b798;margin-right:7px}
+    .hero{text-align:center;padding:15px 8px 24px}.sigil{width:76px;height:76px;display:grid;place-items:center;margin:0 auto 16px;border:1px solid rgba(216,183,116,.6);border-radius:50%;font-size:31px;font-weight:700;color:var(--gold2);background:radial-gradient(circle,rgba(114,65,137,.42),rgba(18,13,25,.75) 67%);box-shadow:0 0 0 8px rgba(216,183,116,.035),0 0 42px rgba(216,183,116,.2)}.eyebrow{margin:0 0 8px;color:#ac9670;font:10px Cinzel,serif;letter-spacing:.3em;padding-left:.3em}h1{margin:0;font-size:clamp(2rem,8vw,3.2rem);line-height:1.25;letter-spacing:.18em;padding-left:.18em;background:linear-gradient(180deg,#fff5d1,#e1bd6d 54%,#93622e);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}.lead{max-width:610px;margin:12px auto 0;color:#b8aa94;font-size:13px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:22px 0 5px}.step{padding:9px 3px;border:1px solid var(--soft);border-radius:12px;background:rgba(9,7,14,.62);color:#998b77;font-size:10px;text-align:center}.step b{display:block;color:#dbbe7b;font-size:14px}
+    .panel{position:relative;overflow:hidden;margin:17px 0;padding:24px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(155deg,rgba(30,20,39,.94),rgba(10,8,16,.96));box-shadow:0 22px 58px rgba(0,0,0,.58),inset 0 1px rgba(255,255,255,.035);backdrop-filter:blur(18px)}.panel::before{content:"";position:absolute;top:0;left:24px;right:24px;height:1px;background:linear-gradient(90deg,transparent,rgba(238,205,135,.5),transparent)}.section-title{display:flex;align-items:center;gap:13px;margin:0 0 18px;color:#ead39a;font-size:19px;letter-spacing:.1em}.section-title span{flex:none;width:38px;height:38px;display:grid;place-items:center;border:1px solid rgba(216,183,116,.55);border-radius:50%;color:#e6c77e;font-size:12px}.sub{margin:22px 0 11px;color:#d7bd83;font-size:14px;letter-spacing:.11em}.notice{margin:0 0 18px;padding:12px 14px;border:1px solid rgba(216,183,116,.23);border-left:3px solid var(--gold);border-radius:0 12px 12px 0;background:rgba(216,183,116,.055);color:#b8aa93;font-size:12px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}label{display:block;margin-bottom:13px;color:#c7b58f;font-size:12px;letter-spacing:.05em}input,select,textarea,button{width:100%;border:1px solid rgba(189,148,75,.46);border-radius:13px;background:rgba(7,6,11,.78);color:var(--text);padding:13px 14px;font:inherit}label>input,label>select,label>textarea{margin-top:7px}input,select{min-height:51px}textarea{min-height:105px;resize:vertical;line-height:1.7}input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 2px rgba(216,183,116,.1),0 0 22px rgba(216,183,116,.11)}select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:calc(100% - 19px) calc(50% - 3px),calc(100% - 13px) calc(50% - 3px);background-size:6px 6px;background-repeat:no-repeat;padding-right:36px}.method-switch{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:2px 0 18px}.method-switch button{min-height:50px;background:rgba(10,8,16,.75);color:#ae9e84;box-shadow:none;letter-spacing:.05em}.method-switch button.active{border-color:#d6b367;color:#f0d28d;background:linear-gradient(145deg,rgba(108,59,128,.52),rgba(31,19,39,.86));box-shadow:inset 0 1px rgba(255,255,255,.06),0 8px 20px rgba(34,13,41,.24)}.method-block{padding:16px;border:1px solid var(--soft);border-radius:16px;background:rgba(7,6,12,.42)}
+    button{cursor:pointer;transition:.2s;border-color:#d4ad5b;background:linear-gradient(135deg,#9d3b31,#73302b 53%,#4d2027);color:#fff4d4;font-weight:700;letter-spacing:.13em;box-shadow:inset 0 1px rgba(255,255,255,.13),0 12px 28px rgba(77,21,24,.28)}button:active{transform:scale(.985)}button.secondary{background:rgba(13,10,18,.8);color:#d8bd83;box-shadow:none}.actions{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-top:18px}.actions button{min-height:55px}.hidden{display:none!important}.error{color:#ffaaa3;border:1px solid rgba(216,83,83,.54);background:rgba(72,31,31,.84);padding:14px 16px;border-radius:13px;margin:14px 0}
+    #result{animation:rise .55s ease both}@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}.hex-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}.hex-card{position:relative;min-height:235px;padding:16px 13px;border:1px solid rgba(193,151,78,.37);border-radius:17px;background:linear-gradient(145deg,rgba(80,44,95,.34),rgba(7,6,12,.68));text-align:center}.hex-card small{color:#958873;font-size:10px;letter-spacing:.12em}.hex-card h3{margin:6px 0 2px;color:#efd08a;font-size:18px}.hex-card p{margin:0;color:#a99c88;font-size:11px}.hex-lines{width:75px;margin:14px auto 10px;display:flex;flex-direction:column;gap:7px}.yao{height:7px;border-radius:2px;background:#d6b468;box-shadow:0 0 10px rgba(216,180,104,.14)}.yao.yin{background:linear-gradient(90deg,#d6b468 0 41%,transparent 41% 59%,#d6b468 59%)}.yao.moving{filter:drop-shadow(0 0 5px #b16bc9)}.yao.moving::after{content:"動";position:absolute;margin:-10px 0 0 48px;color:#d395e7;font-size:8px}.fact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.fact{min-height:100px;padding:13px;border:1px solid var(--soft);border-radius:15px;background:rgba(7,6,12,.5)}.fact span{color:#8f8371;font-size:10px}.fact b{display:block;margin-top:7px;color:#e6c77f;font-size:14px}.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.time-card{padding:15px;border:1px solid var(--soft);border-radius:15px;background:rgba(7,6,12,.48)}.time-card em{display:block;color:#9b8d79;font-size:10px;font-style:normal;letter-spacing:.1em}.time-card h3{margin:5px 0 8px;color:#dfc181;font-size:15px}.time-card p{margin:6px 0;color:#cfc1ac;font-size:12px}.tag{display:inline-block;border:1px solid currentColor;border-radius:999px;padding:3px 9px;font-size:10px}.support{color:var(--green)}.resistance{color:var(--red)}.unresolved{color:var(--blue)}.evidence,.advice{min-height:100%;padding:15px;border:1px solid var(--soft);border-radius:15px;background:rgba(7,6,12,.45)}.evidence h3,.advice h3{margin:0 0 8px;font-size:14px}.evidence.good,.advice.good{border-top:2px solid var(--green)}.evidence.bad,.advice.bad{border-top:2px solid var(--red)}.evidence.open,.advice.check{border-top:2px solid var(--blue)}.list{margin:5px 0;padding-left:1.1rem;color:#d5c8b3;font-size:12px}.list li{padding:3px 0}.empty{color:#766e64;font-size:12px}.explain p{margin:8px 0;color:#d5c8b4;font-size:13px}.explain b{color:#efd28b}.page-foot{text-align:center;margin:24px 10px 0;color:#756e64;font-size:10px;line-height:1.8}.export{margin-top:16px;min-height:50px}
+    @media(max-width:720px){main{width:min(100% - 18px,800px);padding-top:11px}.hero{padding:10px 5px 20px}.sigil{width:68px;height:68px;font-size:28px}h1{font-size:34px}.lead{font-size:12px}.panel{padding:18px 15px;border-radius:19px}.panel::before{left:18px;right:18px}.section-title{font-size:17px}.grid,.grid.three,.timeline{grid-template-columns:1fr}.method-switch{grid-template-columns:1fr}.hex-grid{grid-template-columns:1fr}.hex-card{min-height:210px}.fact-grid{grid-template-columns:repeat(2,1fr)}.actions{grid-template-columns:1fr}.steps{gap:5px}.step{font-size:9px;padding:8px 2px}.step b{font-size:12px}}
+  </style>
+</head>
+<body>
+<main>
+  <nav class="topbar" aria-label="頁面導覽"><a class="home" href="./">返回天衡</a><span class="status">獨立 QA・尚未接主頁</span></nav>
+  <header class="hero">
+    <div class="sigil" aria-hidden="true">梅</div><p class="eyebrow">TIANHENG MEIHUA ORACLE</p><h1>梅花易數</h1>
+    <p class="lead">從起卦原數、本卦互變到體用旺衰逐層留證；先看條件如何變化，再給可以查證的近期做法。</p>
+    <div class="steps" aria-label="判讀流程"><div class="step"><b>01</b>一事一問</div><div class="step"><b>02</b>取數成卦</div><div class="step"><b>03</b>體用互變</div><div class="step"><b>04</b>驗證結果</div></div>
+    <div id="runtimeNotice" class="error">頁面程式尚未啟動。若提示持續顯示，代表預覽器封鎖 JavaScript，請勿把空白畫面當成判讀結果。</div>
+  </header>
+
+  <section class="panel">
+    <h2 class="section-title"><span>壹</span>問題與起卦方法</h2>
+    <div class="notice">請只問一件具體、有期限、結果可查證的事情。年月日時法必須輸入農曆資料，不可用國曆月份代替。</div>
+    <label>具體問題<textarea id="question" placeholder="例如：我在 9 月 15 日前能否收到第二輪面試通知？"></textarea></label>
+    <div class="grid">
+      <label>題型<select id="category"><option>求職／工作</option><option>升遷／職位</option><option>合作／客戶</option><option>收入／收款</option><option>感情／人際</option><option>選擇／決策</option><option>一般問事</option></select></label>
+      <label>提問時間<input id="askedAt" type="datetime-local"></label>
+      <label>時區<input id="timezone" value="Asia/Taipei"></label><label>案例編號（選填）<input id="caseId" placeholder="例如：MH-20260901-001"></label>
+    </div>
+    <h3 class="sub">◇ 選擇起卦法</h3>
+    <div class="method-switch" role="group" aria-label="起卦方法"><button type="button" class="method active" data-method="lunar_time">年月日時</button><button type="button" class="method" data-method="two_numbers">兩數起卦</button><button type="button" class="method" data-method="manual_verified">人工核對</button></div>
+
+    <div id="lunar_time" class="method-block">
+      <div class="grid three">
+        <label>年支<select id="yearZhi"><option>子</option><option>丑</option><option>寅</option><option>卯</option><option>辰</option><option>巳</option><option>午</option><option>未</option><option>申</option><option>酉</option><option>戌</option><option>亥</option></select></label>
+        <label>農曆月<input id="lunarMonth" type="number" min="1" max="12" value="1"></label><label>農曆日<input id="lunarDay" type="number" min="1" max="30" value="1"></label>
+        <label>時支<select id="hourZhi"><option>子</option><option>丑</option><option>寅</option><option>卯</option><option>辰</option><option>巳</option><option>午</option><option>未</option><option>申</option><option>酉</option><option>戌</option><option>亥</option></select></label>
+        <label>曆法來源<input id="calendarSource" value="QA 人工核對農曆"></label>
+      </div>
+    </div>
+    <div id="two_numbers" class="method-block hidden"><div class="grid"><label>第一數・上卦<input id="firstNumber" type="number" min="1" value="17"></label><label>第二數・下卦<input id="secondNumber" type="number" min="1" value="26"></label></div><div class="notice">第一數取上卦、第二數取下卦；兩數相加取動爻，原始數字會完整保留。</div></div>
+    <div id="manual_verified" class="method-block hidden"><div class="grid three">
+      <label>上卦<select id="manualUpper"><option>乾</option><option>兌</option><option>離</option><option>震</option><option>巽</option><option>坎</option><option>艮</option><option>坤</option></select></label>
+      <label>下卦<select id="manualLower"><option>乾</option><option>兌</option><option>離</option><option>震</option><option>巽</option><option>坎</option><option>艮</option><option>坤</option></select></label>
+      <label>動爻<select id="manualMoving"><option value="1">初爻</option><option value="2">二爻</option><option value="3">三爻</option><option value="4">四爻</option><option value="5">五爻</option><option value="6">上爻</option></select></label>
+    </div><label>核對來源<input id="manualSource" value="老師人工核對命例"></label></div>
+
+    <h3 class="sub">◇ 旺衰與外應</h3>
+    <div class="grid"><label>月支（兩數／人工法建議填寫）<select id="monthZhi"><option value="">依農曆月數或保留未判</option><option>子</option><option>丑</option><option>寅</option><option>卯</option><option>辰</option><option>巳</option><option>午</option><option>未</option><option>申</option><option>酉</option><option>戌</option><option>亥</option></select></label><label>外應觀察（選填）<input id="externalResponse" placeholder="例如：起卦時突然聽見鳥鳴"></label></div>
+    <div class="actions"><button id="analyze">執行梅花分層判讀</button><button id="reset" class="secondary">清除結果</button></div>
+  </section>
+
+  <div id="error" class="error hidden" role="alert"></div>
+  <section id="result" class="hidden" aria-live="polite">
+    <div class="panel"><h2 class="section-title"><span>貳</span>本卦・互卦・變卦</h2><div id="hexagrams" class="hex-grid"></div></div>
+    <div class="panel"><h2 class="section-title"><span>參</span>體用與月令旺衰</h2><div id="facts" class="fact-grid"></div><h3 class="sub">◇ 原始起卦證據</h3><div id="castingEvidence" class="notice"></div></div>
+    <div class="panel"><h2 class="section-title"><span>肆</span>起段・中段・末段</h2><div id="timeline" class="timeline"></div></div>
+    <div class="panel"><h2 class="section-title"><span>伍</span>支持、阻力與未定處</h2><div class="grid three"><div class="evidence good"><h3 class="support">支持</h3><div id="support"></div></div><div class="evidence bad"><h3 class="resistance">阻力</h3><div id="resistance"></div></div><div class="evidence open"><h3 class="unresolved">尚未裁定</h3><div id="unresolved"></div></div></div></div>
+    <div class="panel"><h2 class="section-title"><span>陸</span>暫定結論與近期做法</h2><div id="explanation" class="explain"></div><div class="grid three"><div class="advice good"><h3 class="support">可以做</h3><div id="canDo"></div></div><div class="advice bad"><h3 class="resistance">先避免</h3><div id="avoid"></div></div><div class="advice check"><h3 class="unresolved">需要查證</h3><div id="verify"></div></div></div><h3 class="sub">◇ 時間條件</h3><div id="timing"></div><div class="notice">此版本尚未完成真實歷史盲測與前瞻校準，不宣稱正式準確率；不能代替醫療、法律、投資或其他專業判斷。</div><button id="export" class="secondary export">匯出完整判讀 JSON</button></div>
+  </section>
+  <footer class="page-foot">天衡・九維命理｜梅花易數獨立 QA v1<br>原始取數、派生卦與判斷事件分開保存，不覆蓋其他命理引擎。</footer>
+</main>
+<script src="tianheng-meihua-core-v1.js?v=1.0.0"></script>
+<script src="tianheng-meihua-judgment-v1.js?v=1.0.0"></script>
+<script src="tianheng-meihua-validation-v1.js?v=1.0.0"></script>
+<script src="tianheng-meihua-engine-v1.js?v=1.0.0"></script>
+<script>
+(()=>{
+  'use strict';
+  const $=id=>document.getElementById(id);let method='lunar_time';let lastResult=null;
+  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const list=(items,empty='無')=>items&&items.length?`<ul class="list">${items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:`<p class="empty">${empty}</p>`;
+  $('runtimeNotice').classList.add('hidden');
+  const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());$('askedAt').value=now.toISOString().slice(0,16);
+
+  document.querySelectorAll('.method').forEach(button=>button.addEventListener('click',()=>{
+    method=button.dataset.method;document.querySelectorAll('.method').forEach(x=>x.classList.toggle('active',x===button));
+    ['lunar_time','two_numbers','manual_verified'].forEach(id=>$(id).classList.toggle('hidden',id!==method));
+  }));
+
+  function yaoLines(hex,moving){return `<div class="hex-lines">${hex.bits.map((bit,index)=>`<div class="yao ${bit?'yang':'yin'} ${moving===index+1?'moving':''}"></div>`).reverse().join('')}</div>`;}
+  function hexCard(label,hex,moving){return `<article class="hex-card"><small>${label}</small><h3>${esc(hex.fullName)}・${hex.number}</h3>${yaoLines(hex,moving)}<p>上${esc(hex.upper.name)}${esc(hex.upper.element)}・下${esc(hex.lower.name)}${esc(hex.lower.element)}</p></article>`;}
+  function eventText(item){return `${item.actor.name}${item.actor.element}對${item.body.name}${item.body.element}：${item.relation}。${item.explanation}`;}
+
+  function render(engine){
+    const r=engine.result;const c=r.core;const body=c.bodyUse.body;const use=c.bodyUse.use;
+    $('hexagrams').innerHTML=hexCard('本卦',c.primary,c.movingLine)+hexCard('互卦',c.mutual,null)+hexCard('變卦',c.changed,null);
+    const facts=[['動爻',c.movingLine===1?'初爻':c.movingLine===6?'上爻':`${c.movingLine}爻`],['體卦',`${body.name}${body.element}・${r.strength.bodyState}`],['用卦',`${use.name}${use.element}・${r.strength.useState}`],['暫定結果',`${r.outcome.label}・${r.outcome.confidence}`]];
+    $('facts').innerHTML=facts.map(([k,v])=>`<div class="fact"><span>${k}</span><b>${esc(v)}</b></div>`).join('');
+    const original=JSON.stringify(c.casting.original);const seeds=c.casting.seeds?`；取數種子 ${JSON.stringify(c.casting.seeds)}`:'';
+    $('castingEvidence').textContent=`方法：${c.casting.method}；原始輸入 ${original}${seeds}；取上卦 ${c.casting.derived.upperNumber}、下卦 ${c.casting.derived.lowerNumber}、動爻 ${c.casting.derived.movingLine}。`;
+    const middle=r.timeline.middle.events.map(eventText).join('；');
+    $('timeline').innerHTML=`<div class="time-card"><em>INITIAL・起段</em><h3>${esc(c.primary.fullName)}</h3><p>${esc(eventText(r.timeline.initial.event))}</p></div><div class="time-card"><em>MIDDLE・中段</em><h3>${esc(c.mutual.fullName)}</h3><p>${esc(middle)}</p></div><div class="time-card"><em>FINAL・末段</em><h3>${esc(c.changed.fullName)}</h3><p>${esc(eventText(r.timeline.final.event))}</p></div>`;
+    $('support').innerHTML=list(r.evidenceLedger.support);$('resistance').innerHTML=list(r.evidenceLedger.resistance);$('unresolved').innerHTML=list(r.evidenceLedger.unresolved);
+    $('explanation').innerHTML=`<p><b>${esc(r.explanation.headline)}</b></p><p>${esc(r.explanation.process)}</p><p>${esc(r.explanation.season)}</p><p><span class="tag ${r.outcome.direction==='favorable'?'support':r.outcome.direction==='blocked'?'resistance':'unresolved'}">${esc(r.outcome.label)}</span> ${esc(r.explanation.conclusion)}</p><p class="empty">支持 ${r.outcome.supportScore}／阻力 ${r.outcome.resistanceScore}；分數只供一致性檢查，不取代證據鏈。</p>`;
+    $('canDo').innerHTML=list(r.advice.canDo);$('avoid').innerHTML=list(r.advice.avoid);$('verify').innerHTML=list(r.advice.verify);$('timing').innerHTML=list(r.advice.timing);
+    $('result').classList.remove('hidden');setTimeout(()=>$('result').scrollIntoView({behavior:'smooth',block:'start'}),80);
+  }
+
+  function buildInput(){
+    const local=$('askedAt').value;const input={question:$('question').value,category:$('category').value,askedAt:local?new Date(local).toISOString():'',timezone:$('timezone').value,method};
+    if(method==='lunar_time')input.calendar={yearZhi:$('yearZhi').value,lunarMonth:Number($('lunarMonth').value),lunarDay:Number($('lunarDay').value),hourZhi:$('hourZhi').value,source:$('calendarSource').value};
+    if(method==='two_numbers')input.numbers={first:Number($('firstNumber').value),second:Number($('secondNumber').value)};
+    if(method==='manual_verified')input.manual={upper:$('manualUpper').value,lower:$('manualLower').value,movingLine:Number($('manualMoving').value),source:$('manualSource').value};
+    if($('monthZhi').value)input.monthZhi=$('monthZhi').value;
+    if($('externalResponse').value.trim())input.externalResponse={note:$('externalResponse').value.trim(),recordedAt:new Date().toISOString()};
+    return input;
+  }
+
+  $('analyze').addEventListener('click',()=>{
+    $('error').classList.add('hidden');const input=buildInput();const analyzed=window.TianhengMeihuaEngine.safeAnalyze(input);
+    if(!analyzed.ok){$('error').textContent=analyzed.error;$('error').classList.remove('hidden');$('result').classList.add('hidden');return;}
+    lastResult={caseId:$('caseId').value||null,generatedAt:new Date().toISOString(),input,analysis:analyzed.result};render(analyzed.result);
+  });
+  $('reset').addEventListener('click',()=>{$('result').classList.add('hidden');$('error').classList.add('hidden');lastResult=null;});
+  $('export').addEventListener('click',()=>{if(!lastResult)return;const blob=new Blob([JSON.stringify(lastResult,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`tianheng-meihua-${lastResult.caseId||Date.now()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+})();
+</script>
+</body>
+</html>
+

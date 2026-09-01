@@ -1,0 +1,22 @@
+'use strict';
+const fs=require('fs');const html=fs.readFileSync('tianheng-meihua-qa-v1.html','utf8');let pass=0,fail=0;
+function assert(name,fn){try{if(!fn())throw new Error('assert false');console.log('PASS',name);pass++;}catch(e){console.error('FAIL',name,'::',e.message);fail++;}}
+assert('梅花頁維持獨立 QA 尚未接主頁',()=>html.includes('獨立 QA・尚未接主頁')&&html.includes('href="./"'));
+assert('套用天衡黑金紫手機視覺',()=>html.includes('BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png')&&html.includes('class="sigil"')&&html.includes('class="steps"'));
+assert('四個梅花模組依序載入',()=>['meihua-core','meihua-judgment','meihua-validation','meihua-engine'].every(x=>html.includes(x)));
+assert('三種起卦方法都有獨立介面',()=>['lunar_time','two_numbers','manual_verified'].every(x=>html.includes(`data-method="${x}"`)));
+assert('年月日時明示農曆且要求曆法來源',()=>['yearZhi','lunarMonth','lunarDay','hourZhi','calendarSource'].every(id=>html.includes(`id="${id}"`))&&html.includes('不可用國曆月份代替'));
+assert('兩數法保存兩個原始數字欄位',()=>html.includes('id="firstNumber"')&&html.includes('id="secondNumber"')&&html.includes('原始數字會完整保留'));
+assert('人工法提供上下八卦與六動爻',()=>html.includes('id="manualUpper"')&&html.includes('id="manualLower"')&&html.includes('id="manualMoving"')&&html.includes('<option value="6">上爻</option>'));
+assert('本卦互卦變卦均有圖形結果區',()=>html.includes('id="hexagrams"')&&html.includes("hexCard('本卦'")&&html.includes("hexCard('互卦'")&&html.includes("hexCard('變卦'"));
+assert('體用旺衰與原始起卦證據存在',()=>html.includes('體用與月令旺衰')&&html.includes('id="castingEvidence"')&&html.includes('casting.original'));
+assert('起中末動態時間線存在',()=>['INITIAL・起段','MIDDLE・中段','FINAL・末段'].every(x=>html.includes(x)));
+assert('支持阻力未定分欄顯示',()=>['id="support"','id="resistance"','id="unresolved"'].every(x=>html.includes(x)));
+assert('近期建議分為可做避免與查證',()=>['id="canDo"','id="avoid"','id="verify"'].every(x=>html.includes(x)));
+assert('外應另有輸入且不冒充自動定向',()=>html.includes('id="externalResponse"')&&html.includes('input.externalResponse'));
+assert('預覽器封鎖腳本時有明確提示',()=>html.includes('頁面程式尚未啟動')&&html.includes("$('runtimeNotice').classList.add('hidden')"));
+assert('完整判讀可匯出 JSON',()=>html.includes('application/json')&&html.includes('JSON.stringify(lastResult'));
+assert('不宣稱準確率並保留專業安全提醒',()=>html.includes('不宣稱正式準確率')&&html.includes('醫療、法律、投資'));
+assert('HTML 不含付款或覆蓋舊引擎操作',()=>!html.includes('NT$99')&&!html.includes('legacyOverride=true'));
+console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);
+
