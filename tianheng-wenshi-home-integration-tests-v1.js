@@ -29,9 +29,15 @@ test("首頁保留今日運勢與雙人合度入口", () => {
 });
 
 test("首頁提供六爻問事入口", () => {
-  const target = './tianheng-wenshi-qa-v1.html?v=20260831-wenshi-beauty';
+  const target = './tianheng-wenshi-qa-v1.html?v=20260901-narrative1';
   assert.ok(html.split(target).length - 1 >= 2, "頂部入口與更新公告均應連到獨立問事頁");
   assert.ok(html.includes("六爻問事開放驗證"));
+});
+
+test("首頁採主功能卡與四格快捷入口", () => {
+  assert.ok(html.includes('class="home-gateway"'));
+  assert.ok(html.includes('class="gateway-feature"'));
+  assert.ok(html.includes('class="gateway-grid"'));
 });
 
 test("問事仍採獨立頁延遲進入", () => {
