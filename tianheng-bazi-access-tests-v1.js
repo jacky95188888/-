@@ -25,14 +25,16 @@ test('保留舊裝置解鎖期限並接受後台到期日',()=>{
   assert.ok(access.includes("STORAGE_KEY='tianheng_bazi_advanced_access_v1'"));
   assert.ok(access.includes('saveAccess(data.expiresAt)'));
 });
-test('首頁進階內容預設隱藏並有人工轉帳流程',()=>{
-  assert.ok(home.includes('data-bazi-advanced-content hidden'));
-  assert.ok(home.includes('LINE 傳截圖'));
-  assert.ok(home.includes('data-bazi-unlock'));
+test('首頁八字進階內容直接免費開放',()=>{
+  assert.ok(home.includes('data-bazi-advanced-content>'));
+  assert.ok(!home.includes('data-bazi-advanced-content hidden'));
+  assert.ok(!home.includes('data-bazi-access-gate'));
+  assert.ok(!home.includes('data-bazi-unlock'));
 });
-test('首頁說明不傳姓名生日四柱命盤',()=>{
-  assert.ok(home.includes('不會傳送姓名、生日、四柱或命盤資料'));
-  assert.ok(home.includes('一碼一裝置驗證'));
+test('首頁不顯示密碼或轉帳解鎖流程',()=>{
+  assert.ok(!home.includes('輸入專屬解鎖碼'));
+  assert.ok(!home.includes('LINE 傳截圖'));
+  assert.ok(!home.includes('解 鎖 完 整 分 析'));
 });
 test('原本九維內容不在密碼區內',()=>{
   assert.ok(home.indexOf('const cardsHtml=')>home.indexOf('function render(r,info)'));
@@ -43,8 +45,8 @@ test('長篇卡片展開不再受固定高度截斷',()=>{
   assert.ok(home.includes('.lnopen>.lnbody{max-height:none!important;overflow:visible!important}'));
   assert.ok(!home.includes('.card.open .card-b{max-height:1400px}'));
 });
-test('首頁載入進階解鎖模組 v2',()=>{
-  assert.ok(home.includes('tianheng-bazi-access-v1.js?v=2.0.0'));
+test('首頁不載入進階解鎖模組',()=>{
+  assert.ok(!home.includes('tianheng-bazi-access-v1.js'));
 });
 test('發碼台不保存管理金鑰並支援建立列表停用',()=>{
   assert.ok(admin.includes("autocomplete=\"off\""));

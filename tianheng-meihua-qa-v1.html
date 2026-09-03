@@ -75,7 +75,7 @@
 
     <h3 class="sub">◇ 旺衰與外應</h3>
     <div class="grid"><label>月支（兩數／人工法建議填寫）<select id="monthZhi"><option value="">依農曆月數或保留未判</option><option>子</option><option>丑</option><option>寅</option><option>卯</option><option>辰</option><option>巳</option><option>午</option><option>未</option><option>申</option><option>酉</option><option>戌</option><option>亥</option></select></label><label>外應觀察（選填）<input id="externalResponse" placeholder="例如：起卦時突然聽見鳥鳴"></label></div>
-    </div><div class="form-step"><div class="form-step-head"><b>4</b>查看完整分層判讀</div><p class="form-step-note">本卦、互卦、變卦、體用、阻力與近期做法分開顯示</p><div class="feature-access-gate" data-th-access-feature="meihua" data-th-access-target="#analyze"><p>已有開通碼請在這裡輸入；尚未開通可先看完功能，再到頁面最下方聯絡三寶爸。</p><div class="feature-access-row"><input data-th-access-code autocomplete="off" autocapitalize="characters" maxlength="15" placeholder="TH9-XXXXX-XXXXX" aria-label="梅花易數開通碼"><button type="button" data-th-access-submit>驗 證 開 通 碼</button></div><div class="feature-access-status" data-th-access-status aria-live="polite"></div></div><div class="actions"><button id="analyze" data-feature-analyze disabled>執行梅花分層判讀</button><button id="reset" class="secondary">清除結果</button></div></div>
+    </div><div class="form-step"><div class="form-step-head"><b>4</b>查看完整分層判讀</div><p class="form-step-note">本卦、互卦、變卦、體用、阻力與近期做法分開顯示；目前免費開放完整使用</p><div class="actions"><button id="analyze" data-feature-analyze>執行梅花分層判讀</button><button id="reset" class="secondary">清除結果</button></div></div>
   </section>
 
   <div id="error" class="error hidden" role="alert"></div>
@@ -86,7 +86,7 @@
     <div class="panel"><h2 class="section-title"><span>伍</span>支持、阻力與未定處</h2><div class="grid three"><div class="evidence good"><h3 class="support">支持</h3><div id="support"></div></div><div class="evidence bad"><h3 class="resistance">阻力</h3><div id="resistance"></div></div><div class="evidence open"><h3 class="unresolved">尚未裁定</h3><div id="unresolved"></div></div></div></div>
     <div class="panel"><h2 class="section-title"><span>陸</span>暫定結論與近期做法</h2><div id="explanation" class="explain"></div><div class="grid three"><div class="advice good"><h3 class="support">可以做</h3><div id="canDo"></div></div><div class="advice bad"><h3 class="resistance">先避免</h3><div id="avoid"></div></div><div class="advice check"><h3 class="unresolved">需要查證</h3><div id="verify"></div></div></div><h3 class="sub">◇ 時間條件</h3><div id="timing"></div><div class="notice">此版本尚未完成真實歷史盲測與前瞻校準，不宣稱正式準確率；不能代替醫療、法律、投資或其他專業判斷。</div><button id="export" class="secondary export">匯出完整判讀 JSON</button></div>
   </section>
-  <section class="unlock-contact" id="contact-sambo"><div class="mark">啟</div><h2>聯絡三寶爸・開通完整問事</h2><p>您可以先看懂梅花易數的流程與功能。需要正式問事、人工核對或開通完整使用時，再從這裡聯絡。</p><a href="https://line.me/R/ti/p/@788ldzke" target="_blank" rel="noopener">LINE 聯絡三寶爸申請開通</a><small>LINE：三寶爸的命理分析・@788ldzke</small></section>
+  <section class="unlock-contact" id="contact-sambo"><div class="mark">問</div><h2>聯絡三寶爸・人工核對與建議</h2><p>完整功能目前免費開放。若需要人工核對卦象、深入討論或回報實際結果，可以從這裡聯絡。</p><a href="https://line.me/R/ti/p/@788ldzke" target="_blank" rel="noopener">LINE 聯絡三寶爸</a><small>LINE：三寶爸的命理分析・@788ldzke</small></section>
   <footer class="page-foot">天衡・九維命理｜梅花易數公開驗證 v1<br>原始取數、派生卦與判斷事件分開保存，不覆蓋其他命理引擎。</footer>
 </main>
 <script src="tianheng-meihua-core-v1.js?v=20260901-narrative1"></script>
@@ -94,7 +94,6 @@
 <script src="tianheng-meihua-validation-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-meihua-narrative-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-meihua-engine-v1.js?v=20260901-narrative1"></script>
-<script src="tianheng-feature-access-v1.js?v=20260903"></script>
 <script>
 (()=>{
   'use strict';

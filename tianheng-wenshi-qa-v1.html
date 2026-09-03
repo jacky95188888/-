@@ -136,7 +136,7 @@
       <label>日支<select id="dayZhi"><option value="子">子</option><option value="丑">丑</option><option value="寅">寅</option><option value="卯">卯</option><option value="辰">辰</option><option value="巳">巳</option><option value="午">午</option><option value="未">未</option><option value="申">申</option><option value="酉">酉</option><option value="戌">戌</option><option value="亥">亥</option></select></label>
     </div>
     <details class="advanced"><summary>曆法核對來源</summary><label>曆法來源<input id="calendarSource" value="QA 人工核對干支曆"></label></details></div>
-    <div class="form-step"><div class="form-step-head"><b>4</b>查看完整分層判讀</div><p class="form-step-note">保留卦象、動爻、用神、阻力與判斷依據</p><div class="feature-access-gate" data-th-access-feature="wenshi" data-th-access-target="#analyze"><p>已有開通碼請在這裡輸入；尚未開通可先看完功能，再到頁面最下方聯絡三寶爸。</p><div class="feature-access-row"><input data-th-access-code autocomplete="off" autocapitalize="characters" maxlength="15" placeholder="TH9-XXXXX-XXXXX" aria-label="六爻問事開通碼"><button type="button" data-th-access-submit>驗 證 開 通 碼</button></div><div class="feature-access-status" data-th-access-status aria-live="polite"></div></div><div class="actions"><button id="analyze" data-feature-analyze disabled>執行分層判讀</button><button class="secondary" id="reset">清除結果</button></div></div>
+    <div class="form-step"><div class="form-step-head"><b>4</b>查看完整分層判讀</div><p class="form-step-note">保留卦象、動爻、用神、阻力與判斷依據；目前免費開放完整使用</p><div class="actions"><button id="analyze" data-feature-analyze>執行分層判讀</button><button class="secondary" id="reset">清除結果</button></div></div>
   </section>
 
   <div id="error" class="error hidden" role="alert"></div>
@@ -147,7 +147,7 @@
     <div class="panel"><h2 class="section-title"><span>伍</span>支持、阻力與未定處</h2><div class="grid three"><div class="evidence-box support-box"><h3 class="support">支持</h3><div id="support"></div></div><div class="evidence-box resistance-box"><h3 class="resistance">阻力</h3><div id="resistance"></div></div><div class="evidence-box unresolved-box"><h3 class="unresolved">尚未裁定</h3><div id="unresolved"></div></div></div></div>
     <div class="panel"><h2 class="section-title"><span>陸</span>暫定結論與近期做法</h2><div id="explanation"></div><div class="grid three"><div class="advice-card can"><h3 class="support">可以做</h3><div id="canDo"></div></div><div class="advice-card avoid"><h3 class="resistance">先避免</h3><div id="avoid"></div></div><div class="advice-card verify"><h3>需要查證</h3><div id="verify"></div></div></div><h3 class="sub-title">◇ 時間條件</h3><div id="timing"></div><div class="notice">此結果尚未完成真實歷史盲測校準，不能代替醫療、法律、投資或其他專業判斷。</div><button class="secondary" id="export">匯出本次判讀 JSON</button></div>
   </section>
-  <section class="unlock-contact" id="contact-sambo"><div class="mark">啟</div><h2>聯絡三寶爸・開通完整問事</h2><p>您可以先看懂六爻問事的流程與功能。需要正式問事、人工核對或開通完整使用時，再從這裡聯絡。</p><a href="https://line.me/R/ti/p/@788ldzke" target="_blank" rel="noopener">LINE 聯絡三寶爸申請開通</a><small>LINE：三寶爸的命理分析・@788ldzke</small></section>
+  <section class="unlock-contact" id="contact-sambo"><div class="mark">問</div><h2>聯絡三寶爸・人工核對與建議</h2><p>完整功能目前免費開放。若需要人工核對卦象、深入討論或回報實際結果，可以從這裡聯絡。</p><a href="https://line.me/R/ti/p/@788ldzke" target="_blank" rel="noopener">LINE 聯絡三寶爸</a><small>LINE：三寶爸的命理分析・@788ldzke</small></section>
   <footer class="page-foot">天衡・九維命理｜六爻問事公開驗證版<br>推演供文化研究與生活規劃參考，重大決策仍應依現實資訊判斷。</footer>
 </main>
 <script src="tianheng-wenshi-validation-v1.js?v=20260901-narrative1"></script>
@@ -160,7 +160,6 @@
 <script src="tianheng-wenshi-narrative-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-engine-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-history-study-v1.js?v=20260901-narrative1"></script>
-<script src="tianheng-feature-access-v1.js?v=20260903"></script>
 <script>
 (()=>{
   'use strict';

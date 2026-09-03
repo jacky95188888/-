@@ -758,7 +758,6 @@
 <script src="./tianheng-bazi-monthly-v5.js?v=5.0.0"></script>
 <script src="./tianheng-bazi-daily-v6.js?v=6.0.1"></script>
 <script src="./tianheng-bazi-integration-v3.js?v=3.0.0"></script>
-<script src="./tianheng-bazi-access-v1.js?v=2.0.0"></script>
 <script src="./tianheng-bazi-explanations-v2.js?v=2.0.1"></script>
 <script src="./tianheng-bazi-yongshen-explanation-v3.js?v=3.0.0"></script>
 <script src="./tianheng-bazi-yongshen-fortune-explanation-v3.js?v=3.1.1"></script>
@@ -1675,18 +1674,7 @@ function buildAdvancedBaziHtml(r){
   const dailyCard=daily&&dailyExplain?`<div class="card" onclick="this.classList.toggle('open')"><div class="card-h"><span class="no">日</span><span class="nm">重要日期與時段窗口</span><span class="mini">${daily.year}・${daily.month.name}・${daily.purpose.label}</span><span class="arr">▶</span></div><div class="card-b"><div class="card-b-in"><div style="color:#a99877;font-size:11.5px;line-height:1.8;margin-bottom:7px">先選年份、節氣月與真正用途；系統才逐日重算，不用同一份吉日套所有事情。</div><div style="color:#bda678;font-size:11px;margin:9px 0 5px">年份</div><div style="display:flex;flex-wrap:wrap;gap:7px">${dailyYears}</div><div style="color:#bda678;font-size:11px;margin:12px 0 5px">節氣月</div><div style="display:flex;flex-wrap:wrap;gap:7px">${dailyMonths}</div><div style="color:#bda678;font-size:11px;margin:12px 0 5px">用途</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px">${dailyPurposes}</div><div class="bazi-daily-content">${renderBaziDailyContent(daily,dailyExplain)}</div></div></div></div>`:'';
   return `<section class="bazi-advanced-zone" data-bazi-advanced-zone>
     <div class="tasks-head"><div class="ln"></div><span>八 字 進 階 分 析</span><div class="ln"></div></div>
-    <div class="bazi-access-gate" data-bazi-access-gate>
-      <div class="bazi-access-mark">鑰</div>
-      <h3>完整進階分析</h3>
-      <p>原本九維命盤免費保留。完整八字進階包含動態格局、用神、十年大運、十二流月、重要日期與七層命理證據。</p>
-      <div class="bazi-access-flow"><span>① 完成轉帳</span><span>② LINE 傳截圖</span><span>③ 取得解鎖碼</span></div>
-      <a class="bazi-access-line" href="https://line.me/R/ti/p/@788ldzke" target="_blank" rel="noopener">LINE：三寶爸的命理分析・@788ldzke</a>
-      <input class="bazi-access-input" data-bazi-code type="text" inputmode="text" autocomplete="off" autocapitalize="characters" placeholder="輸入專屬解鎖碼" maxlength="15" aria-label="八字進階解鎖碼">
-      <button class="bazi-access-button" data-bazi-unlock type="button">解 鎖 完 整 分 析</button>
-      <div class="bazi-access-status" data-bazi-status aria-live="polite"></div>
-      <div class="bazi-access-note">解鎖碼採一碼一裝置驗證；只傳送解鎖碼與隨機裝置識別，不會傳送姓名、生日、四柱或命盤資料。</div>
-    </div>
-    <div class="bazi-advanced-premium" data-bazi-advanced-content hidden>
+    <div class="bazi-advanced-premium" data-bazi-advanced-content>
     ${recentGuidance}
     <div style="text-align:center;color:#8f836d;font-size:11px;letter-spacing:.18em;margin:20px 0 10px">老師專業資料・點擊展開</div>
     ${zipingCard}
@@ -1790,7 +1778,7 @@ function render(r,info){
    ${crossHtml}
    <div class="lock">
      <b>◇ 流年大運・深度命書 ◇</b>
-     <p>解鎖未來十年逐年運勢、財官姻緣、用神開運方位與改名補運建議。<br>想知道更多，或對天衡有任何建議，都歡迎加三寶爸 LINE 跟我說。</p>
+     <p>查看未來十年逐年運勢、財官姻緣、用神開運方位與改名補運建議。<br>想知道更多，或對天衡有任何建議，都歡迎加三寶爸 LINE 跟我說。</p>
      <a href="https://lin.ee/YewRM1L">加入 LINE 領取完整命書</a>
    </div>
    <div class="share-box">
