@@ -1,5 +1,5 @@
 'use strict';
-const fs=require('fs');const html=fs.readFileSync('tianheng-wenshi-qa-v1.html','utf8');let pass=0,fail=0;
+const fs=require('fs');const V=require('./tianheng-oracle-verification-v1.js');const html=fs.readFileSync('tianheng-wenshi-qa-v1.html','utf8');let pass=0,fail=0;
 function assert(name,fn){try{if(!fn())throw new Error('assert false');console.log('PASS',name);pass++;}catch(e){console.error('FAIL',name,'::',e.message);fail++;}}
 assert('正式入口仍以獨立頁安全接入',()=>html.includes('正式入口・公開驗證中')&&html.includes('href="./?v=20260831-wenshi-beauty"'));
 assert('問事頁套用天衡黑金紫視覺系統',()=>html.includes('BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png')&&html.includes('class="hero-sigil"')&&html.includes('class="steps"'));
@@ -15,6 +15,8 @@ assert('支持阻力未定分欄顯示',()=>['id="support"','id="resistance"','i
 assert('近期建議分成可做避免與查證',()=>['id="canDo"','id="avoid"','id="verify"'].every(x=>html.includes(x)));
 assert('完整敘事逐段顯示證據且不呼叫 API',()=>html.includes('n.paragraphs.map')&&html.includes('依據：')&&html.includes('未呼叫外部 API'));
 assert('可匯出完整判讀 JSON',()=>html.includes('application/json')&&html.includes('JSON.stringify(lastResult'));
+assert('結果第一屏先顯示白話核心結論',()=>html.includes('先看核心結論')&&html.includes('TianhengOracleVerificationV1.verdict'));
+assert('過去日期自動切換驗證且不覆蓋原判',()=>V.modeFor('8/23考試會過嗎？','2026-09-03T10:00:00+08:00').mode==='retrospective'&&html.includes('原判與實際結果分開記錄'));
 assert('健康法律投資安全提醒存在',()=>html.includes('醫療、法律、投資'));
 assert('HTML 不含付款或舊引擎覆蓋操作',()=>!html.includes('NT$99')&&!html.includes('legacyOverride=true'));
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);

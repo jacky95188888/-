@@ -77,7 +77,7 @@
     .scroll{overflow:auto;border:1px solid var(--line-soft);border-radius:15px;background:rgba(5,5,9,.45);-webkit-overflow-scrolling:touch}
     table{width:100%;border-collapse:collapse;min-width:720px;font-size:12px}th,td{padding:11px 10px;border-bottom:1px solid rgba(216,183,116,.1);text-align:left;white-space:nowrap}th{position:sticky;top:0;color:#d8bd83;background:#17111d;letter-spacing:.06em}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:rgba(216,183,116,.035)}tbody tr.is-moving{background:rgba(116,73,137,.18)}tbody tr.is-moving td:first-child{color:#efd18b;font-weight:700}
     #useful,#changes,#interactions,#explanation,#timing{color:#d8cbb6;font-size:13px}#explanation b{color:#efd48f}
-    .narrative-part{margin:0 0 13px;padding:14px 15px;border:1px solid var(--line-soft);border-left:3px solid #b38bce;border-radius:0 14px 14px 0;background:linear-gradient(100deg,rgba(101,58,120,.18),rgba(7,6,12,.28))}.narrative-part h3{margin:0 0 6px;color:#e7c986;font-size:14px;letter-spacing:.08em}.narrative-part p{margin:0;color:#ddd0bc;line-height:1.95}.narrative-part small{display:block;margin-top:8px;color:#817566;font-size:9px;word-break:break-all}
+    .narrative-part{margin:0 0 13px;padding:14px 15px;border:1px solid var(--line-soft);border-left:3px solid #b38bce;border-radius:0 14px 14px 0;background:linear-gradient(100deg,rgba(101,58,120,.18),rgba(7,6,12,.28))}.narrative-part h3{margin:0 0 6px;color:#e7c986;font-size:14px;letter-spacing:.08em}.narrative-part p{margin:0;color:#ddd0bc;line-height:1.95}.narrative-part small{display:block;margin-top:8px;color:#817566;font-size:9px;word-break:break-all}.verdict{padding:20px;border:1px solid rgba(240,213,142,.54);border-left:5px solid var(--gold-bright);border-radius:16px;background:linear-gradient(135deg,rgba(117,70,140,.32),rgba(216,183,116,.08))}.verdict em{font-style:normal;color:#a99980;font-size:10px;letter-spacing:.15em}.verdict strong{display:block;margin:5px 0;color:#f2d68f;font-size:24px}.verdict p{margin:0;color:#ddd0bc;font-size:13px}.verify-box{margin-top:15px;padding:16px;border:1px dashed rgba(142,179,212,.42);border-radius:15px;background:rgba(18,35,51,.2)}.verify-box h3{margin:0 0 5px;color:#a9c9e2}.verify-box p{margin:0 0 12px;color:#a99c88;font-size:11px}.verify-status{min-height:20px;margin-top:8px;color:#9bd0bb;font-size:11px}
     .error{position:relative;z-index:2;color:#ffaaa3;border:1px solid rgba(216,83,83,.54);background:rgba(72,31,31,.82);padding:14px 16px;border-radius:13px;margin:14px 0}.hidden{display:none!important}
     #export{margin-top:16px;min-height:50px}.page-foot{text-align:center;margin:24px 10px 0;color:#756e64;font-size:10px;line-height:1.8;letter-spacing:.04em}
     @media(max-width:720px){
@@ -141,6 +141,7 @@
 
   <div id="error" class="error hidden" role="alert"></div>
   <section id="result" class="hidden" aria-live="polite">
+    <div class="panel"><h2 class="section-title"><span>判</span>先看核心結論</h2><div id="verdict" class="verdict"></div><div id="pastValidation" class="verify-box hidden"><h3>此題已進入過去驗證模式</h3><p>系統已保留原始判讀。請在知道真實結果後另行記錄，不會回寫或改動原判。</p><div class="grid"><label>實際結果<select id="actualOutcome"><option value="">尚未揭曉</option><option value="positive">通過／達成</option><option value="negative">未通過／未達成</option><option value="partial">部分符合</option><option value="unresolved">仍無法確認</option></select></label><label>結果依據<input id="actualNote" placeholder="例如：成績通知、錄取信或當事人回覆"></label></div><button type="button" id="saveActual">保存原判與實際結果</button><div id="verifyStatus" class="verify-status" aria-live="polite"></div></div></div>
     <div class="panel"><h2 class="section-title"><span>貳</span>卦局摘要</h2><div id="summary" class="summary"></div></div>
     <div class="panel"><h2 class="section-title"><span>參</span>六爻證據表</h2><div class="notice">表格可左右滑動查看完整證據；原始爻位與修正事件不互相覆蓋。</div><div class="scroll"><table><thead><tr><th>爻位</th><th>世應</th><th>動靜</th><th>納甲</th><th>六親</th><th>月令</th><th>旬空</th><th>月破</th><th>日沖</th></tr></thead><tbody id="lineRows"></tbody></table></div></div>
     <div class="panel"><h2 class="section-title"><span>肆</span>用神與作用事件</h2><div id="useful"></div><h3 class="sub-title">◇ 動變</h3><div id="changes"></div><h3 class="sub-title">◇ 伏神與沖合</h3><div id="interactions"></div></div>
@@ -160,6 +161,7 @@
 <script src="tianheng-wenshi-narrative-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-engine-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-history-study-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-oracle-verification-v1.js?v=20260903"></script>
 <script>
 (()=>{
   'use strict';
@@ -173,6 +175,9 @@
 
   function render(engine){
     const s=engine.result;const a=s.interactions.adjudication;const structure=a.evidence.structure;const selected=a.usefulGod.selected;
+    const v=TianhengOracleVerificationV1.verdict(s.outcome);const mode=TianhengOracleVerificationV1.modeFor(lastResult.input.question);
+    $('verdict').innerHTML=`<em>${mode.mode==='retrospective'?'過去驗證・原判已保留':'未來觀察・等待事件驗證'}</em><strong>${esc(v.label)}</strong><p>${esc(v.text)}</p>`;
+    $('pastValidation').classList.toggle('hidden',mode.mode!=='retrospective');
     $('summary').innerHTML=[['主卦',`${structure.casting.primary.fullName}・${structure.casting.primary.number}`],['變卦',`${structure.casting.changed.fullName}・${structure.casting.changed.number}`],['八宮',`${structure.palace.palace}宮・${structure.palace.stage}`],['暫定結果',`${s.outcome.label}・${s.outcome.confidence}`]].map(([k,v])=>`<div class="card"><span>${k}</span><b>${esc(v)}</b></div>`).join('');
     $('lineRows').innerHTML=a.lines.slice().reverse().map(line=>`<tr${line.moving?' class="is-moving"':''}><td>${esc(line.label)}</td><td>${line.shi?'世':line.ying?'應':'—'}</td><td>${line.moving?'動':'靜'}</td><td>${esc(line.najia)}</td><td>${esc(line.relation)}</td><td>${esc(line.calendar.seasonalState)}</td><td>${line.adjudicationFacts.xunEmpty?'是':'—'}</td><td>${line.adjudicationFacts.monthBreak?'是':'—'}</td><td>${line.adjudicationFacts.dayClash?'是':'—'}</td></tr>`).join('');
     $('useful').innerHTML=selected?`<p>本題取 <span class="tag">${esc(a.usefulGod.definition.value)}</span>，目前選取第 ${selected.position} 爻 <b>${esc(selected.najia)} ${esc(selected.relation)}</b>。候選沒有被刪除，仍保留於原始資料。</p>`:`<p class="unresolved">本卦用神未明現或候選同級：${esc(a.usefulGod.unresolvedReason||'需查伏神')}</p>`;
@@ -195,6 +200,7 @@
     lastResult={caseId:$('caseId').value||null,generatedAt:new Date().toISOString(),input,analysis:analyzed.result};render(analyzed.result);
   });
   $('reset').addEventListener('click',()=>{$('result').classList.add('hidden');$('error').classList.add('hidden');lastResult=null;});
+  $('saveActual').addEventListener('click',()=>{if(!lastResult||!$('actualOutcome').value)return void($('verifyStatus').textContent='請先選擇實際結果');const record=TianhengOracleVerificationV1.makeRecord(lastResult.input,lastResult.analysis.result.outcome,{outcome:$('actualOutcome').value,note:$('actualNote').value});const rows=JSON.parse(localStorage.getItem('tianheng_oracle_verifications_v1')||'[]');rows.push(record);localStorage.setItem('tianheng_oracle_verifications_v1',JSON.stringify(rows));lastResult.verification=record;$('verifyStatus').textContent='已保存：原判與實際結果分開記錄，不會互相覆蓋。';});
   $('export').addEventListener('click',()=>{
     if(!lastResult)return;const blob=new Blob([JSON.stringify(lastResult,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`tianheng-wenshi-${lastResult.caseId||Date.now()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   });
