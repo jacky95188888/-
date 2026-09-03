@@ -46,6 +46,7 @@ assert('證據層不冒充最終裁決', () => {
   const r=E.analyze(request());
   return r.status==='evidence_complete_decision_pending' && r.evidenceLedger.unresolved.length>0;
 });
+assert('考試證照以父母爻為主並輔看官鬼與世爻',()=>{const r=E.analyze(request('exam_certification'));return r.topic.label==='考試／證照'&&r.targets.primary[0].definition.value==='父母'&&r.targets.secondary.some(x=>x.definition.value==='官鬼');});
 assert('不覆蓋既有引擎', () => E.legacyOverride===false);
 
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);

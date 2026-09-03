@@ -4,7 +4,7 @@ const S=require('./tianheng-wenshi-liuyao-synthesis-v1.js');
 const E=require('./tianheng-wenshi-engine-v1.js');
 let pass=0,fail=0;
 function assert(name,fn){try{if(!fn())throw new Error('assert false');console.log('PASS',name);pass++;}catch(e){console.error('FAIL',name,'::',e.message);fail++;}}
-function input(topic='career_job',casts=[7,7,7,7,7,7]){const labels={career_job:'事業／工作',relationship:'感情／人際',finance_income:'財務／交易'};return{question:'月底前能否收到明確回覆？',category:labels[topic]||'選擇／決策',topic,askedAt:'2026-09-01T08:00:00+08:00',timezone:'Asia/Taipei',casts,calendar:{monthZhi:'申',dayGan:'甲',dayZhi:'子',source:'敘事固定測試'}};}
+function input(topic='career_job',casts=[7,7,7,7,7,7]){const labels={career_job:'事業／工作',exam_certification:'考試／證照',relationship:'感情／人際',finance_income:'財務／交易'};return{question:'月底前能否收到明確回覆？',category:labels[topic]||'選擇／決策',topic,askedAt:'2026-09-01T08:00:00+08:00',timezone:'Asia/Taipei',casts,calendar:{monthZhi:'申',dayGan:'甲',dayZhi:'子',source:'敘事固定測試'}};}
 function narrative(i=input()){const s=S.analyze(i);return N.compose(s,i);}
 
 assert('六爻敘事層不使用外部 API',()=>N.usesExternalApi===false&&narrative().usesExternalApi===false);
@@ -18,4 +18,5 @@ assert('同一輸入重跑敘事完全一致',()=>JSON.stringify(narrative())===
 assert('敘事不修改原始六爻綜合資料',()=>{const i=input();const s=S.analyze(i);const before=JSON.stringify(s);N.compose(s,i);return JSON.stringify(s)===before;});
 assert('總引擎保存原建議與新敘事兩層',()=>{const r=E.analyze(input());return r.result.explanation&&r.result.narrative&&r.layers.originalAdvice&&r.layers.narrative;});
 assert('六爻敘事不覆蓋其他引擎',()=>N.legacyOverride===false&&E.analyze(input()).legacyOverride===false);
+assert('考試證照直接回答並列出正式揭曉點',()=>{const r=E.analyze(input('exam_certification'));const text=r.result.narrative.paragraphs.map(x=>x.title+x.text).join('');return text.includes('直接回答')&&text.includes('官方成績')&&text.includes('成敗關鍵');});
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);

@@ -3,6 +3,7 @@
 (function attachWenshiNarrative(root){
   const VERSION='1.0.0';
   const TOPICS={
+    exam_certification:{subject:'考試／證照結果',checkpoint:'官方成績、合格通知或證照核發結果',action:'核對及格標準、放榜日期與補考規則，考後另記有把握與不確定題目'},
     career_job:{subject:'求職／工作進展',checkpoint:'職缺是否仍有效、誰有決定權、何時正式回覆',action:'把職務條件、決策人與回覆期限整理成可追蹤事項'},
     career_promotion:{subject:'升遷／職位變動',checkpoint:'名額、評核標準與主管正式決定',action:'確認升遷標準、競爭條件與下一次評核節點'},
     cooperation:{subject:'合作／客戶進展',checkpoint:'權責、交付、付款與退出條款是否被確認',action:'把口頭共識轉成含期限與負責人的書面項目'},
@@ -39,6 +40,13 @@
     if(o.direction==='conditional')return`目前判為「${o.label}」：支持與阻力同時存在，結果取決於哪一組條件先被引動。下一步以「${t.checkpoint}」是否被確認作為分界。`;
     return`目前判為「${o.label}」：證據不足以可靠分成成功或失敗。先補齊「${t.checkpoint}」，再重新判讀會比硬猜更有價值。`;
   }
+  function directAnswer(synthesis,input,t){
+    const o=synthesis.outcome;
+    if(o.direction==='favorable')return`直接回答「${input.question}」：目前支持條件較集中，較接近有機會達成，但仍不能當成保證；最後以${t.checkpoint}為準。`;
+    if(o.direction==='blocked')return`直接回答「${input.question}」：目前主要阻力偏強，較接近不容易達成；除非後續出現明確救應，否則不宜先當成已通過。`;
+    if(o.direction==='conditional')return`直接回答「${input.question}」：目前是有條件局，不能簡化成一定會或一定不會；支持與阻力哪一方先落實，才會決定結果。`;
+    return`直接回答「${input.question}」：目前證據不足，暫時不能可靠判定成功或失敗，應等待${t.checkpoint}揭曉。`;
+  }
   function compose(synthesis,input){
     if(!synthesis||!synthesis.interactions)throw new Error('六爻敘事層缺少綜合結果');
     const t=topic(input);const a=synthesis.interactions.adjudication;const structure=a.evidence.structure;const selected=a.usefulGod.selected;
@@ -46,10 +54,12 @@
     const usefulText=selected?`本題以${a.usefulGod.definition.value}為用神，取第${selected.position}爻${selected.najia}${selected.relation}；此爻屬${lineRole(selected)}，月令為${selected.calendar.seasonalState}${selected.adjudicationFacts.xunEmpty?'、旬空':''}${selected.adjudicationFacts.monthBreak?'、月破':''}${selected.adjudicationFacts.dayClash?'、日沖':''}。`:`本題應取${a.usefulGod.definition.value}，但本卦沒有足以直接定向的明現用神，因此伏神與出伏條件必須保留。`;
     const paragraphs=[
       paragraph('問題與卦局',`你問的是「${input.question}」。主卦${structure.casting.primary.fullName}、變卦${structure.casting.changed.fullName}，所問類型是${t.subject}。卦名只描述局勢背景，真正裁決仍由用神、日月、動變與沖合共同完成。`,['REQUEST','PRIMARY_HEXAGRAM','CHANGED_HEXAGRAM']),
+      paragraph('直接回答',directAnswer(synthesis,input,t),['QUESTION_DIRECT_ANSWER',`OUTCOME_${synthesis.outcome.direction}`]),
       paragraph('用神落點',usefulText,['USEFUL_GOD',selected?`LINE_${selected.position}`:'USEFUL_HIDDEN',selected?`SEASON_${selected.calendar.seasonalState}`:null]),
       paragraph('支持條件',evidenceSentence(support,'目前沒有足以直接定向的支持證據；這不等於一定失敗，只代表不能把期待當成助力。'),support.length?support.map(x=>x.code):['SUPPORT_NONE']),
       paragraph('阻力與未定處',`${evidenceSentence(resistance,'未見主要硬阻力。')}${unresolved.length?' 尚未裁定：'+unresolved.map(x=>x.text).join('；')+'。':''}`,[...resistance,...unresolved].length?[...resistance,...unresolved].map(x=>x.code):['RESISTANCE_NONE']),
       paragraph('動變過程',changeSentence(synthesis,selected),['CHANGE_EVENTS']),
+      paragraph('成敗關鍵',`目前共有 ${support.length} 項支持、${resistance.length} 項阻力與 ${unresolved.length} 項未定證據。真正分界不是卦名好不好，而是「${t.checkpoint}」能否在期限內被正式確認；未確認以前只能保留暫定方向。`,['EVIDENCE_LEDGER','DECISION_CHECKPOINT']),
       paragraph('綜合裁決',conclusion(synthesis,t),[`OUTCOME_${synthesis.outcome.direction}`,'EVIDENCE_LEDGER'])
     ];
     const codes=unique([...support,...resistance,...unresolved].map(x=>x.code));

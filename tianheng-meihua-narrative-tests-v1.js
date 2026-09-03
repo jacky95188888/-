@@ -17,4 +17,5 @@ assert('同一輸入重跑敘事完全一致',()=>JSON.stringify(narrative())===
 assert('敘事不修改原始判斷結果',()=>{const i=input();const j=J.analyze(i);const before=JSON.stringify(j);N.compose(j,i);return JSON.stringify(j)===before;});
 assert('總引擎同時保存原判斷與新敘事',()=>{const r=E.analyze(input());return r.result.explanation&&r.result.narrative&&r.layers.originalAdvice&&r.layers.narrative;});
 assert('敘事層不覆蓋舊引擎',()=>N.legacyOverride===false&&E.analyze(input()).legacyOverride===false);
+assert('考試證照直接回答並列出正式揭曉點',()=>{const r=E.analyze(input('考試／證照'));const text=r.result.narrative.paragraphs.map(x=>x.title+x.text).join('');return text.includes('直接回答')&&text.includes('官方成績')&&text.includes('成敗關鍵');});
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);

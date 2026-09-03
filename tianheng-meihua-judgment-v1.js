@@ -74,6 +74,7 @@
   }
 
   function topicKey(category) {
+    if (/考試|證照|檢定|測驗|成績/.test(category)) return 'exam';
     if (/感情|人際|婚/.test(category)) return 'relationship';
     if (/財|收入|收款|投資/.test(category)) return 'finance';
     if (/工作|事業|求職|升遷|合作/.test(category)) return 'career';
@@ -82,6 +83,11 @@
   }
 
   const TOPIC_ACTIONS = {
+    exam: {
+      canDo: '核對考試範圍、及格門檻、成績公告與補考規則',
+      avoid: '不要把考後感覺好壞直接當成正式成績',
+      verify: '以官方成績、合格通知或證照核發資料確認結果'
+    },
     career: {
       canDo: '把職務條件、決策人與回覆期限整理成可追蹤事項',
       avoid: '不要只憑氣氛判定錄取、升遷或合作已經成立',

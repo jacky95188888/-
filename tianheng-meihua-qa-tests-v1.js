@@ -4,7 +4,7 @@ function assert(name,fn){try{if(!fn())throw new Error('assert false');console.lo
 assert('梅花頁標示正式入口並可返回主頁',()=>html.includes('正式入口・公開驗證中')&&html.includes('href="./?v=20260901-meihua-home"'));
 assert('套用天衡黑金紫手機視覺',()=>html.includes('BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png')&&html.includes('class="sigil"')&&html.includes('class="steps"'));
 assert('五個梅花模組含本地敘事層依序載入',()=>['meihua-core','meihua-judgment','meihua-validation','meihua-narrative','meihua-engine'].every(x=>html.includes(x)));
-assert('本地敘事版會避開舊手機快取',()=>html.match(/v=20260901-narrative1/g)?.length===5&&!html.includes('v=20260901-home1'));
+assert('升級判讀與敘事會避開舊手機快取',()=>html.includes('tianheng-meihua-judgment-v1.js?v=20260903-detail2')&&html.includes('tianheng-meihua-narrative-v1.js?v=20260903-detail2'));
 assert('三種起卦方法都有獨立介面',()=>['lunar_time','two_numbers','manual_verified'].every(x=>html.includes(`data-method="${x}"`)));
 assert('年月日時明示農曆且要求曆法來源',()=>['yearZhi','lunarMonth','lunarDay','hourZhi','calendarSource'].every(id=>html.includes(`id="${id}"`))&&html.includes('不可用國曆月份代替'));
 assert('兩數法保存兩個原始數字欄位',()=>html.includes('id="firstNumber"')&&html.includes('id="secondNumber"')&&html.includes('原始數字會完整保留'));
@@ -14,8 +14,9 @@ assert('體用旺衰與原始起卦證據存在',()=>html.includes('體用與月
 assert('起中末動態時間線存在',()=>['INITIAL・起段','MIDDLE・中段','FINAL・末段'].every(x=>html.includes(x)));
 assert('支持阻力未定分欄顯示',()=>['id="support"','id="resistance"','id="unresolved"'].every(x=>html.includes(x)));
 assert('近期建議分為可做避免與查證',()=>['id="canDo"','id="avoid"','id="verify"'].every(x=>html.includes(x)));
-assert('完整敘事逐段顯示證據且不呼叫 API',()=>html.includes('n.paragraphs.map')&&html.includes('依據：')&&html.includes('未呼叫外部 API'));
+assert('完整敘事逐段收合證據且不呼叫 API',()=>html.includes('n.paragraphs.map')&&html.includes('查看判讀證據')&&html.includes('未呼叫外部 API'));
 assert('外應另有輸入且不冒充自動定向',()=>html.includes('id="externalResponse"')&&html.includes('input.externalResponse'));
+assert('考試證照有獨立題型且技術證據預設收合',()=>html.includes('<option>考試／證照</option>')&&html.includes('查看判讀證據'));
 assert('預覽器封鎖腳本時有明確提示',()=>html.includes('頁面程式尚未啟動')&&html.includes("$('runtimeNotice').classList.add('hidden')"));
 assert('完整判讀可匯出 JSON',()=>html.includes('application/json')&&html.includes('JSON.stringify(lastResult'));
 assert('結果第一屏先顯示白話核心結論',()=>html.includes('先看核心結論')&&html.includes('TianhengOracleVerificationV1.verdict'));

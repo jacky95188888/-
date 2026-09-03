@@ -52,6 +52,7 @@ assert('財務類不保證投資獲利', () => {
   return r.advice.avoid.join('').includes('不') && r.advice.avoid.join('').includes('保證投資獲利');
 });
 assert('分數明示只供輔助不取代證據鏈', () => J.analyze(input({upper:'乾',lower:'坎',movingLine:2})).outcome.auxiliaryScoreOnly === true);
+assert('考試證照使用專屬查證建議',()=>J.analyze({...input({upper:'乾',lower:'坎',movingLine:2}),category:'考試／證照'}).advice.verify.some(x=>x.includes('官方成績')));
 assert('梅花判斷層不覆蓋其他命理結果', () => J.legacyOverride === false && J.analyze(input({upper:'乾',lower:'坎',movingLine:2})).legacyOverride === false);
 
 console.log(`\nRESULT ${pass}/${pass + fail} passed`);

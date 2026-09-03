@@ -51,7 +51,7 @@
     </div></div>
     <div class="form-step"><div class="form-step-head"><b>2</b>寫下一件具體問題</div><p class="form-step-note">最好包含人物、事件與期限</p><label>具體問題<textarea id="question" placeholder="例如：我在 9 月 15 日前能否收到第二輪面試通知？"></textarea></label>
     <div class="grid">
-      <label>題型<select id="category"><option>求職／工作</option><option>升遷／職位</option><option>合作／客戶</option><option>收入／收款</option><option>感情／人際</option><option>選擇／決策</option><option>一般問事</option></select></label>
+      <label>題型<select id="category"><option>求職／工作</option><option>考試／證照</option><option>升遷／職位</option><option>合作／客戶</option><option>收入／收款</option><option>感情／人際</option><option>選擇／決策</option><option>一般問事</option></select></label>
       <label>提問時間<input id="askedAt" type="datetime-local"></label>
     </div>
     <details class="advanced"><summary>進階紀錄（一般使用不用填）</summary><div class="grid"><label>時區<input id="timezone" value="Asia/Taipei"></label><label>案例編號（選填）<input id="caseId" placeholder="例如：MH-20260901-001"></label></div></details></div>
@@ -91,9 +91,9 @@
   <footer class="page-foot">天衡・九維命理｜梅花易數公開驗證 v1<br>原始取數、派生卦與判斷事件分開保存，不覆蓋其他命理引擎。</footer>
 </main>
 <script src="tianheng-meihua-core-v1.js?v=20260901-narrative1"></script>
-<script src="tianheng-meihua-judgment-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-meihua-judgment-v1.js?v=20260903-detail2"></script>
 <script src="tianheng-meihua-validation-v1.js?v=20260901-narrative1"></script>
-<script src="tianheng-meihua-narrative-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-meihua-narrative-v1.js?v=20260903-detail2"></script>
 <script src="tianheng-meihua-engine-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-oracle-verification-v1.js?v=20260903"></script>
 <script>
@@ -127,7 +127,7 @@
     const middle=r.timeline.middle.events.map(eventText).join('；');
     $('timeline').innerHTML=`<div class="time-card"><em>INITIAL・起段</em><h3>${esc(c.primary.fullName)}</h3><p>${esc(eventText(r.timeline.initial.event))}</p></div><div class="time-card"><em>MIDDLE・中段</em><h3>${esc(c.mutual.fullName)}</h3><p>${esc(middle)}</p></div><div class="time-card"><em>FINAL・末段</em><h3>${esc(c.changed.fullName)}</h3><p>${esc(eventText(r.timeline.final.event))}</p></div>`;
     $('support').innerHTML=list(r.evidenceLedger.support);$('resistance').innerHTML=list(r.evidenceLedger.resistance);$('unresolved').innerHTML=list(r.evidenceLedger.unresolved);
-    const n=r.narrative;$('explanation').innerHTML=n.paragraphs.map(x=>`<section class="narrative-part"><h3>${esc(x.title)}</h3><p>${esc(x.text)}</p><small>依據：${esc(x.evidenceRefs.join('・'))}</small></section>`).join('')+`<p class="empty">支持 ${r.outcome.supportScore}／阻力 ${r.outcome.resistanceScore}；分數只供一致性檢查，不取代證據鏈。全段由本地規則產生，未呼叫外部 API。</p>`;
+    const n=r.narrative;$('explanation').innerHTML=n.paragraphs.map(x=>`<section class="narrative-part"><h3>${esc(x.title)}</h3><p>${esc(x.text)}</p><details class="advanced"><summary>查看判讀證據</summary><small>${esc(x.evidenceRefs.join('・'))}</small></details></section>`).join('')+`<p class="empty">支持 ${r.outcome.supportScore}／阻力 ${r.outcome.resistanceScore}；分數只供一致性檢查，不取代證據鏈。全段由本地規則產生，未呼叫外部 API。</p>`;
     $('canDo').innerHTML=list(n.advice.canDo);$('avoid').innerHTML=list(n.advice.avoid);$('verify').innerHTML=list(n.advice.verify);$('timing').innerHTML=list(n.advice.timing);
     $('result').classList.remove('hidden');setTimeout(()=>$('result').scrollIntoView({behavior:'smooth',block:'start'}),80);
   }

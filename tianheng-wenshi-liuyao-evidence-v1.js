@@ -16,6 +16,11 @@
   const HARMONY = { 子:'丑',丑:'子',寅:'亥',亥:'寅',卯:'戌',戌:'卯',辰:'酉',酉:'辰',巳:'申',申:'巳',午:'未',未:'午' };
 
   const TOPICS = {
+    exam_certification: {
+      label: '考試／證照', primary: [{ type:'relation', value:'父母' }],
+      secondary: [{ type:'relation', value:'官鬼' }, { type:'marker', value:'世爻' }],
+      note: '父母爻主試卷、成績文件與證照；官鬼輔看資格與錄取壓力，世爻看應試者承接力。'
+    },
     career_job: {
       label: '求職／工作', primary: [{ type:'relation', value:'官鬼' }],
       secondary: [{ type:'relation', value:'父母' }, { type:'marker', value:'世爻' }]

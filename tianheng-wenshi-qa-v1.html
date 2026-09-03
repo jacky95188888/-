@@ -119,7 +119,7 @@
     <label>具體問題<textarea id="question" placeholder="例如：我在 9 月 15 日前能否收到這間公司的第二輪面試通知？"></textarea></label>
     <div class="grid">
       <label>題型<select id="topic">
-        <option value="career_job">求職／工作</option><option value="career_promotion">升遷／職位</option>
+        <option value="career_job">求職／工作</option><option value="exam_certification">考試／證照</option><option value="career_promotion">升遷／職位</option>
         <option value="finance_income">收入／收款</option><option value="cooperation">合作／客戶</option>
         <option value="contract">合約／文件</option><option value="relationship">感情／人際</option>
         <option value="family_peer">兄弟姊妹／同輩家人</option><option value="decision">選擇／決策</option>
@@ -154,11 +154,11 @@
 <script src="tianheng-wenshi-validation-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-liuyao-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-liuyao-structure-v1.js?v=20260901-narrative1"></script>
-<script src="tianheng-wenshi-liuyao-evidence-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-wenshi-liuyao-evidence-v1.js?v=20260903-detail2"></script>
 <script src="tianheng-wenshi-liuyao-adjudication-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-liuyao-interactions-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-liuyao-synthesis-v1.js?v=20260901-narrative1"></script>
-<script src="tianheng-wenshi-narrative-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-wenshi-narrative-v1.js?v=20260903-detail2"></script>
 <script src="tianheng-wenshi-engine-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-history-study-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-oracle-verification-v1.js?v=20260903"></script>
@@ -168,7 +168,7 @@
   const $=id=>document.getElementById(id);let lastResult=null;
   const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const list=(items,empty='無')=>items?.length?`<ul class="list">${items.map(x=>`<li>${esc(typeof x==='string'?x:x.text||JSON.stringify(x))}</li>`).join('')}</ul>`:`<p class="empty">${empty}</p>`;
-  const topicLabels={career_job:'事業／工作',career_promotion:'事業／工作',finance_income:'財務／交易',cooperation:'合作／客戶',contract:'合約／文件',relationship:'感情／人際',family_peer:'家庭／生活',decision:'選擇／決策'};
+  const topicLabels={career_job:'事業／工作',exam_certification:'考試／證照',career_promotion:'事業／工作',finance_income:'財務／交易',cooperation:'合作／客戶',contract:'合約／文件',relationship:'感情／人際',family_peer:'家庭／生活',decision:'選擇／決策'};
   $('runtimeNotice').classList.add('hidden');
   $('casts').innerHTML=Array.from({length:6},(_,i)=>`<label>${i===0?'初爻':i===5?'上爻':`${i+1}爻`}<select class="cast"><option value="6">6 老陰・動</option><option value="7" selected>7 少陽・靜</option><option value="8">8 少陰・靜</option><option value="9">9 老陽・動</option></select><small>由下往上</small></label>`).join('');
   const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());$('askedAt').value=now.toISOString().slice(0,16);
@@ -185,7 +185,7 @@
     const hidden=s.interactions.hiddenGod;const pair=s.interactions.interactions.branchPairs;const trines=s.interactions.interactions.trines;
     $('interactions').innerHTML=list([hidden?.found?`伏神：${hidden.candidates.map(x=>`${x.hidden.najia}${x.hidden.relation}伏於第${x.position}爻，${x.relation}`).join('；')}`:null,...pair.map(x=>`${x.type}${x.pair.join('')}・第${x.positions.join('、')}爻${x.active?'（已引動）':'（靜態）'}`),...trines.map(x=>`三合${x.branches.join('')}化${x.element}・${x.active?'有動爻引動':'支序齊備但未引動'}`)].filter(Boolean));
     $('support').innerHTML=list(s.evidenceLedger.support);$('resistance').innerHTML=list(s.evidenceLedger.resistance);$('unresolved').innerHTML=list(s.evidenceLedger.unresolved);
-    const n=s.narrative;$('explanation').innerHTML=n.paragraphs.map(x=>`<section class="narrative-part"><h3>${esc(x.title)}</h3><p>${esc(x.text)}</p><small>依據：${esc(x.evidenceRefs.join('・'))}</small></section>`).join('')+`<p class="empty">全段由本地規則與證據鏈產生，未呼叫外部 API。</p>`;
+    const n=s.narrative;$('explanation').innerHTML=n.paragraphs.map(x=>`<section class="narrative-part"><h3>${esc(x.title)}</h3><p>${esc(x.text)}</p><details class="advanced"><summary>查看判讀證據</summary><small>${esc(x.evidenceRefs.join('・'))}</small></details></section>`).join('')+`<p class="empty">全段由本地規則與證據鏈產生，未呼叫外部 API。</p>`;
     $('canDo').innerHTML=list(n.advice.canDo);$('avoid').innerHTML=list(n.advice.avoid);$('verify').innerHTML=list(n.advice.verify);$('timing').innerHTML=list(n.advice.timing);
     $('result').classList.remove('hidden');
     setTimeout(()=>$('result').scrollIntoView({behavior:'smooth',block:'start'}),80);
