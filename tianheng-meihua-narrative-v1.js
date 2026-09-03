@@ -1,7 +1,7 @@
 'use strict';
 
 (function attachMeihuaNarrative(root){
-  const VERSION='1.0.0';
+  const VERSION='1.2.0';
   const TOPICS={
     exam:{subject:'這次考試／證照結果',actor:'題目難度、及格標準、臨場表現與成績認定',checkpoint:'官方成績、合格通知或證照核發結果',action:'先核對考試範圍、及格門檻與放榜日期；考後記下有把握與不確定的題目比例'},
     career:{subject:'這件工作／事業進展',actor:'對方的決策流程、名額與資源',checkpoint:'正式通知、決策人回覆或下一階段安排',action:'把負責人、條件與回覆期限列成一張追蹤表'},
@@ -36,6 +36,58 @@
   }
   function unique(values){return[...new Set(values.filter(Boolean))]}
   function paragraph(title,text,evidenceRefs){return{title,text,evidenceRefs:unique(evidenceRefs)}}
+  function decisionSummary(outcome,initial,final){
+    const balance=Number(outcome.balance)||0;
+    let label='五五波／條件局',tone='mixed';
+    if(balance>=4){label='明顯偏向達成';tone='positive'}
+    else if(balance>=.75){label='略偏達成';tone='positive'}
+    else if(balance<=-4){label='明顯偏向未達成';tone='negative'}
+    else if(balance<=-.75){label='略偏未達成';tone='negative'}
+    const processLabel=initial.polarity==='resistance'&&final.polarity==='support'?'先難後成':initial.polarity==='support'&&final.polarity==='resistance'?'先順後阻':initial.polarity==='support'&&final.polarity==='support'?'全程較順':'阻力持續';
+    return{label,strength:`結果方向：${label}`,processLabel,tone};
+  }
+  function contextText(input,topic){
+    const c=input&&input.eventContext;
+    if(!c||!Object.values(c).some(Boolean))return`目前沒有補充${topic.subject}的現實資料。卦象可以描述方向與阻力，但不能自行知道當事人的準備程度、上次結果或實際門檻；若要判得更貼近事件，請補上這些資料。`;
+    const parts=[];
+    if(c.attempt)parts.push(`本次狀態：${c.attempt}`);
+    if(c.eventDate)parts.push(`事件日期：${c.eventDate}`);
+    if(c.priorResult)parts.push(`上次結果：${c.priorResult}`);
+    if(c.preparation)parts.push(`目前準備：${c.preparation}`);
+    if(c.knownFacts)parts.push(`其他已知事實：${c.knownFacts}`);
+    return`本次判讀已納入你提供的現實資料：${parts.join('；')}。這些內容用來把象意對準具體事件，不會反過來改動原始卦象；最後仍要以${topic.checkpoint}揭曉。`;
+  }
+  function examMetrics(input){
+    const m=input&&input.eventContext&&input.eventContext.examMetrics||{};
+    const number=value=>value===''||value==null?null:Number(value);
+    return{priorScore:number(m.priorScore),passScore:number(m.passScore),mockScore:number(m.mockScore)};
+  }
+  function eventWord(topic){return topic===TOPICS.exam?'通過':topic===TOPICS.relationship?'改善':topic===TOPICS.finance?'落實':topic===TOPICS.career?'達成':'達成'}
+  function evidenceQuality(input,topic){
+    const c=input&&input.eventContext||{};let count=0;
+    ['eventDate','priorResult','preparation','successDefinition','knownObstacle','strongestEvidence'].forEach(k=>{if(c[k])count++});
+    if(topic===TOPICS.exam){const m=examMetrics(input);if(m.passScore!=null)count++;if(m.mockScore!=null)count++;}
+    return count>=6?'資料較完整':count>=3?'資料中等':'資料不足';
+  }
+  function realitySignal(input,topic){
+    if(topic!==TOPICS.exam)return'尚未提供可計算的現實門檻；卦象方向與實際準備需分開核對。';
+    const m=examMetrics(input);
+    if(m.mockScore!=null&&m.passScore!=null){const gap=Number((m.mockScore-m.passScore).toFixed(2));return gap>=0?`最近模擬成績已高於及格門檻 ${gap} 分；現實資料目前支持通過，但仍需維持計時作答穩定度。`:`最近模擬成績仍低於及格門檻 ${Math.abs(gap)} 分；現實資料尚未支持穩定通過。`;}
+    if(m.priorScore!=null&&m.passScore!=null){const gap=Number((m.passScore-m.priorScore).toFixed(2));return gap>0?`上次成績距及格門檻尚差 ${gap} 分；這是本次重考最明確的補強目標。`:`上次成績已到門檻，需確認未通過原因是否另有科目、資格或程序限制。`;}
+    return'尚未填入上次成績、及格門檻與模擬成績，因此不能把卦象強度換算成通過機率。';
+  }
+  function specificAction(input,topic){
+    if(topic!==TOPICS.exam)return`把「${topic.checkpoint}」拆成一個負責人、一個期限與一項可驗證結果，下一次只追蹤這三項。`;
+    const m=examMetrics(input);const scoreLine=m.passScore!=null?`以 ${m.passScore} 分為及格線，考前至少完成三次完整計時模考；連續兩次高於門檻，才算準備已落實。`:'先查清楚正式及格分數，再完成三次完整計時模考；連續兩次高於門檻，才算準備已落實。';
+    return`${scoreLine} 把錯題只分成四類：知識缺口、題意誤判、時間不足、粗心；先處理失分最多的一類，而不是籠統要求自己更努力。`;
+  }
+  function processOutcome(result,topic){
+    const initial=result.timeline.initial.event;const final=result.timeline.final.event;
+    if(initial.polarity==='resistance'&&final.polarity==='support')return`前段確實較費力，但末段轉為支持，所以「過程不順」不等於「最後失敗」。本次應把前段看成要處理的關卡，把末段是否落實到${topic.checkpoint}看成結果。`;
+    if(initial.polarity==='support'&&final.polarity==='resistance')return`前段較順不代表最後一定成功；末段轉為阻力，越接近結果越要核對規則、成本與正式通知。`;
+    if(final.polarity==='support')return`過程與結果都偏向支持，但仍只能寫成較可能達成，不能把象意改寫成保證；仍應核對正式結果是否在期限內出現。`;
+    return`過程中的辛苦、努力與阻礙都不等於最後結果；本卦到變卦目前未形成明顯翻轉，應把「如何走」與「最後有沒有達成」分開看。`;
+  }
   function stageTurn(initial,final,topic){
     if(initial.polarity==='resistance'&&final.polarity==='support')return`起初${topic.actor}形成限制，但末段轉為${final.relation}，代表後續存在條件回補或關係重新協調的空間。這不是立即翻盤，而是要等外部節點真正成立。`;
     if(initial.polarity==='support'&&final.polarity==='resistance')return`起初條件較順，但末段轉為${final.relation}，表示越接近結果越要注意成本、規則或對方態度的反轉；前段順利不能直接外推成最後成功。`;
@@ -62,8 +114,9 @@
   }
   function directAnswer(result,question,topic){
     const o=result.outcome;
-    if(o.direction==='favorable')return`直接回答「${question}」：目前卦局偏向有利，較接近「有機會達成」，但不能直接寫成一定成功。最後仍以${topic.checkpoint}為準。`;
-    if(o.direction==='blocked')return`直接回答「${question}」：目前阻力高於支持，較接近「不容易達成」；若要改變結果，必須先出現能解除主要限制的明確事件。`;
+    const word=eventWord(topic);
+    if(o.direction==='favorable')return`直接回答「${question}」：就結果方向而言，目前較可能${word}，但不是穩過或保證成功。過程中的辛苦不等於失敗，最後仍以${topic.checkpoint}為準。`;
+    if(o.direction==='blocked')return`直接回答「${question}」：就結果方向而言，目前較可能未${word}；若要改變結果，必須先出現能解除主要限制的明確事件。`;
     if(o.direction==='conditional')return`直接回答「${question}」：目前不是穩過或穩不過，而是接近條件局；關鍵在支持條件能否先於阻力落實。`;
     return`直接回答「${question}」：目前證據不足，不能負責任地判定成功或失敗；需要更多可核對條件才能下結論。`;
   }
@@ -71,9 +124,14 @@
     if(!result||!result.core||!result.timeline)throw new Error('梅花敘事層缺少判斷結果');
     const topic=TOPICS[topicKey(result.core.request.category)];
     const c=result.core;const initial=result.timeline.initial.event;const middle=result.timeline.middle.events;const final=result.timeline.final.event;
+    const decision=decisionSummary(result.outcome,initial,final);decision.realitySignal=realitySignal(input,topic);decision.evidenceQuality=evidenceQuality(input,topic);
     const paragraphs=[
       paragraph('問題焦點',`你問的是「${c.request.question}」。本卦${c.primary.fullName}以${c.bodyUse.body.name}${c.bodyUse.body.element}為體、${c.bodyUse.use.name}${c.bodyUse.use.element}為用；體代表你可承接與控制的部分，用代表${topic.actor}。${LINE_TEXT[c.movingLine]}`,['REQUEST','PRIMARY_HEXAGRAM','BODY_USE',`MOVING_LINE_${c.movingLine}`]),
       paragraph('直接回答',directAnswer(result,c.request.question,topic),['QUESTION_DIRECT_ANSWER',`OUTCOME_${result.outcome.direction}`]),
+      paragraph('本次事件校正',contextText(input,topic),['USER_EVENT_CONTEXT','REALITY_CHECK']),
+      paragraph('成功標準與真正阻力',`本題的成功標準是「${input?.eventContext?.successDefinition||topic.checkpoint}」；目前最需要排除的阻力是「${input?.eventContext?.knownObstacle||'尚未提供'}」。已知最強證據為「${input?.eventContext?.strongestEvidence||'尚未提供'}」。未提供的部分維持未判，不用套語補成答案。`,['SUCCESS_DEFINITION','KNOWN_OBSTACLE','STRONGEST_REALITY_EVIDENCE']),
+      paragraph('具體補強目標',specificAction(input,topic),['REALITY_THRESHOLD','ACTIONABLE_NEXT_STEP']),
+      paragraph('過程不等於結果',processOutcome(result,topic),['INITIAL_RELATION',initial.relation,'FINAL_RELATION',final.relation]),
       paragraph('起段判讀',`起段為「${initial.relation}」：${RELATION_TEXT[initial.relation]}。放到${topic.subject}來看，這描述的是目前的作用方式，不是單獨一句吉凶。`,['INITIAL_RELATION',initial.relation]),
       paragraph('中段與轉折',`${middleText(middle,c.mutual)} ${stageTurn(initial,final,topic)}`,['MUTUAL_HEXAGRAM',...middle.map(x=>x.relation),'FINAL_RELATION',final.relation]),
       paragraph('時令承受力',seasonText(result,topic),[result.monthContext.available?'MONTH_STRENGTH':'MONTH_UNRESOLVED',`BODY_STATE_${result.strength.bodyState}`]),
@@ -87,7 +145,7 @@
       verify:unique([`${topic.checkpoint}是否在你設定的期限內出現`,...result.advice.verify]),
       timing:unique(result.advice.timing)
     };
-    return{engine:'tianheng-meihua-narrative',version:VERSION,mode:'deterministic_evidence_narrative',usesExternalApi:false,legacyOverride:false,topic:topicKey(c.request.category),paragraphs,advice,evidenceTrace:unique(paragraphs.flatMap(x=>x.evidenceRefs))};
+    return{engine:'tianheng-meihua-narrative',version:VERSION,mode:'deterministic_evidence_narrative',usesExternalApi:false,legacyOverride:false,topic:topicKey(c.request.category),decisionSummary:{...decision,probability:null,note:'不顯示虛構百分比；卦象只給方向，現實門檻另行校正。'},eventContext:input&&input.eventContext||null,paragraphs,advice,evidenceTrace:unique(paragraphs.flatMap(x=>x.evidenceRefs))};
   }
   const api={version:VERSION,legacyOverride:false,usesExternalApi:false,compose};
   root.TianhengMeihuaNarrative=api;
