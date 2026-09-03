@@ -4,7 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>天衡・九維命理｜六爻問事</title>
-  <meta name="theme-color" content="#08070d">
+  <meta name="theme-color" content="#17101f">
+  <link rel="icon" type="image/svg+xml" href="./tianheng-icon.svg?v=20260902">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png?v=20260902">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Noto+Serif+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
@@ -40,6 +42,12 @@
     .section-title span{flex:none;width:38px;height:38px;display:grid;place-items:center;border:1px solid rgba(216,183,116,.55);border-radius:50%;color:#e6c77e;font-size:12px;background:rgba(216,183,116,.05)}
     .sub-title{margin:24px 0 12px;color:#d7bd83;font-size:14px;letter-spacing:.12em}
     .notice{border:1px solid rgba(216,183,116,.23);border-left:3px solid var(--gold);border-radius:0 12px 12px 0;padding:12px 14px;background:rgba(216,183,116,.055);margin:0 0 18px;color:#b8aa93;font-size:12px;line-height:1.8}
+    .form-step{margin:14px 0 18px;padding:18px 16px;border:1px solid var(--line-soft);border-radius:17px;background:rgba(7,6,12,.38)}
+    .form-step-head{display:flex;align-items:center;gap:11px;margin:0 0 5px;color:#ead39a;font-size:16px;font-weight:600}.form-step-head b{flex:none;width:31px;height:31px;display:grid;place-items:center;border-radius:50%;background:#2d1940;border:1px solid #d8b774;color:#f3d992}.form-step-note{margin:0 0 14px;color:#8f8473;font-size:11px}
+    .horizon-options{display:grid;gap:9px}.horizon-card{position:relative;display:block;margin:0;padding:12px 14px;border:1px solid rgba(216,183,116,.2);border-radius:13px;background:rgba(255,255,255,.025);cursor:pointer}.horizon-card input{position:absolute;opacity:0;pointer-events:none}.horizon-card strong{display:block;color:#ddd0bc;font-size:14px}.horizon-card small{display:block;color:#8f8473;font-size:11px;line-height:1.55}.horizon-card:has(input:checked){border-color:#ddb96e;background:linear-gradient(135deg,rgba(106,60,126,.35),rgba(216,183,116,.08));box-shadow:0 0 0 1px rgba(216,183,116,.11)}.horizon-card:has(input:checked) strong{color:#f3d992}
+    details.advanced{margin:10px 0 0;border-top:1px dashed var(--line-soft);padding-top:10px}details.advanced summary{cursor:pointer;color:#a99777;font-size:11px;list-style:none}details.advanced summary::before{content:'＋ ';color:#d8b774}details.advanced[open] summary::before{content:'－ '}
+    .unlock-contact{margin:24px 0 8px;padding:26px 18px;text-align:center;border:1px solid rgba(216,183,116,.5);border-radius:22px;background:radial-gradient(circle at 50% 0,rgba(114,65,137,.3),transparent 65%),rgba(12,9,17,.95);box-shadow:0 20px 55px rgba(0,0,0,.45)}.unlock-contact .mark{width:48px;height:48px;display:grid;place-items:center;margin:0 auto 11px;border:1px solid #d8b774;border-radius:50%;color:#f1d58d;font-size:21px}.unlock-contact h2{margin:0;color:#efd391;font-size:20px}.unlock-contact p{margin:9px auto 16px;max-width:520px;color:#a99c88;font-size:12px}.unlock-contact a{display:block;min-height:54px;padding:13px;border:1px solid #58bd7c;border-radius:999px;background:linear-gradient(135deg,#1c8f50,#086b39);color:white;text-decoration:none;font-weight:700;letter-spacing:.12em}.unlock-contact small{display:block;margin-top:10px;color:#766e63;font-size:10px}
+    .feature-access-gate{padding:14px;margin:9px 0 14px;border:1px solid rgba(216,183,116,.28);border-radius:14px;background:rgba(0,0,0,.2)}.feature-access-gate>p{margin:0 0 10px;color:#b7a78f;font-size:11px}.feature-access-row{display:grid;grid-template-columns:1.45fr 1fr;gap:8px}.feature-access-row button{letter-spacing:.06em}.feature-access-status{min-height:18px;margin-top:7px;color:#d88880;font-size:10px}.feature-access-ok b{display:block;color:#92c9aa}.feature-access-ok small{color:#897f70}button:disabled{opacity:.45;cursor:not-allowed}
     .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
     label{display:block;color:#c7b58f;font-size:12px;letter-spacing:.06em;margin-bottom:13px}
     input,select,textarea,button{width:100%;border:1px solid rgba(189,148,75,.46);background:rgba(7,6,11,.76);color:var(--text);border-radius:13px;padding:13px 14px;font:inherit;transition:border-color .2s,box-shadow .2s,transform .2s}
@@ -75,7 +83,7 @@
     @media(max-width:720px){
       main{width:min(100% - 20px,760px);padding-top:12px}.hero{padding:12px 6px 20px}.hero-sigil{width:68px;height:68px;font-size:28px}h1{font-size:35px}.lead{font-size:12px}
       .panel{padding:18px 15px;border-radius:19px}.panel::before{left:18px;right:18px}.section-title{font-size:17px}.grid,.grid.three{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}.card{min-height:95px}
-      .casts{grid-template-columns:repeat(2,1fr)}.actions{grid-template-columns:1fr}.steps{gap:5px}.step{font-size:9px;padding:8px 2px}.step b{font-size:12px}
+      .casts{grid-template-columns:repeat(2,1fr)}.actions,.feature-access-row{grid-template-columns:1fr}.steps{gap:5px}.step{font-size:9px;padding:8px 2px}.step b{font-size:12px}
     }
     @media(min-width:721px){.casts{grid-template-columns:repeat(6,1fr)}}
   </style>
@@ -99,8 +107,15 @@
   </header>
 
   <section class="panel">
-    <h2 class="section-title"><span>壹</span>問題與起卦資料</h2>
-    <div class="notice">請輸入一件具體、有期限、結果可核實的事情。六次銅錢依「初爻到上爻」排列。</div>
+    <h2 class="section-title"><span>壹</span>四步完成問事</h2>
+    <div class="notice">畫面一次整理一個決定。先選時間，再寫問題，最後輸入六次銅錢結果。</div>
+    <div class="form-step"><div class="form-step-head"><b>1</b>你想問哪一段時間？</div><p class="form-step-note">選最接近的範圍，讓判讀的時間條件更清楚</p><div class="horizon-options">
+      <label class="horizon-card"><input type="radio" name="horizon" value="一個月內" checked><strong>問近期一個月</strong><small>通知、回覆、感情互動、短期進展</small></label>
+      <label class="horizon-card"><input type="radio" name="horizon" value="三個月內"><strong>問三個月內</strong><small>求職、合作、搬遷、關係發展</small></label>
+      <label class="horizon-card"><input type="radio" name="horizon" value="半年至一年"><strong>問半年至一年</strong><small>工作方向、收入規劃、較長期決定</small></label>
+      <label class="horizon-card"><input type="radio" name="horizon" value="特定日期以前"><strong>問特定日期以前</strong><small>已有截止日、面試日、簽約日或約定時間</small></label>
+    </div></div>
+    <div class="form-step"><div class="form-step-head"><b>2</b>寫下一件具體問題</div><p class="form-step-note">一事一問，最好包含人物、事件與期限</p>
     <label>具體問題<textarea id="question" placeholder="例如：我在 9 月 15 日前能否收到這間公司的第二輪面試通知？"></textarea></label>
     <div class="grid">
       <label>題型<select id="topic">
@@ -110,10 +125,9 @@
         <option value="family_peer">兄弟姊妹／同輩家人</option><option value="decision">選擇／決策</option>
       </select></label>
       <label>提問時間<input id="askedAt" type="datetime-local"></label>
-      <label>時區<input id="timezone" value="Asia/Taipei"></label>
-      <label>案例編號（選填）<input id="caseId" placeholder="例如：QA-20260830-001"></label>
     </div>
-    <h3 class="sub-title">◇ 三枚銅錢・六次結果</h3>
+    <details class="advanced"><summary>進階紀錄（一般使用不用填）</summary><div class="grid"><label>時區<input id="timezone" value="Asia/Taipei"></label><label>案例編號（選填）<input id="caseId" placeholder="例如：QA-20260830-001"></label></div></details></div>
+    <div class="form-step"><div class="form-step-head"><b>3</b>輸入三枚銅錢六次結果</div><p class="form-step-note">依初爻到上爻、由下往上填寫</p>
     <div class="casts" id="casts"></div>
     <h3 class="sub-title">◇ 當時曆法</h3>
     <div class="grid three">
@@ -121,8 +135,8 @@
       <label>日干<select id="dayGan"><option value="甲">甲</option><option value="乙">乙</option><option value="丙">丙</option><option value="丁">丁</option><option value="戊">戊</option><option value="己">己</option><option value="庚">庚</option><option value="辛">辛</option><option value="壬">壬</option><option value="癸">癸</option></select></label>
       <label>日支<select id="dayZhi"><option value="子">子</option><option value="丑">丑</option><option value="寅">寅</option><option value="卯">卯</option><option value="辰">辰</option><option value="巳">巳</option><option value="午">午</option><option value="未">未</option><option value="申">申</option><option value="酉">酉</option><option value="戌">戌</option><option value="亥">亥</option></select></label>
     </div>
-    <label>曆法來源<input id="calendarSource" value="QA 人工核對干支曆"></label>
-    <div class="actions"><button id="analyze">執行分層判讀</button><button class="secondary" id="reset">清除結果</button></div>
+    <details class="advanced"><summary>曆法核對來源</summary><label>曆法來源<input id="calendarSource" value="QA 人工核對干支曆"></label></details></div>
+    <div class="form-step"><div class="form-step-head"><b>4</b>查看完整分層判讀</div><p class="form-step-note">保留卦象、動爻、用神、阻力與判斷依據</p><div class="feature-access-gate" data-th-access-feature="wenshi" data-th-access-target="#analyze"><p>已有開通碼請在這裡輸入；尚未開通可先看完功能，再到頁面最下方聯絡三寶爸。</p><div class="feature-access-row"><input data-th-access-code autocomplete="off" autocapitalize="characters" maxlength="15" placeholder="TH9-XXXXX-XXXXX" aria-label="六爻問事開通碼"><button type="button" data-th-access-submit>驗 證 開 通 碼</button></div><div class="feature-access-status" data-th-access-status aria-live="polite"></div></div><div class="actions"><button id="analyze" data-feature-analyze disabled>執行分層判讀</button><button class="secondary" id="reset">清除結果</button></div></div>
   </section>
 
   <div id="error" class="error hidden" role="alert"></div>
@@ -133,6 +147,7 @@
     <div class="panel"><h2 class="section-title"><span>伍</span>支持、阻力與未定處</h2><div class="grid three"><div class="evidence-box support-box"><h3 class="support">支持</h3><div id="support"></div></div><div class="evidence-box resistance-box"><h3 class="resistance">阻力</h3><div id="resistance"></div></div><div class="evidence-box unresolved-box"><h3 class="unresolved">尚未裁定</h3><div id="unresolved"></div></div></div></div>
     <div class="panel"><h2 class="section-title"><span>陸</span>暫定結論與近期做法</h2><div id="explanation"></div><div class="grid three"><div class="advice-card can"><h3 class="support">可以做</h3><div id="canDo"></div></div><div class="advice-card avoid"><h3 class="resistance">先避免</h3><div id="avoid"></div></div><div class="advice-card verify"><h3>需要查證</h3><div id="verify"></div></div></div><h3 class="sub-title">◇ 時間條件</h3><div id="timing"></div><div class="notice">此結果尚未完成真實歷史盲測校準，不能代替醫療、法律、投資或其他專業判斷。</div><button class="secondary" id="export">匯出本次判讀 JSON</button></div>
   </section>
+  <section class="unlock-contact" id="contact-sambo"><div class="mark">啟</div><h2>聯絡三寶爸・開通完整問事</h2><p>您可以先看懂六爻問事的流程與功能。需要正式問事、人工核對或開通完整使用時，再從這裡聯絡。</p><a href="https://line.me/R/ti/p/@788ldzke" target="_blank" rel="noopener">LINE 聯絡三寶爸申請開通</a><small>LINE：三寶爸的命理分析・@788ldzke</small></section>
   <footer class="page-foot">天衡・九維命理｜六爻問事公開驗證版<br>推演供文化研究與生活規劃參考，重大決策仍應依現實資訊判斷。</footer>
 </main>
 <script src="tianheng-wenshi-validation-v1.js?v=20260901-narrative1"></script>
@@ -145,6 +160,7 @@
 <script src="tianheng-wenshi-narrative-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-engine-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-history-study-v1.js?v=20260901-narrative1"></script>
+<script src="tianheng-feature-access-v1.js?v=20260903"></script>
 <script>
 (()=>{
   'use strict';
@@ -174,7 +190,7 @@
   $('analyze').addEventListener('click',()=>{
     $('error').classList.add('hidden');
     const topic=$('topic').value;const local=$('askedAt').value;
-    const input={question:$('question').value,category:topicLabels[topic],topic,askedAt:local?new Date(local).toISOString():'',timezone:$('timezone').value,casts:[...document.querySelectorAll('.cast')].map(x=>Number(x.value)),calendar:{monthZhi:$('monthZhi').value,dayGan:$('dayGan').value,dayZhi:$('dayZhi').value,source:$('calendarSource').value,timezone:$('timezone').value}};
+    const input={question:$('question').value,category:topicLabels[topic],topic,timeHorizon:document.querySelector('input[name="horizon"]:checked')?.value||'一個月內',askedAt:local?new Date(local).toISOString():'',timezone:$('timezone').value,casts:[...document.querySelectorAll('.cast')].map(x=>Number(x.value)),calendar:{monthZhi:$('monthZhi').value,dayGan:$('dayGan').value,dayZhi:$('dayZhi').value,source:$('calendarSource').value,timezone:$('timezone').value}};
     const analyzed=window.TianhengWenshiEngine.safeAnalyze(input);
     if(!analyzed.ok){$('error').textContent=analyzed.error;$('error').classList.remove('hidden');$('result').classList.add('hidden');return;}
     lastResult={caseId:$('caseId').value||null,generatedAt:new Date().toISOString(),input,analysis:analyzed.result};render(analyzed.result);
@@ -185,5 +201,6 @@
   });
 })();
 </script>
+<script src="./tianheng-support-v1.js?v=20260902"></script>
 </body>
 </html>
