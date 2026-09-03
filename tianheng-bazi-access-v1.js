@@ -50,7 +50,7 @@
   async function redeem(code){
     var response=await fetch(API+'/redeem',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({code:code,device:deviceId()})
+      body:JSON.stringify({code:code,device:deviceId(),feature:'bazi'})
     });
     var data=await response.json().catch(function(){return {ok:false,error:'bad_response'}});
     if(!response.ok||!data.ok)throw Object.assign(new Error(data.error||'request_failed'),{code:data.error||'request_failed'});

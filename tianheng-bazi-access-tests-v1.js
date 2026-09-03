@@ -18,7 +18,7 @@ test('前端不再保存固定解鎖碼或雜湊清單',()=>{
 });
 test('一碼一裝置且不傳命盤個資',()=>{
   assert.ok(access.includes("DEVICE_KEY='tianheng_bazi_device_v1'"));
-  assert.ok(access.includes("JSON.stringify({code:code,device:deviceId()})"));
+  assert.ok(access.includes("JSON.stringify({code:code,device:deviceId(),feature:'bazi'})"));
   assert.ok(!/name:|birthday:|pillars:|chart:/.test(access));
 });
 test('保留舊裝置解鎖期限並接受後台到期日',()=>{
@@ -52,6 +52,12 @@ test('發碼台不保存管理金鑰並支援建立列表停用',()=>{
   assert.ok(admin.includes("'/admin/create'"));
   assert.ok(admin.includes("'/admin/list'"));
   assert.ok(admin.includes("'/admin/revoke'"));
+});
+test('發碼後台可分別建立三種功能碼',()=>{
+  assert.ok(admin.includes('<option value="bazi">八字進階分析</option>'));
+  assert.ok(admin.includes('<option value="wenshi">六爻問事</option>'));
+  assert.ok(admin.includes('<option value="meihua">梅花易數</option>'));
+  assert.ok(admin.includes("feature:$('feature').value"));
 });
 
 console.log(`\nRESULT ${passed}/${passed} passed`);

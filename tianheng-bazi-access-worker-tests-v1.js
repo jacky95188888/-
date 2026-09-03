@@ -12,6 +12,11 @@ test('管理路由需要 ADMIN_KEY', () => assert.ok(src.includes("req.headers.g
 test('一次性兌換拒絕不同裝置重複使用', () => assert.ok(src.includes("error: 'already_redeemed'") && src.includes('record.redeemedDevice === device')));
 test('只保存雜湊、不在 KV 保存明碼', () => assert.ok(src.includes('code:${hash}') && !src.includes('record.code = code')));
 test('期限限制在 1 至 365 天', () => assert.ok(src.includes('Math.min(365')));
+test('解鎖碼綁定指定功能且舊碼維持八字', () => {
+  assert.ok(src.includes("new Set(['bazi', 'wenshi', 'meihua'])"));
+  assert.ok(src.includes("record.feature || 'bazi'"));
+  assert.ok(src.includes("error: 'wrong_feature'"));
+});
 test('自動部署會沿用既有 Cloudflare Token 並建立 KV', () => {
   assert.ok(workflow.includes('secrets.CLOUDFLARE_API_TOKEN'));
   assert.ok(workflow.includes('kv namespace create tianheng-bazi-access-codes'));
