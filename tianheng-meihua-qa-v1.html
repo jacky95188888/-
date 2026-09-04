@@ -27,6 +27,8 @@
     button{cursor:pointer;transition:.2s;border-color:#d4ad5b;background:linear-gradient(135deg,#9d3b31,#73302b 53%,#4d2027);color:#fff4d4;font-weight:700;letter-spacing:.13em;box-shadow:inset 0 1px rgba(255,255,255,.13),0 12px 28px rgba(77,21,24,.28)}button:active{transform:scale(.985)}button.secondary{background:rgba(13,10,18,.8);color:#d8bd83;box-shadow:none}.actions{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-top:18px}.actions button{min-height:55px}.hidden{display:none!important}.error{color:#ffaaa3;border:1px solid rgba(216,83,83,.54);background:rgba(72,31,31,.84);padding:14px 16px;border-radius:13px;margin:14px 0}
     #result{animation:rise .55s ease both}@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}.hex-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}.hex-card{position:relative;min-height:235px;padding:16px 13px;border:1px solid rgba(193,151,78,.37);border-radius:17px;background:linear-gradient(145deg,rgba(80,44,95,.34),rgba(7,6,12,.68));text-align:center}.hex-card small{color:#958873;font-size:10px;letter-spacing:.12em}.hex-card h3{margin:6px 0 2px;color:#efd08a;font-size:18px}.hex-card p{margin:0;color:#a99c88;font-size:11px}.hex-lines{width:75px;margin:14px auto 10px;display:flex;flex-direction:column;gap:7px}.yao{height:7px;border-radius:2px;background:#d6b468;box-shadow:0 0 10px rgba(216,180,104,.14)}.yao.yin{background:linear-gradient(90deg,#d6b468 0 41%,transparent 41% 59%,#d6b468 59%)}.yao.moving{filter:drop-shadow(0 0 5px #b16bc9)}.yao.moving::after{content:"動";position:absolute;margin:-10px 0 0 48px;color:#d395e7;font-size:8px}.fact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.fact{min-height:100px;padding:13px;border:1px solid var(--soft);border-radius:15px;background:rgba(7,6,12,.5)}.fact span{color:#8f8371;font-size:10px}.fact b{display:block;margin-top:7px;color:#e6c77f;font-size:14px}.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.time-card{padding:15px;border:1px solid var(--soft);border-radius:15px;background:rgba(7,6,12,.48)}.time-card em{display:block;color:#9b8d79;font-size:10px;font-style:normal;letter-spacing:.1em}.time-card h3{margin:5px 0 8px;color:#dfc181;font-size:15px}.time-card p{margin:6px 0;color:#cfc1ac;font-size:12px}.tag{display:inline-block;border:1px solid currentColor;border-radius:999px;padding:3px 9px;font-size:10px}.support{color:var(--green)}.resistance{color:var(--red)}.unresolved{color:var(--blue)}.evidence,.advice{min-height:100%;padding:15px;border:1px solid var(--soft);border-radius:15px;background:rgba(7,6,12,.45)}.evidence h3,.advice h3{margin:0 0 8px;font-size:14px}.evidence.good,.advice.good{border-top:2px solid var(--green)}.evidence.bad,.advice.bad{border-top:2px solid var(--red)}.evidence.open,.advice.check{border-top:2px solid var(--blue)}.list{margin:5px 0;padding-left:1.1rem;color:#d5c8b3;font-size:12px}.list li{padding:3px 0}.empty{color:#766e64;font-size:12px}.explain p{margin:8px 0;color:#d5c8b4;font-size:13px}.explain b{color:#efd28b}.page-foot{text-align:center;margin:24px 10px 0;color:#756e64;font-size:10px;line-height:1.8}.export{margin-top:16px;min-height:50px}
     .narrative-part{margin:0 0 13px;padding:14px 15px;border:1px solid var(--soft);border-left:3px solid #b38bce;border-radius:0 14px 14px 0;background:linear-gradient(100deg,rgba(101,58,120,.18),rgba(7,6,12,.28))}.narrative-part h3{margin:0 0 6px;color:#e7c986;font-size:14px;letter-spacing:.08em}.narrative-part p{margin:0;color:#ddd0bc;line-height:1.95}.narrative-part small{display:block;margin-top:8px;color:#817566;font-size:9px;word-break:break-all}.event-context{margin:13px 0 0;padding:15px;border:1px solid rgba(142,179,212,.3);border-radius:15px;background:linear-gradient(135deg,rgba(35,55,77,.28),rgba(105,60,126,.15))}.event-context h3{margin:0 0 4px;color:#b9d4e8;font-size:14px}.event-context>p{margin:0 0 12px;color:#948a7c;font-size:11px}.decision-line{display:block;margin:8px 0 4px;color:#fff0bd;font-size:15px}.decision-note{display:block;margin-top:8px;color:#8f8372;font-size:10px}.verdict{padding:20px;border:1px solid rgba(240,213,142,.54);border-left:5px solid var(--gold2);border-radius:16px;background:linear-gradient(135deg,rgba(117,70,140,.32),rgba(216,183,116,.08))}.verdict em{font-style:normal;color:#a99980;font-size:10px;letter-spacing:.15em}.verdict strong{display:block;margin:5px 0;color:#f2d68f;font-size:24px}.verdict p{margin:0;color:#ddd0bc;font-size:13px}.verify-box{margin-top:15px;padding:16px;border:1px dashed rgba(142,179,212,.42);border-radius:15px;background:rgba(18,35,51,.2)}.verify-box h3{margin:0 0 5px;color:#a9c9e2}.verify-box p{margin:0 0 12px;color:#a99c88;font-size:11px}.verify-status{min-height:20px;margin-top:8px;color:#9bd0bb;font-size:11px}
+    .score-band{display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:6px 14px;border-radius:999px;font-size:12px;letter-spacing:.06em;border:1px solid currentColor}
+    .score-band.low{color:var(--red)}.score-band.watch{color:#e0b86a}.score-band.mid{color:var(--blue)}.score-band.high{color:var(--green)}
     @media(max-width:720px){main{width:min(100% - 18px,800px);padding-top:11px}.hero{padding:10px 5px 20px}.sigil{width:68px;height:68px;font-size:28px}h1{font-size:34px}.lead{font-size:12px}.panel{padding:18px 15px;border-radius:19px}.panel::before{left:18px;right:18px}.section-title{font-size:17px}.grid,.grid.three,.timeline{grid-template-columns:1fr}.method-switch{grid-template-columns:1fr}.hex-grid{grid-template-columns:1fr}.hex-card{min-height:210px}.fact-grid{grid-template-columns:repeat(2,1fr)}.actions,.feature-access-row{grid-template-columns:1fr}.steps{gap:5px}.step{font-size:9px;padding:8px 2px}.step b{font-size:12px}}
   </style>
 </head>
@@ -54,7 +56,10 @@
       <label>題型<select id="category"><option>求職／工作</option><option>考試／證照</option><option>升遷／職位</option><option>合作／客戶</option><option>收入／收款</option><option>感情／人際</option><option>選擇／決策</option><option>一般問事</option></select></label>
       <label>提問時間<input id="askedAt" type="datetime-local"></label>
     </div>
-    <div class="event-context"><h3>讓答案對準這一次事件</h3><p id="eventGuide">系統會依題型改問真正影響結果的資料；不知道可以留白，不會用套話補答案。</p><div class="grid"><label>本次狀態<select id="eventAttempt"><option value="">請選擇</option><option>第一次</option><option>再次嘗試／重考</option><option>事件延續中</option><option>過去結果核對</option></select></label><label>事件日期<input id="eventDate" type="date"></label></div><label>這次怎樣才算成功？<input id="successDefinition" placeholder="例如：收到正式錄取通知"></label><label>目前最可能卡在哪裡？<input id="knownObstacle" placeholder="例如：名額、資格、對方尚未決定"></label><label>目前最強的現實證據<input id="strongestEvidence" placeholder="例如：已收到二次面試通知"></label><label>上次結果或差距<input id="priorResult" placeholder="例如：上次未錄取、仍差一個條件"></label><label>目前準備與已知事實<textarea id="preparation" placeholder="請只填已知事實，不用猜測"></textarea></label><div id="specificMetrics" class="grid"><label><span id="specificOneLabel">目前進度</span><input id="specificOne"></label><label><span id="specificTwoLabel">正式確認點</span><input id="specificTwo"></label></div><div id="examMetrics" class="grid hidden"><label>上次成績<input id="priorScore" type="number" step="0.1" placeholder="例如 67"></label><label>及格分數<input id="passScore" type="number" step="0.1" placeholder="例如 70"></label><label>最近模擬成績<input id="mockScore" type="number" step="0.1" placeholder="例如 75"></label></div></div>
+    <div class="event-context"><h3>讓答案對準這一次事件</h3><p id="eventGuide">系統會依題型改問真正影響結果的資料；不知道可以留白，不會用套話補答案。</p><div class="grid"><label>本次狀態<select id="eventAttempt"><option value="">請選擇</option><option>第一次</option><option>再次嘗試／重考</option><option>事件延續中</option><option>過去結果核對</option></select></label><label>事件日期<input id="eventDate" type="date"></label></div><label>這次怎樣才算成功？<input id="successDefinition" placeholder="例如：收到正式錄取通知"></label><label>目前最可能卡在哪裡？<input id="knownObstacle" placeholder="例如：名額、資格、對方尚未決定"></label><label>目前最強的現實證據<input id="strongestEvidence" placeholder="例如：已收到二次面試通知"></label><label>上次結果或差距<input id="priorResult" placeholder="例如：上次未錄取、仍差一個條件"></label><label>目前準備與已知事實<textarea id="preparation" placeholder="請只填已知事實，不用猜測"></textarea></label>
+    <label>補充說明（感情等較難量化的問題可在此大概敘述狀況，其他題型可留白）<textarea id="supplementNote" placeholder="例如：兩人已認識三個月，最近互動變少，想了解關係走向與對方態度"></textarea></label>
+    <div class="grid"><label>對方出生年月（選填，感情／人際類問題較適用）<input id="counterpartBirth" type="month"></label><div><label style="display:flex;align-items:center;gap:8px;margin-top:29px;font-size:12px;color:#c7b58f;cursor:pointer"><input type="checkbox" id="counterpartBirthUnknown" style="width:auto;min-height:auto;flex:none">不知道對方生日</label></div></div>
+    <div id="specificMetrics" class="grid"><label><span id="specificOneLabel">目前進度</span><input id="specificOne"></label><label><span id="specificTwoLabel">正式確認點</span><input id="specificTwo"></label></div><div id="examMetrics" class="grid hidden"><label>上次成績<input id="priorScore" type="number" step="0.1" placeholder="例如 67"></label><label>及格分數<input id="passScore" type="number" step="0.1" placeholder="例如 70"></label><label>最近模擬成績<input id="mockScore" type="number" step="0.1" placeholder="例如 75"></label></div></div>
     <details class="advanced"><summary>進階紀錄（一般使用不用填）</summary><div class="grid"><label>時區<input id="timezone" value="Asia/Taipei"></label><label>案例編號（選填）<input id="caseId" placeholder="例如：MH-20260901-001"></label></div></details></div>
     <div class="form-step"><div class="form-step-head"><b>3</b>選擇起卦方法</div><p class="form-step-note">一般可用年月日時；已有兩個數字或老師核對卦象時再切換</p>
     <div class="method-switch" role="group" aria-label="起卦方法"><button type="button" class="method active" data-method="lunar_time">年月日時</button><button type="button" class="method" data-method="two_numbers">兩數起卦</button><button type="button" class="method" data-method="manual_verified">人工核對</button></div>
@@ -81,7 +86,7 @@
 
   <div id="error" class="error hidden" role="alert"></div>
   <section id="result" class="hidden" aria-live="polite">
-    <div class="panel"><h2 class="section-title"><span>判</span>先看核心結論</h2><div id="verdict" class="verdict"></div><div id="pastValidation" class="verify-box hidden"><h3>此題已進入過去驗證模式</h3><p>系統已保留原始判讀。請在知道真實結果後另行記錄，不會回寫或改動原判。</p><div class="grid"><label>實際結果<select id="actualOutcome"><option value="">尚未揭曉</option><option value="positive">通過／達成</option><option value="negative">未通過／未達成</option><option value="partial">部分符合</option><option value="unresolved">仍無法確認</option></select></label><label>結果依據<input id="actualNote" placeholder="例如：成績通知、錄取信或當事人回覆"></label></div><button type="button" id="saveActual">保存原判與實際結果</button><div id="verifyStatus" class="verify-status" aria-live="polite"></div></div></div>
+    <div class="panel"><h2 class="section-title"><span>判</span>先看核心結論</h2><div id="verdict" class="verdict"></div><div id="scoreBandWrap"></div><div id="pastValidation" class="verify-box hidden"><h3>此題已進入過去驗證模式</h3><p>系統已保留原始判讀。請在知道真實結果後另行記錄，不會回寫或改動原判。</p><div class="grid"><label>實際結果<select id="actualOutcome"><option value="">尚未揭曉</option><option value="positive">通過／達成</option><option value="negative">未通過／未達成</option><option value="partial">部分符合</option><option value="unresolved">仍無法確認</option></select></label><label>結果依據<input id="actualNote" placeholder="例如：成績通知、錄取信或當事人回覆"></label></div><button type="button" id="saveActual">保存原判與實際結果</button><div id="verifyStatus" class="verify-status" aria-live="polite"></div></div></div>
     <div class="panel"><h2 class="section-title"><span>貳</span>本卦・互卦・變卦</h2><div id="hexagrams" class="hex-grid"></div></div>
     <div class="panel"><h2 class="section-title"><span>參</span>體用與月令旺衰</h2><div id="facts" class="fact-grid"></div><h3 class="sub">◇ 原始起卦證據</h3><div id="castingEvidence" class="notice"></div></div>
     <div class="panel"><h2 class="section-title"><span>肆</span>起段・中段・末段</h2><div id="timeline" class="timeline"></div></div>
@@ -106,6 +111,12 @@
   $('runtimeNotice').classList.add('hidden');
   const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());$('askedAt').value=now.toISOString().slice(0,16);
 
+  $('counterpartBirthUnknown').addEventListener('change',()=>{
+    const unknown=$('counterpartBirthUnknown').checked;
+    $('counterpartBirth').disabled=unknown;
+    if(unknown)$('counterpartBirth').value='';
+  });
+
   document.querySelectorAll('.method').forEach(button=>button.addEventListener('click',()=>{
     method=button.dataset.method;document.querySelectorAll('.method').forEach(x=>x.classList.toggle('active',x===button));
     ['lunar_time','two_numbers','manual_verified'].forEach(id=>$(id).classList.toggle('hidden',id!==method));
@@ -115,10 +126,40 @@
   function hexCard(label,hex,moving){return `<article class="hex-card"><small>${label}</small><h3>${esc(hex.fullName)}・${hex.number}</h3>${yaoLines(hex,moving)}<p>上${esc(hex.upper.name)}${esc(hex.upper.element)}・下${esc(hex.lower.name)}${esc(hex.lower.element)}</p></article>`;}
   function eventText(item){return `${item.actor.name}${item.actor.element}對${item.body.name}${item.body.element}：${item.relation}。${item.explanation}`;}
 
+  /* 分數區間對照：50 以下／50-60／60-80／80 以上。
+     嘗試從 outcome 物件裡找出可用的數字分數（score / probability / supportScore-resistanceScore 等），
+     找不到就不顯示，不用猜測值硬套。 */
+  function resolveNumericScore(outcome){
+    if(!outcome||typeof outcome!=='object')return null;
+    const direct=['score','probability','confidenceScore','successScore','numericConfidence'];
+    for(const key of direct){
+      const v=outcome[key];
+      if(typeof v==='number'&&isFinite(v))return v<=1?Math.round(v*100):Math.round(v);
+    }
+    if(typeof outcome.supportScore==='number'&&typeof outcome.resistanceScore==='number'){
+      const total=outcome.supportScore+outcome.resistanceScore;
+      if(total>0)return Math.round((outcome.supportScore/total)*100);
+    }
+    return null;
+  }
+  function scoreBand(score){
+    if(score<50)return{cls:'low',label:'低機率（50 以下）',note:'現況條件偏弱，怎麼努力都相對吃力，先確認阻力點能否化解。'};
+    if(score<60)return{cls:'watch',label:'臨界區間（50–60）',note:'接近門檻，加把勁可以過，代表現實條件與問事人能力不差。'};
+    if(score<80)return{cls:'mid',label:'中高機率（60–80）',note:'順勢而為多能達成，仍建議留意尚未裁定的條件。'};
+    return{cls:'high',label:'高機率（80 以上）',note:'條件相對穩妥，維持既有節奏即可。'};
+  }
+  function renderScoreBand(outcome){
+    const score=resolveNumericScore(outcome);
+    if(score===null){$('scoreBandWrap').innerHTML='';return;}
+    const band=scoreBand(score);
+    $('scoreBandWrap').innerHTML=`<div class="score-band ${band.cls}">${score} 分・${band.label}</div><p class="empty" style="margin-top:8px">${band.note}</p>`;
+  }
+
   function render(engine){
     const r=engine.result;const c=r.core;const body=c.bodyUse.body;const use=c.bodyUse.use;
     const v=TianhengOracleVerificationV1.verdict(r.outcome);const mode=TianhengOracleVerificationV1.modeFor(c.request.question);const d=r.narrative.decisionSummary;
     $('verdict').innerHTML=`<em>${mode.mode==='retrospective'?'過去驗證・原判已保留':'未來觀察・等待事件驗證'}</em><strong>結果：${esc(d.label)}</strong><span class="decision-line">過程：${esc(d.processLabel)}</span><span class="decision-line">資料：${esc(d.evidenceQuality)}</span><p>${esc(d.realitySignal)}</p><small class="decision-note">${esc(d.note)}</small>`;
+    renderScoreBand(r.outcome);
     $('pastValidation').classList.toggle('hidden',mode.mode!=='retrospective');
     $('hexagrams').innerHTML=hexCard('本卦',c.primary,c.movingLine)+hexCard('互卦',c.mutual,null)+hexCard('變卦',c.changed,null);
     const facts=[['動爻',c.movingLine===1?'初爻':c.movingLine===6?'上爻':`${c.movingLine}爻`],['體卦',`${body.name}${body.element}・${r.strength.bodyState}`],['用卦',`${use.name}${use.element}・${r.strength.useState}`],['暫定結果',`${r.outcome.label}・${r.outcome.confidence}`]];
@@ -134,7 +175,7 @@
   }
 
   function buildInput(){
-    const local=$('askedAt').value;const input={question:$('question').value,category:$('category').value,timeHorizon:document.querySelector('input[name="horizon"]:checked')?.value||'一個月內',askedAt:local?new Date(local).toISOString():'',timezone:$('timezone').value,method,eventContext:{attempt:$('eventAttempt').value,eventDate:$('eventDate').value,successDefinition:$('successDefinition').value.trim(),knownObstacle:$('knownObstacle').value.trim(),strongestEvidence:$('strongestEvidence').value.trim(),priorResult:$('priorResult').value.trim(),preparation:$('preparation').value.trim(),specific:{oneLabel:$('specificOneLabel').textContent,one:$('specificOne').value.trim(),twoLabel:$('specificTwoLabel').textContent,two:$('specificTwo').value.trim()},examMetrics:{priorScore:$('priorScore').value,passScore:$('passScore').value,mockScore:$('mockScore').value}}};
+    const local=$('askedAt').value;const input={question:$('question').value,category:$('category').value,timeHorizon:document.querySelector('input[name="horizon"]:checked')?.value||'一個月內',askedAt:local?new Date(local).toISOString():'',timezone:$('timezone').value,method,eventContext:{attempt:$('eventAttempt').value,eventDate:$('eventDate').value,successDefinition:$('successDefinition').value.trim(),knownObstacle:$('knownObstacle').value.trim(),strongestEvidence:$('strongestEvidence').value.trim(),priorResult:$('priorResult').value.trim(),preparation:$('preparation').value.trim(),supplementNote:$('supplementNote').value.trim(),counterpartBirth:$('counterpartBirthUnknown').checked?'不知道':$('counterpartBirth').value,specific:{oneLabel:$('specificOneLabel').textContent,one:$('specificOne').value.trim(),twoLabel:$('specificTwoLabel').textContent,two:$('specificTwo').value.trim()},examMetrics:{priorScore:$('priorScore').value,passScore:$('passScore').value,mockScore:$('mockScore').value}}};
     if(method==='lunar_time')input.calendar={yearZhi:$('yearZhi').value,lunarMonth:Number($('lunarMonth').value),lunarDay:Number($('lunarDay').value),hourZhi:$('hourZhi').value,source:$('calendarSource').value};
     if(method==='two_numbers')input.numbers={first:Number($('firstNumber').value),second:Number($('secondNumber').value)};
     if(method==='manual_verified')input.manual={upper:$('manualUpper').value,lower:$('manualLower').value,movingLine:Number($('manualMoving').value),source:$('manualSource').value};
