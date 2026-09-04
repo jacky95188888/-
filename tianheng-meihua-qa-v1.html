@@ -54,7 +54,7 @@
       <label>題型<select id="category"><option>求職／工作</option><option>考試／證照</option><option>升遷／職位</option><option>合作／客戶</option><option>收入／收款</option><option>感情／人際</option><option>選擇／決策</option><option>一般問事</option></select></label>
       <label>提問時間<input id="askedAt" type="datetime-local"></label>
     </div>
-    <div class="event-context"><h3>讓答案對準這一次事件</h3><p>尤其是重考、二次面試或已發生過一次的事情，請填已知事實，避免只解釋抽象象意。</p><div class="grid"><label>本次狀態<select id="eventAttempt"><option value="">請選擇</option><option>第一次</option><option>再次嘗試／重考</option><option>事件延續中</option><option>過去結果核對</option></select></label><label>事件日期<input id="eventDate" type="date"></label></div><label>這次怎樣才算成功？<input id="successDefinition" placeholder="例如：正式放榜通過投資型保險測驗"></label><label>目前最可能卡在哪裡？<input id="knownObstacle" placeholder="例如：法規題失分、作答時間不足、名額限制"></label><label>目前最強的現實證據<input id="strongestEvidence" placeholder="例如：最近三次模考為 72、75、76 分"></label><label>上次結果或差距<input id="priorResult" placeholder="例如：上次差 3 分、未錄取、尚未收到回覆"></label><label>目前準備與已知事實<textarea id="preparation" placeholder="例如：十月重考，已加強法規題；最近模擬成績約 75 分，及格門檻 70 分"></textarea></label><div id="examMetrics" class="grid hidden"><label>上次成績<input id="priorScore" type="number" step="0.1" placeholder="例如 67"></label><label>及格分數<input id="passScore" type="number" step="0.1" placeholder="例如 70"></label><label>最近模擬成績<input id="mockScore" type="number" step="0.1" placeholder="例如 75"></label></div></div>
+    <div class="event-context"><h3>讓答案對準這一次事件</h3><p id="eventGuide">系統會依題型改問真正影響結果的資料；不知道可以留白，不會用套話補答案。</p><div class="grid"><label>本次狀態<select id="eventAttempt"><option value="">請選擇</option><option>第一次</option><option>再次嘗試／重考</option><option>事件延續中</option><option>過去結果核對</option></select></label><label>事件日期<input id="eventDate" type="date"></label></div><label>這次怎樣才算成功？<input id="successDefinition" placeholder="例如：收到正式錄取通知"></label><label>目前最可能卡在哪裡？<input id="knownObstacle" placeholder="例如：名額、資格、對方尚未決定"></label><label>目前最強的現實證據<input id="strongestEvidence" placeholder="例如：已收到二次面試通知"></label><label>上次結果或差距<input id="priorResult" placeholder="例如：上次未錄取、仍差一個條件"></label><label>目前準備與已知事實<textarea id="preparation" placeholder="請只填已知事實，不用猜測"></textarea></label><div id="specificMetrics" class="grid"><label><span id="specificOneLabel">目前進度</span><input id="specificOne"></label><label><span id="specificTwoLabel">正式確認點</span><input id="specificTwo"></label></div><div id="examMetrics" class="grid hidden"><label>上次成績<input id="priorScore" type="number" step="0.1" placeholder="例如 67"></label><label>及格分數<input id="passScore" type="number" step="0.1" placeholder="例如 70"></label><label>最近模擬成績<input id="mockScore" type="number" step="0.1" placeholder="例如 75"></label></div></div>
     <details class="advanced"><summary>進階紀錄（一般使用不用填）</summary><div class="grid"><label>時區<input id="timezone" value="Asia/Taipei"></label><label>案例編號（選填）<input id="caseId" placeholder="例如：MH-20260901-001"></label></div></details></div>
     <div class="form-step"><div class="form-step-head"><b>3</b>選擇起卦方法</div><p class="form-step-note">一般可用年月日時；已有兩個數字或老師核對卦象時再切換</p>
     <div class="method-switch" role="group" aria-label="起卦方法"><button type="button" class="method active" data-method="lunar_time">年月日時</button><button type="button" class="method" data-method="two_numbers">兩數起卦</button><button type="button" class="method" data-method="manual_verified">人工核對</button></div>
@@ -94,7 +94,7 @@
 <script src="tianheng-meihua-core-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-meihua-judgment-v1.js?v=20260903-detail2"></script>
 <script src="tianheng-meihua-validation-v1.js?v=20260901-narrative1"></script>
-<script src="tianheng-meihua-narrative-v1.js?v=20260903-event4"></script>
+<script src="tianheng-meihua-narrative-v1.js?v=20260904-event5"></script>
 <script src="tianheng-meihua-engine-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-oracle-verification-v1.js?v=20260903"></script>
 <script>
@@ -134,7 +134,7 @@
   }
 
   function buildInput(){
-    const local=$('askedAt').value;const input={question:$('question').value,category:$('category').value,timeHorizon:document.querySelector('input[name="horizon"]:checked')?.value||'一個月內',askedAt:local?new Date(local).toISOString():'',timezone:$('timezone').value,method,eventContext:{attempt:$('eventAttempt').value,eventDate:$('eventDate').value,successDefinition:$('successDefinition').value.trim(),knownObstacle:$('knownObstacle').value.trim(),strongestEvidence:$('strongestEvidence').value.trim(),priorResult:$('priorResult').value.trim(),preparation:$('preparation').value.trim(),examMetrics:{priorScore:$('priorScore').value,passScore:$('passScore').value,mockScore:$('mockScore').value}}};
+    const local=$('askedAt').value;const input={question:$('question').value,category:$('category').value,timeHorizon:document.querySelector('input[name="horizon"]:checked')?.value||'一個月內',askedAt:local?new Date(local).toISOString():'',timezone:$('timezone').value,method,eventContext:{attempt:$('eventAttempt').value,eventDate:$('eventDate').value,successDefinition:$('successDefinition').value.trim(),knownObstacle:$('knownObstacle').value.trim(),strongestEvidence:$('strongestEvidence').value.trim(),priorResult:$('priorResult').value.trim(),preparation:$('preparation').value.trim(),specific:{oneLabel:$('specificOneLabel').textContent,one:$('specificOne').value.trim(),twoLabel:$('specificTwoLabel').textContent,two:$('specificTwo').value.trim()},examMetrics:{priorScore:$('priorScore').value,passScore:$('passScore').value,mockScore:$('mockScore').value}}};
     if(method==='lunar_time')input.calendar={yearZhi:$('yearZhi').value,lunarMonth:Number($('lunarMonth').value),lunarDay:Number($('lunarDay').value),hourZhi:$('hourZhi').value,source:$('calendarSource').value};
     if(method==='two_numbers')input.numbers={first:Number($('firstNumber').value),second:Number($('secondNumber').value)};
     if(method==='manual_verified')input.manual={upper:$('manualUpper').value,lower:$('manualLower').value,movingLine:Number($('manualMoving').value),source:$('manualSource').value};
@@ -143,8 +143,18 @@
     return input;
   }
 
-  function toggleExamMetrics(){$('examMetrics').classList.toggle('hidden',$('category').value!=='考試／證照');}
-  $('category').addEventListener('change',toggleExamMetrics);toggleExamMetrics();
+  const eventPrompts={
+    '求職／工作':['目前到哪一關','誰會做最後決定','例如：完成二面','例如：部門主管／人資'],
+    '考試／證照':['已完成的準備','正式放榜日','例如：三次計時模考','例如：10 月 28 日'],
+    '升遷／職位':['目前評核進度','名額與決定人','例如：已完成年度評核','例如：1 個名額／主管決定'],
+    '合作／客戶':['已確認的承諾','尚未確認的條件','例如：已確認交付內容','例如：付款日／簽約人'],
+    '收入／收款':['應收金額與日期','對方付款證據','例如：30,000 元／9 月 15 日','例如：已對帳／尚未開票'],
+    '感情／人際':['最近一次實際互動','接下來要觀察的行動','例如：昨天主動聯絡','例如：是否主動約下次見面'],
+    '選擇／決策':['最重要的比較條件','停止或轉向條件','例如：成本與時間','例如：超過預算便停止'],
+    '一般問事':['目前已發生的進度','結果確認方式','例如：已送件','例如：收到正式通知']
+  };
+  function updateEventPrompts(){const category=$('category').value;const p=eventPrompts[category]||eventPrompts['一般問事'];$('specificOneLabel').textContent=p[0];$('specificTwoLabel').textContent=p[1];$('specificOne').placeholder=p[2];$('specificTwo').placeholder=p[3];$('examMetrics').classList.toggle('hidden',category!=='考試／證照');$('specificMetrics').classList.toggle('hidden',category==='考試／證照');$('eventGuide').textContent=category==='考試／證照'?'請填門檻、最近表現與上次差距；系統會分開顯示卦象方向與現實準備，不拿卦象硬換百分比。':`現在問的是「${category}」，請填可被日期、文件或對方行動核對的資料。`;}
+  $('category').addEventListener('change',updateEventPrompts);updateEventPrompts();
 
   $('analyze').addEventListener('click',()=>{
     $('error').classList.add('hidden');const input=buildInput();const analyzed=window.TianhengMeihuaEngine.safeAnalyze(input);
