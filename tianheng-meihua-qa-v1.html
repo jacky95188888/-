@@ -126,16 +126,14 @@
   function hexCard(label,hex,moving){return `<article class="hex-card"><small>${label}</small><h3>${esc(hex.fullName)}・${hex.number}</h3>${yaoLines(hex,moving)}<p>上${esc(hex.upper.name)}${esc(hex.upper.element)}・下${esc(hex.lower.name)}${esc(hex.lower.element)}</p></article>`;}
   function eventText(item){return `${item.actor.name}${item.actor.element}對${item.body.name}${item.body.element}：${item.relation}。${item.explanation}`;}
 
-  /* 分數區間對照：50 以下／50-60／60-80／80 以上。
-     嘗試從 outcome 物件裡找出可用的數字分數（score / probability / supportScore-resistanceScore 等），
-     找不到就不顯示，不用猜測值硬套。 */
-  function resolveNumericScore(outcome){
+  /* 證據強度指數：50 以下／50-60／60-80／80 以上。
+     資料來源是 outcome.supportScore 與 outcome.resistanceScore（judgment 層產出）。
+     引擎本身把這兩個分數標記為 outcome.auxiliaryScoreOnly === true——
+     即「只供輔助參考、不是機率保證」，所以這裡刻意不稱它為「成功機率」，
+     用詞改成「證據強度指數」，並固定附上提示文字，避免使用者誤讀成保證值。
+     就像氣象預報 85% 降雨機率也不是保證下雨——分數仍有參考價值，但不是承諾。 */
+  function resolveEvidenceScore(outcome){
     if(!outcome||typeof outcome!=='object')return null;
-    const direct=['score','probability','confidenceScore','successScore','numericConfidence'];
-    for(const key of direct){
-      const v=outcome[key];
-      if(typeof v==='number'&&isFinite(v))return v<=1?Math.round(v*100):Math.round(v);
-    }
     if(typeof outcome.supportScore==='number'&&typeof outcome.resistanceScore==='number'){
       const total=outcome.supportScore+outcome.resistanceScore;
       if(total>0)return Math.round((outcome.supportScore/total)*100);
@@ -143,16 +141,16 @@
     return null;
   }
   function scoreBand(score){
-    if(score<50)return{cls:'low',label:'低機率（50 以下）',note:'現況條件偏弱，怎麼努力都相對吃力，先確認阻力點能否化解。'};
-    if(score<60)return{cls:'watch',label:'臨界區間（50–60）',note:'接近門檻，加把勁可以過，代表現實條件與問事人能力不差。'};
-    if(score<80)return{cls:'mid',label:'中高機率（60–80）',note:'順勢而為多能達成，仍建議留意尚未裁定的條件。'};
-    return{cls:'high',label:'高機率（80 以上）',note:'條件相對穩妥，維持既有節奏即可。'};
+    if(score<50)return{cls:'low',label:'偏弱區間（50 以下）',note:'目前檢出的支持證據明顯少於阻力，條件偏弱，先確認阻力點能否化解，而非單看數字硬拚。'};
+    if(score<60)return{cls:'watch',label:'臨界區間（50–60）',note:'支持與阻力接近，屬於加把勁就可能過的臨界帶，代表現實條件與問事人能力並不差。'};
+    if(score<80)return{cls:'mid',label:'偏強區間（60–80）',note:'支持證據明顯多於阻力，順勢而為多半能達成，仍建議留意尚未裁定的條件。'};
+    return{cls:'high',label:'強勢區間（80 以上）',note:'支持證據壓倒性偏多，條件相對穩妥，但仍不是保證結果，維持既有節奏並持續查證即可。'};
   }
   function renderScoreBand(outcome){
-    const score=resolveNumericScore(outcome);
+    const score=resolveEvidenceScore(outcome);
     if(score===null){$('scoreBandWrap').innerHTML='';return;}
     const band=scoreBand(score);
-    $('scoreBandWrap').innerHTML=`<div class="score-band ${band.cls}">${score} 分・${band.label}</div><p class="empty" style="margin-top:8px">${band.note}</p>`;
+    $('scoreBandWrap').innerHTML=`<div class="score-band ${band.cls}">證據強度指數 ${score}・${band.label}</div><p class="empty" style="margin-top:8px">${band.note}</p><p class="empty" style="margin-top:4px">※ 此指數僅由本題「支持／阻力」證據數量換算而來，不是機率保證，也不取代逐條證據鏈；本版尚未完成歷史盲測，不宣稱正式準確率。</p>`;
   }
 
   function render(engine){
