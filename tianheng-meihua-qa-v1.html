@@ -66,11 +66,12 @@
 
     <div id="lunar_time" class="method-block">
       <div class="grid three">
-        <label>年支<select id="yearZhi"><option>子</option><option>丑</option><option>寅</option><option>卯</option><option>辰</option><option>巳</option><option>午</option><option>未</option><option>申</option><option>酉</option><option>戌</option><option>亥</option></select></label>
-        <label>農曆月<input id="lunarMonth" type="number" min="1" max="12" value="1"></label><label>農曆日<input id="lunarDay" type="number" min="1" max="30" value="1"></label>
-        <label>時支<select id="hourZhi"><option>子</option><option>丑</option><option>寅</option><option>卯</option><option>辰</option><option>巳</option><option>午</option><option>未</option><option>申</option><option>酉</option><option>戌</option><option>亥</option></select></label>
+        <label>年支<select id="yearZhi"><option value="">請選擇</option><option>子</option><option>丑</option><option>寅</option><option>卯</option><option>辰</option><option>巳</option><option>午</option><option>未</option><option>申</option><option>酉</option><option>戌</option><option>亥</option></select></label>
+        <label>農曆月<input id="lunarMonth" type="number" min="1" max="12" placeholder="請填 1–12"></label><label>農曆日<input id="lunarDay" type="number" min="1" max="30" placeholder="請填 1–30"></label>
+        <label>時支<select id="hourZhi"><option value="">請選擇</option><option>子</option><option>丑</option><option>寅</option><option>卯</option><option>辰</option><option>巳</option><option>午</option><option>未</option><option>申</option><option>酉</option><option>戌</option><option>亥</option></select></label>
         <label>曆法來源<input id="calendarSource" value="QA 人工核對農曆"></label>
       </div>
+      <div class="notice">請務必填入起卦當下（通常是「今天」）的實際農曆年支、月、日與時辰，不可留空或照抄範例；卦象由這四項數字完全決定，沒填實際日期就會跟其他沒填的人得到一模一樣的卦。若不確定今天的農曆日期，可先查「農民曆」App 或搜尋「今日農曆」再填入。</div>
     </div>
     <div id="two_numbers" class="method-block hidden"><div class="grid"><label>第一數・上卦<input id="firstNumber" type="number" min="1" value="17"></label><label>第二數・下卦<input id="secondNumber" type="number" min="1" value="26"></label></div><div class="notice">第一數取上卦、第二數取下卦；兩數相加取動爻，原始數字會完整保留。</div></div>
     <div id="manual_verified" class="method-block hidden"><div class="grid three">
@@ -196,7 +197,12 @@
   $('category').addEventListener('change',updateEventPrompts);updateEventPrompts();
 
   $('analyze').addEventListener('click',()=>{
-    $('error').classList.add('hidden');const input=buildInput();const analyzed=window.TianhengMeihuaEngine.safeAnalyze(input);
+    $('error').classList.add('hidden');
+    if(method==='lunar_time'){
+      const missing=!$('yearZhi').value||!$('lunarMonth').value||!$('lunarDay').value||!$('hourZhi').value;
+      if(missing){$('error').textContent='年月日時法需要填完整：年支、農曆月、農曆日、時支都不能留空，請填入起卦當下（通常是今天）的實際農曆日期，否則卦象會跟其他沒填的人重複。';$('error').classList.remove('hidden');$('result').classList.add('hidden');return;}
+    }
+    const input=buildInput();const analyzed=window.TianhengMeihuaEngine.safeAnalyze(input);
     if(!analyzed.ok){$('error').textContent=analyzed.error;$('error').classList.remove('hidden');$('result').classList.add('hidden');return;}
     lastResult={caseId:$('caseId').value||null,generatedAt:new Date().toISOString(),input,analysis:analyzed.result};render(analyzed.result);
   });
