@@ -4,7 +4,7 @@ function assert(name,fn){try{if(!fn())throw new Error('assert false');console.lo
 assert('梅花頁標示正式入口並可返回主頁',()=>html.includes('正式入口・公開驗證中')&&html.includes('href="./?v=20260901-meihua-home"'));
 assert('套用天衡黑金紫手機視覺',()=>html.includes('BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png')&&html.includes('class="sigil"')&&html.includes('class="steps"'));
 assert('五個梅花模組含本地敘事層依序載入',()=>['meihua-core','meihua-judgment','meihua-validation','meihua-narrative','meihua-engine'].every(x=>html.includes(x)));
-assert('升級判讀與敘事會避開舊手機快取',()=>html.includes('tianheng-meihua-judgment-v1.js?v=20260903-detail2')&&html.includes('tianheng-meihua-narrative-v1.js?v=20260903-event4'));
+assert('升級判讀與敘事會避開舊手機快取',()=>html.includes('tianheng-meihua-judgment-v1.js?v=20260903-detail2')&&html.includes('tianheng-meihua-narrative-v1.js?v=20260904-event5'));
 assert('三種起卦方法都有獨立介面',()=>['lunar_time','two_numbers','manual_verified'].every(x=>html.includes(`data-method="${x}"`)));
 assert('年月日時明示農曆且要求曆法來源',()=>['yearZhi','lunarMonth','lunarDay','hourZhi','calendarSource'].every(id=>html.includes(`id="${id}"`))&&html.includes('不可用國曆月份代替'));
 assert('兩數法保存兩個原始數字欄位',()=>html.includes('id="firstNumber"')&&html.includes('id="secondNumber"')&&html.includes('原始數字會完整保留'));
@@ -18,6 +18,7 @@ assert('完整敘事逐段收合證據且不呼叫 API',()=>html.includes('n.par
 assert('外應另有輸入且不冒充自動定向',()=>html.includes('id="externalResponse"')&&html.includes('input.externalResponse'));
 assert('考試證照有獨立題型且技術證據預設收合',()=>html.includes('<option>考試／證照</option>')&&html.includes('查看判讀證據'));
 assert('本次事件補充可記錄重考日期與既有事實',()=>['eventAttempt','eventDate','priorResult','preparation','priorScore','passScore','mockScore'].every(id=>html.includes(`id="${id}"`))&&html.includes('再次嘗試／重考')&&html.includes('eventContext'));
+assert('題型切換會改問該事件的專屬資料',()=>['specificOne','specificTwo','specificMetrics','eventGuide'].every(id=>html.includes(`id="${id}"`))&&html.includes("'收入／收款':['應收金額與日期'")&&html.includes('updateEventPrompts'));
 assert('核心結論分開顯示結果與過程且不冒充機率',()=>html.includes('結果：${esc(d.label)}')&&html.includes('過程：${esc(d.processLabel)}')&&html.includes('decision-note'));
 assert('預覽器封鎖腳本時有明確提示',()=>html.includes('頁面程式尚未啟動')&&html.includes("$('runtimeNotice').classList.add('hidden')"));
 assert('完整判讀可匯出 JSON',()=>html.includes('application/json')&&html.includes('JSON.stringify(lastResult'));

@@ -36,6 +36,8 @@
     if(c.eventDate)parts.push(`事件日期：${c.eventDate}`);
     if(c.priorResult)parts.push(`上次結果：${c.priorResult}`);
     if(c.preparation)parts.push(`目前準備：${c.preparation}`);
+    if(c.specific?.one)parts.push(`${c.specific.oneLabel||'事件進度'}：${c.specific.one}`);
+    if(c.specific?.two)parts.push(`${c.specific.twoLabel||'確認條件'}：${c.specific.two}`);
     if(c.knownFacts)parts.push(`其他已知事實：${c.knownFacts}`);
     return`本次判讀已納入你提供的現實資料：${parts.join('；')}。這些內容只用來對準具體事件，不會改動原始卦象；最後仍以${t.checkpoint}揭曉。`;
   }
@@ -44,7 +46,7 @@
     return{priorScore:number(m.priorScore),passScore:number(m.passScore),mockScore:number(m.mockScore)};
   }
   function eventWord(input){return input.topic==='exam_certification'?'通過':input.topic==='relationship'?'改善':input.topic==='finance_income'?'入帳':'達成'}
-  function evidenceQuality(input){const c=input&&input.eventContext||{};let count=0;['eventDate','priorResult','preparation','successDefinition','knownObstacle','strongestEvidence'].forEach(k=>{if(c[k])count++});const m=examMetrics(input);if(m.passScore!=null)count++;if(m.mockScore!=null)count++;return count>=6?'資料較完整':count>=3?'資料中等':'資料不足'}
+  function evidenceQuality(input){const c=input&&input.eventContext||{};let count=0;['eventDate','priorResult','preparation','successDefinition','knownObstacle','strongestEvidence'].forEach(k=>{if(c[k])count++});if(c.specific?.one)count++;if(c.specific?.two)count++;const m=examMetrics(input);if(m.passScore!=null)count++;if(m.mockScore!=null)count++;return count>=6?'資料較完整':count>=3?'資料中等':'資料不足'}
   function realitySignal(input){
     if(input.topic!=='exam_certification')return'尚未提供可計算的現實門檻；卦象方向與實際條件需分開核對。';
     const m=examMetrics(input);
@@ -53,7 +55,7 @@
     return'尚未填入上次成績、及格門檻與模擬成績，因此不能把卦象強度換算成通過機率。';
   }
   function specificAction(input,t){
-    if(input.topic!=='exam_certification')return`把「${t.checkpoint}」拆成一個負責人、一個期限與一項可驗證結果，下一次只追蹤這三項。`;
+    if(input.topic!=='exam_certification'){const s=input?.eventContext?.specific||{};return s.one||s.two?`先核對「${s.oneLabel||'目前進度'}：${s.one||'尚未提供'}」，再以「${s.twoLabel||'正式確認點'}：${s.two||'尚未提供'}」作為下一個查證點；未取得可核對訊號前，不把期待當成結果。`:`把「${t.checkpoint}」拆成一個負責人、一個期限與一項可驗證結果，下一次只追蹤這三項。`;}
     const m=examMetrics(input);const scoreLine=m.passScore!=null?`以 ${m.passScore} 分為及格線，考前至少完成三次完整計時模考；連續兩次高於門檻，才算準備已落實。`:'先查清楚正式及格分數，再完成三次完整計時模考；連續兩次高於門檻，才算準備已落實。';
     return`${scoreLine} 把錯題只分成四類：知識缺口、題意誤判、時間不足、粗心；先處理失分最多的一類，而不是籠統要求自己更努力。`;
   }

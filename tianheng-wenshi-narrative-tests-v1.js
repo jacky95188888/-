@@ -4,7 +4,7 @@ const S=require('./tianheng-wenshi-liuyao-synthesis-v1.js');
 const E=require('./tianheng-wenshi-engine-v1.js');
 let pass=0,fail=0;
 function assert(name,fn){try{if(!fn())throw new Error('assert false');console.log('PASS',name);pass++;}catch(e){console.error('FAIL',name,'::',e.message);fail++;}}
-function input(topic='career_job',casts=[7,7,7,7,7,7]){const labels={career_job:'事業／工作',exam_certification:'考試／證照',relationship:'感情／人際',finance_income:'財務／交易'};return{question:'月底前能否收到明確回覆？',category:labels[topic]||'選擇／決策',topic,askedAt:'2026-09-01T08:00:00+08:00',timezone:'Asia/Taipei',eventContext:{attempt:'再次嘗試／重考',eventDate:'2026-10-18',successDefinition:'正式放榜通過',knownObstacle:'法規題失分',strongestEvidence:'最近模考72分',priorResult:'上次差3分',preparation:'已加強法規題',examMetrics:{priorScore:'67',passScore:'70',mockScore:'72'}},casts,calendar:{monthZhi:'申',dayGan:'甲',dayZhi:'子',source:'敘事固定測試'}};}
+function input(topic='career_job',casts=[7,7,7,7,7,7]){const labels={career_job:'事業／工作',exam_certification:'考試／證照',relationship:'感情／人際',finance_income:'財務／交易'};return{question:'月底前能否收到明確回覆？',category:labels[topic]||'選擇／決策',topic,askedAt:'2026-09-01T08:00:00+08:00',timezone:'Asia/Taipei',eventContext:{attempt:'再次嘗試／重考',eventDate:'2026-10-18',successDefinition:'正式放榜通過',knownObstacle:'法規題失分',strongestEvidence:'最近模考72分',priorResult:'上次差3分',preparation:'已加強法規題',specific:{oneLabel:'目前到哪一關',one:'完成二面',twoLabel:'誰會做最後決定',two:'部門主管'},examMetrics:{priorScore:'67',passScore:'70',mockScore:'72'}},casts,calendar:{monthZhi:'申',dayGan:'甲',dayZhi:'子',source:'敘事固定測試'}};}
 function narrative(i=input()){const s=S.analyze(i);return N.compose(s,i);}
 
 assert('六爻敘事層不使用外部 API',()=>N.usesExternalApi===false&&narrative().usesExternalApi===false);
@@ -23,4 +23,5 @@ assert('本次事件資料進入判讀且與卦象分開',()=>{const r=E.analyze
 assert('結果採六級方向並另列過程',()=>{const d=E.analyze(input('exam_certification')).result.narrative.decisionSummary;return ['明顯偏向達成','略偏達成','五五波／條件局','略偏未達成','明顯偏向未達成','證據不足，暫不判'].includes(d.label)&&d.processLabel&&d.probability===null;});
 assert('考試分數形成獨立現實校正與具體補強',()=>{const n=E.analyze(input('exam_certification')).result.narrative;return n.decisionSummary.realitySignal.includes('高於及格門檻 2 分')&&n.paragraphs.find(x=>x.title==='具體補強目標').text.includes('三次完整計時模考');});
 assert('結論另列成功標準阻力與資料完整度',()=>{const n=E.analyze(input('exam_certification')).result.narrative;const p=n.paragraphs.find(x=>x.title==='成功標準與真正阻力');return p.text.includes('正式放榜通過')&&p.text.includes('法規題失分')&&n.decisionSummary.evidenceQuality==='資料較完整'&&n.decisionSummary.probability===null;});
+assert('非考試題會使用該事件的專屬進度與確認點',()=>{const n=E.analyze(input('career_job')).result.narrative;const text=n.paragraphs.find(x=>x.title==='本次事件校正').text;const action=n.paragraphs.find(x=>x.title==='具體補強目標').text;return text.includes('完成二面')&&text.includes('部門主管')&&action.includes('目前到哪一關');});
 console.log(`\nRESULT ${pass}/${pass+fail} passed`);if(fail)process.exit(1);
