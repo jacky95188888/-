@@ -46,6 +46,16 @@
     .form-step-head{display:flex;align-items:center;gap:11px;margin:0 0 5px;color:#ead39a;font-size:16px;font-weight:600}.form-step-head b{flex:none;width:31px;height:31px;display:grid;place-items:center;border-radius:50%;background:#2d1940;border:1px solid #d8b774;color:#f3d992}.form-step-note{margin:0 0 14px;color:#8f8473;font-size:11px}
     .horizon-options{display:grid;gap:9px}.horizon-card{position:relative;display:block;margin:0;padding:12px 14px;border:1px solid rgba(216,183,116,.2);border-radius:13px;background:rgba(255,255,255,.025);cursor:pointer}.horizon-card input{position:absolute;opacity:0;pointer-events:none}.horizon-card strong{display:block;color:#ddd0bc;font-size:14px}.horizon-card small{display:block;color:#8f8473;font-size:11px;line-height:1.55}.horizon-card:has(input:checked){border-color:#ddb96e;background:linear-gradient(135deg,rgba(106,60,126,.35),rgba(216,183,116,.08));box-shadow:0 0 0 1px rgba(216,183,116,.11)}.horizon-card:has(input:checked) strong{color:#f3d992}
     details.advanced{margin:10px 0 0;border-top:1px dashed var(--line-soft);padding-top:10px}details.advanced summary{cursor:pointer;color:#a99777;font-size:11px;list-style:none}details.advanced summary::before{content:'＋ ';color:#d8b774}details.advanced[open] summary::before{content:'－ '}
+    .optional-context{margin:14px 0 0;border:1px solid rgba(142,179,212,.28);border-radius:15px;background:rgba(20,32,45,.28);overflow:hidden}
+    .optional-context>summary{cursor:pointer;list-style:none;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:#b9d4e8;font-size:13px;letter-spacing:.05em}
+    .optional-context>summary::-webkit-details-marker{display:none}
+    .optional-context>summary::after{content:'展開填寫（選填）';flex:none;font-size:10px;color:#8b9aa8;border:1px solid rgba(142,179,212,.35);border-radius:999px;padding:3px 10px}
+    .optional-context[open]>summary::after{content:'收合'}
+    .optional-context .inner{padding:0 15px 16px}
+    .optional-context.recommended{border-color:rgba(216,183,116,.55);background:rgba(216,183,116,.08)}
+    .optional-context.recommended>summary{color:#f0d58e}
+    .optional-context.recommended>summary::after{content:'建議填寫';border-color:rgba(216,183,116,.55);color:#f0d58e}
+    .optional-context.recommended[open]>summary::after{content:'收合'}
     .unlock-contact{margin:24px 0 8px;padding:26px 18px;text-align:center;border:1px solid rgba(216,183,116,.5);border-radius:22px;background:radial-gradient(circle at 50% 0,rgba(114,65,137,.3),transparent 65%),rgba(12,9,17,.95);box-shadow:0 20px 55px rgba(0,0,0,.45)}.unlock-contact .mark{width:48px;height:48px;display:grid;place-items:center;margin:0 auto 11px;border:1px solid #d8b774;border-radius:50%;color:#f1d58d;font-size:21px}.unlock-contact h2{margin:0;color:#efd391;font-size:20px}.unlock-contact p{margin:9px auto 16px;max-width:520px;color:#a99c88;font-size:12px}.unlock-contact a{display:block;min-height:54px;padding:13px;border:1px solid #58bd7c;border-radius:999px;background:linear-gradient(135deg,#1c8f50,#086b39);color:white;text-decoration:none;font-weight:700;letter-spacing:.12em}.unlock-contact small{display:block;margin-top:10px;color:#766e63;font-size:10px}
     .feature-access-gate{padding:14px;margin:9px 0 14px;border:1px solid rgba(216,183,116,.28);border-radius:14px;background:rgba(0,0,0,.2)}.feature-access-gate>p{margin:0 0 10px;color:#b7a78f;font-size:11px}.feature-access-row{display:grid;grid-template-columns:1.45fr 1fr;gap:8px}.feature-access-row button{letter-spacing:.06em}.feature-access-status{min-height:18px;margin-top:7px;color:#d88880;font-size:10px}.feature-access-ok b{display:block;color:#92c9aa}.feature-access-ok small{color:#897f70}button:disabled{opacity:.45;cursor:not-allowed}
     .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -77,7 +87,7 @@
     .scroll{overflow:auto;border:1px solid var(--line-soft);border-radius:15px;background:rgba(5,5,9,.45);-webkit-overflow-scrolling:touch}
     table{width:100%;border-collapse:collapse;min-width:720px;font-size:12px}th,td{padding:11px 10px;border-bottom:1px solid rgba(216,183,116,.1);text-align:left;white-space:nowrap}th{position:sticky;top:0;color:#d8bd83;background:#17111d;letter-spacing:.06em}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:rgba(216,183,116,.035)}tbody tr.is-moving{background:rgba(116,73,137,.18)}tbody tr.is-moving td:first-child{color:#efd18b;font-weight:700}
     #useful,#changes,#interactions,#explanation,#timing{color:#d8cbb6;font-size:13px}#explanation b{color:#efd48f}
-    .narrative-part{margin:0 0 13px;padding:14px 15px;border:1px solid var(--line-soft);border-left:3px solid #b38bce;border-radius:0 14px 14px 0;background:linear-gradient(100deg,rgba(101,58,120,.18),rgba(7,6,12,.28))}.narrative-part h3{margin:0 0 6px;color:#e7c986;font-size:14px;letter-spacing:.08em}.narrative-part p{margin:0;color:#ddd0bc;line-height:1.95}.narrative-part small{display:block;margin-top:8px;color:#817566;font-size:9px;word-break:break-all}.event-context{margin:13px 0 0;padding:15px;border:1px solid rgba(142,179,212,.3);border-radius:15px;background:linear-gradient(135deg,rgba(35,55,77,.28),rgba(105,60,126,.15))}.event-context h3{margin:0 0 4px;color:#b9d4e8;font-size:14px}.event-context>p{margin:0 0 12px;color:#948a7c;font-size:11px}.decision-line{display:block;margin:8px 0 4px;color:#fff0bd;font-size:15px}.decision-note{display:block;margin-top:8px;color:#8f8372;font-size:10px}.verdict{padding:20px;border:1px solid rgba(240,213,142,.54);border-left:5px solid var(--gold-bright);border-radius:16px;background:linear-gradient(135deg,rgba(117,70,140,.32),rgba(216,183,116,.08))}.verdict em{font-style:normal;color:#a99980;font-size:10px;letter-spacing:.15em}.verdict strong{display:block;margin:5px 0;color:#f2d68f;font-size:24px}.verdict p{margin:0;color:#ddd0bc;font-size:13px}.verify-box{margin-top:15px;padding:16px;border:1px dashed rgba(142,179,212,.42);border-radius:15px;background:rgba(18,35,51,.2)}.verify-box h3{margin:0 0 5px;color:#a9c9e2}.verify-box p{margin:0 0 12px;color:#a99c88;font-size:11px}.verify-status{min-height:20px;margin-top:8px;color:#9bd0bb;font-size:11px}
+    .narrative-part{margin:0 0 13px;padding:14px 15px;border:1px solid var(--line-soft);border-left:3px solid #b38bce;border-radius:0 14px 14px 0;background:linear-gradient(100deg,rgba(101,58,120,.18),rgba(7,6,12,.28))}.narrative-part h3{margin:0 0 6px;color:#e7c986;font-size:14px;letter-spacing:.08em}.narrative-part p{margin:0;color:#ddd0bc;line-height:1.95}.narrative-part small{display:block;margin-top:8px;color:#817566;font-size:9px;word-break:break-all}.event-context{margin:13px 0 0;padding:15px;border:1px solid rgba(142,179,212,.3);border-radius:15px;background:linear-gradient(135deg,rgba(35,55,77,.28),rgba(105,60,126,.15))}.event-context h3{margin:0 0 4px;color:#b9d4e8;font-size:14px}.event-context>p{margin:0 0 12px;color:#948a7c;font-size:11px}.decision-line{display:block;margin:8px 0 4px;color:#fff0bd;font-size:15px}.decision-note{display:block;margin-top:8px;color:#8f8372;font-size:10px}.verdict{padding:20px;border:1px solid rgba(240,213,142,.54);border-left:5px solid var(--gold-hi);border-radius:16px;background:linear-gradient(135deg,rgba(117,70,140,.32),rgba(216,183,116,.08))}.verdict em{font-style:normal;color:#a99980;font-size:10px;letter-spacing:.15em}.verdict strong{display:block;margin:5px 0;color:#f2d68f;font-size:24px}.verdict p{margin:0;color:#ddd0bc;font-size:13px}.verify-box{margin-top:15px;padding:16px;border:1px dashed rgba(142,179,212,.42);border-radius:15px;background:rgba(18,35,51,.2)}.verify-box h3{margin:0 0 5px;color:#a9c9e2}.verify-box p{margin:0 0 12px;color:#a99c88;font-size:11px}.verify-status{min-height:20px;margin-top:8px;color:#9bd0bb;font-size:11px}
     .error{position:relative;z-index:2;color:#ffaaa3;border:1px solid rgba(216,83,83,.54);background:rgba(72,31,31,.82);padding:14px 16px;border-radius:13px;margin:14px 0}.hidden{display:none!important}
     #export{margin-top:16px;min-height:50px}.page-foot{text-align:center;margin:24px 10px 0;color:#756e64;font-size:10px;line-height:1.8;letter-spacing:.04em}
     @media(max-width:720px){
@@ -108,7 +118,7 @@
 
   <section class="panel">
     <h2 class="section-title"><span>壹</span>四步完成問事</h2>
-    <div class="notice">畫面一次整理一個決定。先選時間，再寫問題，最後輸入六次銅錢結果。</div>
+    <div class="notice">畫面一次整理一個決定。先選時間，再寫問題，最後輸入六次銅錢結果；下方「事件脈絡」全部都是選填，簡單問題可以直接跳過不填。</div>
     <div class="form-step"><div class="form-step-head"><b>1</b>你想問哪一段時間？</div><p class="form-step-note">選最接近的範圍，讓判讀的時間條件更清楚</p><div class="horizon-options">
       <label class="horizon-card"><input type="radio" name="horizon" value="一個月內" checked><strong>問近期一個月</strong><small>通知、回覆、感情互動、短期進展</small></label>
       <label class="horizon-card"><input type="radio" name="horizon" value="三個月內"><strong>問三個月內</strong><small>求職、合作、搬遷、關係發展</small></label>
@@ -123,10 +133,24 @@
         <option value="finance_income">收入／收款</option><option value="cooperation">合作／客戶</option>
         <option value="contract">合約／文件</option><option value="relationship">感情／人際</option>
         <option value="family_peer">兄弟姊妹／同輩家人</option><option value="decision">選擇／決策</option>
+        <option value="legal_dispute">官司／法律爭議</option><option value="unusual_event">靈異／怪異事件</option>
       </select></label>
       <label>提問時間<input id="askedAt" type="datetime-local"></label>
     </div>
-    <div class="event-context"><h3>讓答案對準這一次事件</h3><p id="eventGuide">系統會依題型改問真正影響結果的資料；不知道可以留白，不會用套話補答案。</p><div class="grid"><label>本次狀態<select id="eventAttempt"><option value="">請選擇</option><option>第一次</option><option>再次嘗試／重考</option><option>事件延續中</option><option>過去結果核對</option></select></label><label>事件日期<input id="eventDate" type="date"></label></div><label>這次怎樣才算成功？<input id="successDefinition" placeholder="例如：收到正式錄取通知"></label><label>目前最可能卡在哪裡？<input id="knownObstacle" placeholder="例如：名額、資格、對方尚未決定"></label><label>目前最強的現實證據<input id="strongestEvidence" placeholder="例如：已收到二次面試通知"></label><label>上次結果或差距<input id="priorResult" placeholder="例如：上次未錄取、仍差一個條件"></label><label>目前準備與已知事實<textarea id="preparation" placeholder="請只填已知事實，不用猜測"></textarea></label><div id="specificMetrics" class="grid"><label><span id="specificOneLabel">目前進度</span><input id="specificOne"></label><label><span id="specificTwoLabel">正式確認點</span><input id="specificTwo"></label></div><div id="examMetrics" class="grid hidden"><label>上次成績<input id="priorScore" type="number" step="0.1" placeholder="例如 67"></label><label>及格分數<input id="passScore" type="number" step="0.1" placeholder="例如 70"></label><label>最近模擬成績<input id="mockScore" type="number" step="0.1" placeholder="例如 75"></label></div></div>
+    <details class="optional-context" id="eventContextBox">
+      <summary>讓答案對準這一次事件</summary>
+      <div class="inner">
+        <p id="eventGuide" style="margin:0 0 12px;color:#948a7c;font-size:11px">以下欄位皆為選填，不確定或懶得填都可以直接跳過，系統不會用套話補答案；若問的是官司或靈異怪事，建議盡量填寫，判讀依據會更足。</p>
+        <div class="grid"><label>本次狀態<select id="eventAttempt"><option value="">請選擇</option><option>第一次</option><option>再次嘗試／重考</option><option>事件延續中</option><option>過去結果核對</option></select></label><label>事件日期<input id="eventDate" type="date"></label></div>
+        <label>這次怎樣才算成功？<input id="successDefinition" placeholder="例如：收到正式錄取通知"></label>
+        <label>目前最可能卡在哪裡？<input id="knownObstacle" placeholder="例如：名額、資格、對方尚未決定"></label>
+        <label>目前最強的現實證據<input id="strongestEvidence" placeholder="例如：已收到二次面試通知"></label>
+        <label>上次結果或差距<input id="priorResult" placeholder="例如：上次未錄取、仍差一個條件"></label>
+        <label>目前準備與已知事實<textarea id="preparation" placeholder="請只填已知事實，不用猜測"></textarea></label>
+        <div id="specificMetrics" class="grid"><label><span id="specificOneLabel">目前進度</span><input id="specificOne"></label><label><span id="specificTwoLabel">正式確認點</span><input id="specificTwo"></label></div>
+        <div id="examMetrics" class="grid hidden"><label>上次成績<input id="priorScore" type="number" step="0.1" placeholder="例如 67"></label><label>及格分數<input id="passScore" type="number" step="0.1" placeholder="例如 70"></label><label>最近模擬成績<input id="mockScore" type="number" step="0.1" placeholder="例如 75"></label></div>
+      </div>
+    </details>
     <details class="advanced"><summary>進階紀錄（一般使用不用填）</summary><div class="grid"><label>時區<input id="timezone" value="Asia/Taipei"></label><label>案例編號（選填）<input id="caseId" placeholder="例如：QA-20260830-001"></label></div></details></div>
     <div class="form-step"><div class="form-step-head"><b>3</b>輸入三枚銅錢六次結果</div><p class="form-step-note">依初爻到上爻、由下往上填寫</p>
     <div class="casts" id="casts"></div>
@@ -169,10 +193,21 @@
   const $=id=>document.getElementById(id);let lastResult=null;
   const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const list=(items,empty='無')=>items?.length?`<ul class="list">${items.map(x=>`<li>${esc(typeof x==='string'?x:x.text||JSON.stringify(x))}</li>`).join('')}</ul>`:`<p class="empty">${empty}</p>`;
-  const topicLabels={career_job:'事業／工作',exam_certification:'考試／證照',career_promotion:'事業／工作',finance_income:'財務／交易',cooperation:'合作／客戶',contract:'合約／文件',relationship:'感情／人際',family_peer:'家庭／生活',decision:'選擇／決策'};
+  const topicLabels={career_job:'事業／工作',exam_certification:'考試／證照',career_promotion:'事業／工作',finance_income:'財務／交易',cooperation:'合作／客戶',contract:'合約／文件',relationship:'感情／人際',family_peer:'家庭／生活',decision:'選擇／決策',legal_dispute:'官司／法律爭議',unusual_event:'靈異／怪異事件'};
   $('runtimeNotice').classList.add('hidden');
   $('casts').innerHTML=Array.from({length:6},(_,i)=>`<label>${i===0?'初爻':i===5?'上爻':`${i+1}爻`}<select class="cast"><option value="6">6 老陰・動</option><option value="7" selected>7 少陽・靜</option><option value="8">8 少陰・靜</option><option value="9">9 老陽・動</option></select><small>由下往上</small></label>`).join('');
   const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());$('askedAt').value=now.toISOString().slice(0,16);
+
+  /* 官司／靈異怪事屬於需要更多現實脈絡才容易判讀清楚的類型：
+     選到這兩個題型時，「讓答案對準這一次事件」自動展開並標示為「建議填寫」；
+     其他題型維持收合、選填，不強制、不擋送出。 */
+  const RECOMMEND_DETAIL_TOPICS=['legal_dispute','unusual_event'];
+  function syncEventContextEmphasis(){
+    const box=$('eventContextBox');const topic=$('topic').value;
+    const recommended=RECOMMEND_DETAIL_TOPICS.includes(topic);
+    box.classList.toggle('recommended',recommended);
+    if(recommended)box.open=true;
+  }
 
   function render(engine){
     const s=engine.result;const a=s.interactions.adjudication;const structure=a.evidence.structure;const selected=a.usefulGod.selected;
@@ -200,8 +235,8 @@
     if(!analyzed.ok){$('error').textContent=analyzed.error;$('error').classList.remove('hidden');$('result').classList.add('hidden');return;}
     lastResult={caseId:$('caseId').value||null,generatedAt:new Date().toISOString(),input,analysis:analyzed.result};render(analyzed.result);
   });
-  const eventPrompts={career_job:['目前到哪一關','誰會做最後決定','例如：完成二面','例如：部門主管／人資'],exam_certification:['已完成的準備','正式放榜日','例如：三次計時模考','例如：10 月 28 日'],career_promotion:['目前評核進度','名額與決定人','例如：已完成年度評核','例如：1 個名額／主管決定'],finance_income:['應收金額與日期','對方付款證據','例如：30,000 元／9 月 15 日','例如：已對帳／尚未開票'],cooperation:['已確認的承諾','尚未確認的條件','例如：已確認交付內容','例如：付款日／簽約人'],contract:['文件目前狀態','有權簽署的人','例如：法務審閱中','例如：公司負責人'],relationship:['最近一次實際互動','接下來觀察的行動','例如：昨天主動聯絡','例如：是否主動約下次見面'],family_peer:['目前已確認的分工','尚未履行的承諾','例如：照護時段已排定','例如：費用尚未分攤'],decision:['最重要的比較條件','停止或轉向條件','例如：成本與時間','例如：超過預算便停止']};
-  function updateEventPrompts(){const topic=$('topic').value;const p=eventPrompts[topic]||eventPrompts.decision;$('specificOneLabel').textContent=p[0];$('specificTwoLabel').textContent=p[1];$('specificOne').placeholder=p[2];$('specificTwo').placeholder=p[3];$('examMetrics').classList.toggle('hidden',topic!=='exam_certification');$('specificMetrics').classList.toggle('hidden',topic==='exam_certification');$('eventGuide').textContent=topic==='exam_certification'?'請填門檻、最近表現與上次差距；系統會分開顯示卦象方向與現實準備，不拿卦象硬換百分比。':`現在問的是「${$('topic').selectedOptions[0].textContent}」，請填可被日期、文件或對方行動核對的資料。`;}
+  const eventPrompts={career_job:['目前到哪一關','誰會做最後決定','例如：完成二面','例如：部門主管／人資'],exam_certification:['已完成的準備','正式放榜日','例如：三次計時模考','例如：10 月 28 日'],career_promotion:['目前評核進度','名額與決定人','例如：已完成年度評核','例如：1 個名額／主管決定'],finance_income:['應收金額與日期','對方付款證據','例如：30,000 元／9 月 15 日','例如：已對帳／尚未開票'],cooperation:['已確認的承諾','尚未確認的條件','例如：已確認交付內容','例如：付款日／簽約人'],contract:['文件目前狀態','有權簽署的人','例如：法務審閱中','例如：公司負責人'],relationship:['最近一次實際互動','接下來觀察的行動','例如：昨天主動聯絡','例如：是否主動約下次見面'],family_peer:['目前已確認的分工','尚未履行的承諾','例如：照護時段已排定','例如：費用尚未分攤'],decision:['最重要的比較條件','停止或轉向條件','例如：成本與時間','例如：超過預算便停止'],legal_dispute:['目前訴訟／協商階段','關鍵期限或開庭日','例如：已委任律師、尚未開庭','例如：10 月 5 日開庭'],unusual_event:['具體異常現象','已求助的對象或做法','例如：連續多日夜間異響','例如：已詢問宮廟或長輩']};
+  function updateEventPrompts(){const topic=$('topic').value;const p=eventPrompts[topic]||eventPrompts.decision;$('specificOneLabel').textContent=p[0];$('specificTwoLabel').textContent=p[1];$('specificOne').placeholder=p[2];$('specificTwo').placeholder=p[3];$('examMetrics').classList.toggle('hidden',topic!=='exam_certification');$('specificMetrics').classList.toggle('hidden',topic==='exam_certification');$('eventGuide').textContent=topic==='exam_certification'?'以下欄位皆為選填，不確定可以跳過；若要填，請填門檻、最近表現與上次差距，系統會分開顯示卦象方向與現實準備，不拿卦象硬換百分比。':RECOMMEND_DETAIL_TOPICS.includes(topic)?'官司或靈異怪事這類題型，現實資訊通常比較稀薄，建議盡量填寫下面欄位，判讀依據會更足；仍然不強制，留白也能送出。':`以下欄位皆為選填，不確定或懶得填都可以直接跳過。現在問的是「${$('topic').selectedOptions[0].textContent}」，若要填，請填可被日期、文件或對方行動核對的資料。`;syncEventContextEmphasis();}
   $('topic').addEventListener('change',updateEventPrompts);updateEventPrompts();
   $('reset').addEventListener('click',()=>{$('result').classList.add('hidden');$('error').classList.add('hidden');lastResult=null;});
   $('saveActual').addEventListener('click',()=>{if(!lastResult||!$('actualOutcome').value)return void($('verifyStatus').textContent='請先選擇實際結果');const record=TianhengOracleVerificationV1.makeRecord(lastResult.input,lastResult.analysis.result.outcome,{outcome:$('actualOutcome').value,note:$('actualNote').value});const rows=JSON.parse(localStorage.getItem('tianheng_oracle_verifications_v1')||'[]');rows.push(record);localStorage.setItem('tianheng_oracle_verifications_v1',JSON.stringify(rows));lastResult.verification=record;$('verifyStatus').textContent='已保存：原判與實際結果分開記錄，不會互相覆蓋。';});
