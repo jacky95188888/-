@@ -1,15 +1,48 @@
-/* 天衡・全站隨喜支持元件 v1｜不啟用自動付款 */
+/* 天衡・支持系統 v2｜低門檻支持 + 轉換事件追蹤（不改命理引擎） */
 (function(){'use strict';
 var ACCOUNT='093540015944';
-if(!document.querySelector('link[rel~="icon"]')){var icon=document.createElement('link');icon.rel='icon';icon.type='image/svg+xml';icon.href='./tianheng-icon.svg?v=20260902';document.head.appendChild(icon);}
-if(!document.querySelector('link[rel="apple-touch-icon"]')){var apple=document.createElement('link');apple.rel='apple-touch-icon';apple.href='./apple-touch-icon.png?v=20260902';document.head.appendChild(apple);}
-var css='.th-support-float{position:fixed;right:14px;bottom:max(18px,env(safe-area-inset-bottom));z-index:9990;border:1px solid rgba(218,185,108,.7);border-radius:999px;background:rgba(24,16,29,.94);color:#f0d48d;padding:10px 15px;box-shadow:0 8px 30px rgba(0,0,0,.4);font:600 13px/1 system-ui;letter-spacing:.08em}.th-support-card{max-width:760px;margin:18px auto;padding:22px 18px;text-align:center;border:1px solid rgba(218,185,108,.5);border-radius:18px;background:linear-gradient(145deg,rgba(35,23,40,.97),rgba(12,9,16,.97));color:#e9dfcd;box-shadow:0 14px 38px rgba(0,0,0,.28)}.th-support-card h2{margin:0;color:#efd18a;font-size:20px;letter-spacing:.2em}.th-support-card p{margin:9px auto;color:#cfc2aa;font-size:13px;line-height:1.8}.th-support-card .th-support-use{font-size:11px;color:#9f927d}.th-support-amounts{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:13px 0}.th-support-amounts span{border:1px solid rgba(218,185,108,.3);border-radius:999px;padding:5px 10px;color:#d5bd80;font-size:11px}.th-support-account{display:flex;align-items:center;gap:9px;max-width:480px;margin:auto;padding:12px;border:1px solid rgba(218,185,108,.35);border-radius:12px;background:rgba(0,0,0,.22)}.th-support-account strong{flex:1;text-align:left;color:#f5dda4;font:18px/1.2 ui-monospace,monospace;letter-spacing:.04em}.th-support-copy{width:auto!important;margin:0!important;padding:9px 12px!important;border:1px solid #caa85d!important;border-radius:9px!important;background:rgba(202,168,93,.1)!important;color:#efd18a!important;font-size:12px!important}.th-support-free{font-size:10px!important;color:#887d6a!important}@media(max-width:520px){.th-support-float{right:10px;padding:9px 12px}.th-support-card{margin:14px 0;padding:19px 13px}.th-support-account strong{font-size:15px}}';
-var style=document.createElement('style');style.textContent=css;document.head.appendChild(style);
-function markup(){var s=document.createElement('section');s.className='th-support-card';s.setAttribute('data-th-support','result');s.innerHTML='<h2>♡ 隨 喜 支 持</h2><p>若這次分析讓您多看懂自己一點，歡迎量力隨喜，支持天衡持續校正資料、維護演算法與改善手機閱讀體驗。</p><div class="th-support-amounts"><span>一份心意 NT$66</span><span>一路順心 NT$168</span><span>圓滿支持 NT$360</span></div><div class="th-support-account"><strong>中國信託 0935-4001-5944</strong><button class="th-support-copy" type="button">複製帳號</button></div><p class="th-support-use">每一份支持用於命理資料校正、功能維護與閱讀體驗優化。</p><p class="th-support-free">隨喜完全自由，支持與否不影響任何功能或分析結果；目前未啟用自動付款。</p>';s.querySelector('button').onclick=function(){copy(this);};return s;}
-function copy(btn){function ok(){btn.textContent='已複製';setTimeout(function(){btn.textContent='複製帳號';},1600);}if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(ACCOUNT).then(ok).catch(function(){fallback(ok);});else fallback(ok);}
+var AMOUNTS=[39,69,99];
+var EVENT_KEY='th_support_seen_v2';
+var firebaseConfig={
+  apiKey:'AIzaSyCxKCj8wnBYAfHIv93yug162RaWrPC3Pyk',
+  authDomain:'jacky-1fdd1.firebaseapp.com',
+  databaseURL:'https://jacky-1fdd1-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId:'jacky-1fdd1',
+  storageBucket:'jacky-1fdd1.firebasestorage.app',
+  messagingSenderId:'520720595730',
+  appId:'1:520720595730:web:867795fa5e58b08606d1cb'
+};
+var dbPromise=null;
+function getDb(){
+  if(dbPromise)return dbPromise;
+  dbPromise=Promise.all([
+    import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+    import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js')
+  ]).then(function(m){
+    var app=m[0].initializeApp(firebaseConfig,'th-support-v2');
+    return {db:m[1].getDatabase(app),ref:m[1].ref,runTransaction:m[1].runTransaction};
+  }).catch(function(){return null;});
+  return dbPromise;
+}
+function day(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
+function track(name,amount){
+  getDb().then(function(x){if(!x)return;var base='supportFunnel/'+day()+'/'+name; x.runTransaction(x.ref(x.db,base),(n)=>(n||0)+1); if(amount)x.runTransaction(x.ref(x.db,'supportFunnel/'+day()+'/amount_'+amount),(n)=>(n||0)+1);});
+}
+var css='.th2-float{position:fixed;right:14px;bottom:max(18px,env(safe-area-inset-bottom));z-index:9990;border:1px solid rgba(218,185,108,.72);border-radius:999px;background:rgba(24,16,29,.95);color:#f2d78d;padding:11px 16px;box-shadow:0 8px 30px rgba(0,0,0,.4);font:700 13px/1 system-ui;letter-spacing:.06em}.th2-card{max-width:760px;margin:24px auto;padding:25px 18px;text-align:center;border:1px solid rgba(218,185,108,.55);border-radius:20px;background:linear-gradient(145deg,rgba(35,23,40,.98),rgba(12,9,16,.98));color:#e9dfcd;box-shadow:0 14px 38px rgba(0,0,0,.32)}.th2-card h2{margin:0;color:#efd18a;font-size:21px;letter-spacing:.12em}.th2-card .lead{margin:10px auto 4px;color:#eee1c9;font-size:14px;line-height:1.85}.th2-card .story{margin:4px auto 14px;color:#bba98b;font-size:12px;line-height:1.8}.th2-amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.th2-amount{border:1px solid rgba(218,185,108,.38);border-radius:13px;padding:11px 7px;background:rgba(202,168,93,.07);color:#f1d487;font:700 14px system-ui;cursor:pointer}.th2-amount small{display:block;margin-top:3px;color:#a99b82;font-size:10px;font-weight:500}.th2-account{display:none;align-items:center;gap:9px;margin-top:13px;padding:12px;border:1px solid rgba(218,185,108,.35);border-radius:12px;background:rgba(0,0,0,.22)}.th2-account.show{display:flex}.th2-account strong{flex:1;text-align:left;color:#f5dda4;font:16px/1.25 ui-monospace,monospace}.th2-copy{padding:9px 11px;border:1px solid #caa85d;border-radius:9px;background:rgba(202,168,93,.1);color:#efd18a;font-size:12px}.th2-free{margin-top:12px;color:#817663;font-size:10px;line-height:1.7}.th2-selected{margin:0 0 8px;color:#d7bd7a;font-size:12px}@media(max-width:520px){.th2-card{margin:18px 0;padding:22px 13px}.th2-float{right:10px}.th2-amounts{gap:6px}.th2-account strong{font-size:14px}}';
+var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+function copy(btn){function ok(){btn.textContent='已複製';track('copy_account');setTimeout(function(){btn.textContent='複製帳號';},1600);}if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(ACCOUNT).then(ok).catch(function(){fallback(ok);});else fallback(ok);}
 function fallback(done){var i=document.createElement('input');i.value=ACCOUNT;document.body.appendChild(i);i.select();try{document.execCommand('copy');done();}catch(e){}i.remove();}
-function existing(){return document.querySelector('#support.support,.support-card,[data-th-support]');}
-function reveal(){var old=existing();if(old){old.scrollIntoView({behavior:'smooth',block:'center'});return;}var result=document.getElementById('result');if(result){var c=markup();result.insertAdjacentElement('afterend',c);c.scrollIntoView({behavior:'smooth',block:'center'});}}
-var floating=document.createElement('button');floating.type='button';floating.className='th-support-float';floating.textContent='♡ 隨喜';floating.setAttribute('aria-label','查看隨喜支持方式');floating.onclick=reveal;document.body.appendChild(floating);
-var result=document.getElementById('result');if(result){var obs=new MutationObserver(function(){if(!result.textContent.trim()||existing())return;result.insertAdjacentElement('afterend',markup());});obs.observe(result,{childList:true,subtree:true,characterData:true});}
+function card(){
+  var s=document.createElement('section');s.className='th2-card';s.setAttribute('data-th-support-v2','1');
+  s.innerHTML='<h2>♡ 如果這次真的有幫到你</h2><p class="lead">天衡會繼續把基本工具免費留下來。</p><p class="story">如果這份解析讓你多看懂自己一點，可以用一杯飲料的方式支持後續維護、資料校正與新功能開發。</p><div class="th2-amounts"></div><div class="th2-selected"></div><div class="th2-account"><strong>中國信託 0935-4001-5944</strong><button class="th2-copy" type="button">複製帳號</button></div><p class="th2-free">完全自由支持；不支持也不影響任何免費功能與分析結果。</p>';
+  var wrap=s.querySelector('.th2-amounts'),sel=s.querySelector('.th2-selected'),acc=s.querySelector('.th2-account');
+  [['39','小小支持'],['69','請杯飲料'],['99','支持開發']].forEach(function(a){var b=document.createElement('button');b.className='th2-amount';b.type='button';b.innerHTML='NT$'+a[0]+'<small>'+a[1]+'</small>';b.onclick=function(){sel.textContent='你選擇 NT$'+a[0]+'，謝謝你的心意。';acc.classList.add('show');track('choose_amount',Number(a[0]));};wrap.appendChild(b);});
+  s.querySelector('.th2-copy').onclick=function(){copy(this);};
+  track('support_view');
+  return s;
+}
+function existing(){return document.querySelector('[data-th-support-v2]');}
+function reveal(){var old=existing();if(old){old.scrollIntoView({behavior:'smooth',block:'center'});track('float_click');return;}var result=document.getElementById('result');if(result){var c=card();result.insertAdjacentElement('afterend',c);c.scrollIntoView({behavior:'smooth',block:'center'});track('float_click');}}
+var floating=document.createElement('button');floating.type='button';floating.className='th2-float';floating.textContent='♡ 支持天衡';floating.setAttribute('aria-label','支持天衡');floating.onclick=reveal;document.body.appendChild(floating);
+var result=document.getElementById('result');if(result){var obs=new MutationObserver(function(){if(!result.textContent.trim()||existing())return;var c=card();result.insertAdjacentElement('afterend',c);try{if(!sessionStorage.getItem(EVENT_KEY)){sessionStorage.setItem(EVENT_KEY,'1');track('result_complete');}}catch(e){}});obs.observe(result,{childList:true,subtree:true,characterData:true});}
 })();
