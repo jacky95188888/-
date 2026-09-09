@@ -1,0 +1,28 @@
+'use strict';
+global.GAN_WX={甲:'木',乙:'木',丙:'火',丁:'火',戊:'土',己:'土',庚:'金',辛:'金',壬:'水',癸:'水'};
+global.ZHI_CANGAN={子:[['癸']],丑:[['己'],['癸'],['辛']],寅:[['甲'],['丙'],['戊']],卯:[['乙']],辰:[['戊'],['乙'],['癸']],巳:[['丙'],['戊'],['庚']],午:[['丁'],['己']],未:[['己'],['丁'],['乙']],申:[['庚'],['壬'],['戊']],酉:[['辛']],戌:[['戊'],['辛'],['丁']],亥:[['壬'],['甲']]};
+global.SHISHEN_CLASS={比肩:'比劫',劫財:'比劫',食神:'食傷',傷官:'食傷',偏財:'財星',正財:'財星',七殺:'官殺',正官:'官殺',偏印:'印星',正印:'印星'};
+global.tenGod=function(d,g){var seq='甲乙丙丁戊己庚辛壬癸',groups=[['比肩','劫財'],['食神','傷官'],['偏財','正財'],['七殺','正官'],['偏印','正印']],di=seq.indexOf(d),gi=seq.indexOf(g),de=Math.floor(di/2),ge=Math.floor(gi/2),delta=(ge-de+5)%5,map=[0,1,2,3,4],pair=groups[map[delta]],same=(di%2)===(gi%2);return pair[same?0:1]};
+const api=require('./tianheng-v10-gates.js');let pass=0,fail=0;function t(n,fn){try{if(!fn())throw Error('false');console.log('PASS',n);pass++}catch(e){console.error('FAIL',n,e.message);fail++}}
+const base={chars:['羅','貞','成'],gz:{yGan:'辛',yZhi:'未',mGan:'戊',mZhi:'戌',dGan:'庚',dZhi:'午',hGan:'丁',hZhi:'丑'},strengthInfo:{strength:'身強',useWx:['水','木','火']},tally:{木:1,火:2,土:4,金:3,水:.5},dayun:{cur:1,list:[{gz:'己亥',startYear:2017},{gz:'庚申',startYear:2027}]}};
+const alt={chars:['測','試','者'],gz:{yGan:'甲',yZhi:'子',mGan:'丙',mZhi:'寅',dGan:'甲',dZhi:'辰',hGan:'壬',hZhi:'申'},strengthInfo:{strength:'身弱',useWx:['水','木']},tally:{木:4,火:2,土:1,金:.5,水:3},dayun:{cur:0,list:[{gz:'戊午',startYear:2023}]}};
+const a=api.buildBooks(base),b=api.buildBooks(alt);
+t('產生四本不同領域命書',()=>a.length===4&&new Set(a.map(x=>x.sub)).size===4);
+t('不再使用固定30／90日',()=>!a.map(x=>x.body).join('').includes('30／90'));
+t('每本均標示實際證據',()=>a.every(x=>x.body.includes('本段取用證據')));
+t('不同命盤產生不同內容',()=>a.map(x=>x.body).join('')!==b.map(x=>x.body).join(''));
+t('事業目前行運不重複',()=>((a[1].body.match(/目前行運/g)||[]).length<=1));
+t('健康不從命理診斷疾病',()=>a[2].body.includes('不能直接推斷器官或疾病'));
+t('未開始的大運不冒充目前',()=>{const x=JSON.parse(JSON.stringify(base));x.dayun={cur:-1,list:[{gz:'甲子',startYear:new Date().getFullYear()+5}]};return api.facts(x).current===null});
+t('四本內容不共用同一結論',()=>{const bodies=a.map(x=>x.body.replace(/<[^>]+>/g,' '));return new Set(bodies).size===4&&bodies.every((x,i)=>bodies.every((y,j)=>i===j||x!==y))});
+t('完整資料顯示證據層級',()=>api.facts(base).evidenceLevel.includes('四柱完整'));
+t('缺時辰時停止完整結論',()=>{const x=JSON.parse(JSON.stringify(base));x.gz.hGan='—';x.gz.hZhi='—';return api.buildBooks(x).every(b=>b.body.includes('缺少完整出生資料')&&!/目前觸發|工作引擎|錢從哪裡來/.test(b.body))});
+t('錯誤cur不能指定未來大運',()=>{const x=JSON.parse(JSON.stringify(base));x.dayun={cur:0,list:[{gz:'甲子',startYear:new Date().getFullYear()+1}]};return api.facts(x).current===null&&api.buildBooks(x).every(b=>!b.body.includes('帶入 待核'))});
+t('過期大運不延長使用',()=>{const x=JSON.parse(JSON.stringify(base));x.dayun={cur:0,list:[{gz:'甲子',startYear:1900}]};return api.facts(x).current===null});
+t('姓名在標題安全轉義',()=>{const x=JSON.parse(JSON.stringify(base));x.chars=['<img src=x>'];return api.buildBooks(x).every(b=>!b.title.includes('<img'))});
+t('四本均提供反證與保留',()=>a.every(x=>x.body.includes('反證與保留')));
+t('財星少不誤判沒有收入能力',()=>{const x=JSON.parse(JSON.stringify(alt)),book=api.buildBooks(x)[3];return book.body.includes('不等於沒有收入能力')||api.facts(x).counts.財星>=.7});
+t('沒有進階資料時不假裝有格局結論',()=>a.every(x=>x.body.includes('進階')&&x.body.includes('尚未完成')));
+t('有進階資料時四域引用不同證據',()=>{global.TianhengBaziIntegration={safeAnalyzeAlongsideLegacy:()=>({ok:true,data:{advanced:{geJu:{geJu:'正印格'},heHuiJu:{conflicts:{selected:[{name:'寅午半合火',indices:[1,2]}]}},tiaoHou:{yongShenChongTu:true,desc:'秋燥需潤',queShi:['壬']},quality:{gaoDiPingJi:'中上',poGeJianCe:[{name:'財壞印'}],factors:{wuXingLiuTong:{name:'半流通'}}}}}})};const x=api.buildBooks(base);delete global.TianhengBaziIntegration;return x[0].body.includes('夫妻宮參與')&&x[1].body.includes('正印格')&&x[2].body.includes('取向不同')&&x[3].body.includes('半流通')});
+t('重新排盤移除上一份命書且保留原回傳',()=>{const vm=require('vm'),fs=require('fs');let queued,removed=0;const old={remove(){removed++}},doc={body:{},head:{appendChild(){}},getElementById(id){return id==='th-books-style'?{}:id==='th-premium-gates'?old:null}};const ctx={document:doc,console,setTimeout(fn){queued=fn;return 1},clearTimeout(){},MutationObserver:class{observe(){}},render(){return '原結果'}};ctx.window=ctx;vm.runInNewContext(fs.readFileSync('./tianheng-v10-gates.js','utf8'),ctx);queued();const r={gz:{}};return ctx.render(r)==='原結果'&&removed===1&&ctx.__TH_LAST_RESULT===r});
+console.log(`RESULT ${pass}/${pass+fail}`);if(fail)process.exit(1);
