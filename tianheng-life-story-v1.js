@@ -1,58 +1,47 @@
 (function(root){'use strict';
 var GOD={
-  比肩:{role:'守住自身位置、與同輩並肩的人',habit:'遇事先靠自己，直到負擔過重才讓別人知道',gift:'獨立推進、守住原則，也能理解同層夥伴的處境',cost:'把協助誤認為干涉，或在資源有限時仍堅持各做各的',step:'挑一件不必獨自完成的事，清楚說出你要的協助與界線'},
-  劫財:{role:'在競爭與資源交換中求生的人',habit:'先回應人情與局勢，再處理自己的成本',gift:'快速動員、人脈整合與危機應變',cost:'替關係墊付太多，最後才發現分工、分潤或承諾不清',step:'把一項合作的責任、金額、期限與退出條件寫清楚'},
-  食神:{role:'以作品、照顧或手藝讓生活安定的人',habit:'希望先把氣氛照顧好，再談自己的要求',gift:'把複雜事說清楚、做成作品，並創造讓人安心的節奏',cost:'停在舒服與準備，真正需要交付時反而延後',step:'選一項能力，在三十天內完成一個看得見、能交付的版本'},
-  傷官:{role:'看見舊規則漏洞並嘗試改法的人',habit:'一感到不合理就先指出問題，較晚處理對方能否接住',gift:'洞察問題、創新表達與突破僵化流程',cost:'正確的內容因語氣或時機，變成與制度、長輩或權威對抗',step:'提出問題時，同時帶上一個替代方案與可驗收結果'},
-  偏財:{role:'穿梭不同人群、交換機會與資源的人',habit:'先看外面的機會，再回頭確認自己的容量',gift:'市場感、連結外部資源與把握變化',cost:'選項太多、戰線太廣，現金與注意力被分散',step:'只保留一個最能在期限內驗證的機會，其他先列入等待'},
-  正財:{role:'用穩定交付守住家庭與生活秩序的人',habit:'先完成責任，再允許自己休息或改變',gift:'務實、可靠，能把抽象期待變成可管理的成果',cost:'把安全感綁在收入與責任上，長期忽略身體和真正需求',step:'重新列出固定責任，刪掉一項已不再需要由你承擔的工作'},
-  七殺:{role:'在壓力、期限與高要求中磨出能力的人',habit:'危機一來就接管局面，很少先承認自己也需要緩衝',gift:'攻堅、決斷與在限制中快速成長',cost:'習慣靠壓力啟動，事情平靜時反而不知道如何前進',step:'把目前最大壓力拆成七天內能完成的一個決定，不一次扛完整局'},
-  正官:{role:'維持規則、秩序與承諾可信度的人',habit:'先問自己應不應該，再問自己真正想不想',gift:'責任感、制度能力與取得長期信任',cost:'怕犯錯而過度服從標準，讓真正意見一直延後',step:'找出一條已不合現況的規則，提出正式、可被討論的調整'},
-  偏印:{role:'在陌生環境中靠觀察、研究與轉念找出口的人',habit:'先在腦中推演很多版本，確定安全才願意落地',gift:'深入研究、轉換視角與學習冷門專業',cost:'想法跳躍、實作斷續，或在需要回應時突然退回自己的世界',step:'把一個研究中的想法做成最小實驗，七天後只看結果再修正'},
-  正印:{role:'保存知識、照顧傳承並替人承接經驗的人',habit:'先理解與準備，等到把握夠高才開始',gift:'學習、整合、支持別人與建立可傳承的方法',cost:'準備太久、依賴熟悉資源，錯過實際回饋',step:'停止新增資料一週，用現有知識完成一份可讓別人使用的成果'}
+比肩:{scene:'與同輩共同守住資源、土地或名聲',choice:'為了不失去自己的位置，先靠自己處理，也不輕易示弱',gift:'獨立推進、守住原則',shadow:'責任與功勞難以分清',step:'挑一件不必獨自完成的事，把責任、權限與完成日寫清楚'},
+劫財:{scene:'在資源有限、人情緊密的群體裡替大家調度',choice:'先救關係與局勢，自己的成本最後才算',gift:'快速動員與整合資源',shadow:'替關係墊付過多，分工、分潤或承諾不清',step:'把一項合作的責任、金額、期限與退出條件寫清楚'},
+食神:{scene:'用食物、技藝、教養或作品維持一群人的日常',choice:'先讓眾人安穩，自己的要求與期限一再後放',gift:'把複雜事做成作品並創造安定節奏',shadow:'停在舒服與準備，交付一再延後',step:'選一項能力，三十天內完成一個能交付的版本'},
+傷官:{scene:'負責技術、帳目或規則，並比別人更早看見漏洞',choice:'為了讓事情正確運作，先改方法、指出錯誤，較晚才處理人的感受與權威的面子',gift:'洞察問題、創新表達與突破僵化流程',shadow:'內容雖正確，卻因時機、語氣或越過程序形成關係債',step:'指出問題時，同時說明原因、替代方案、受影響的人與驗收日期'},
+偏財:{scene:'往返不同人群，以消息、交易與機會維持生計',choice:'先抓住外部機會，再回頭計算承諾與容量',gift:'市場感與連結外部資源',shadow:'戰線太廣，使金錢、注意力與承諾彼此牽制',step:'只留一個能在期限內驗證的機會，其餘列入等待'},
+正財:{scene:'管理糧資、帳目、交付或一家人的固定生計',choice:'先確保大家有得用、事情有結果，再考慮自己是否願意',gift:'務實可靠，把期待變成可管理的成果',shadow:'安全感綁在責任上，沒有人知道你的真正需求',step:'列出責任，標出自己的、共同的、應交還的，先交還一項'},
+七殺:{scene:'在期限、風險或強勢命令下保住一群人的安全',choice:'危機一到便接管，來不及解釋也不容自己退後',gift:'攻堅、決斷與危機應變',shadow:'平靜時仍以戰時方式對待關係',step:'把最大壓力拆成七天的一個決定，約定誰負責、何時回報'},
+正官:{scene:'在制度與人情間維持規矩、名譽與承諾',choice:'先守住規範，個人意願放在後面',gift:'制度能力與取得長期信任',shadow:'怕犯錯而過度服從，真正意見未進入決策',step:'找出一條不合現況的規則，提出修訂與試行期限'},
+偏印:{scene:'在資訊不足時，靠觀察、知識與非常規方法找出口',choice:'先在腦中推演並保留退路，確定安全才表態',gift:'深入研究與轉換視角',shadow:'實作斷續，需要回應時退回自己的世界',step:'把一個想法做成七天最小實驗，寫下成功與停止條件'},
+正印:{scene:'保存知識、照顧傳承，承接尚未整理的經驗',choice:'先理解、保護與準備，等把握足夠才行動',gift:'學習、整合與建立可傳承的方法',shadow:'準備太久或過度代辦，使別人沒有承擔',step:'停止新增資料一週，用現有知識完成可交接成果'}
 };
-var ELEMENT={
-  木:{use:'成長、規劃與協商',practice:'固定學習一項可累積能力，並把目標拆成每週一步'},
-  火:{use:'啟動、表達與被看見',practice:'把作息往白天移，用規律活動與公開成果增加穩定的火'},
-  土:{use:'承接、落地與守住秩序',practice:'建立固定流程、期限與完成標準，一次處理一件能落地的事'},
-  金:{use:'判斷、界線與整理',practice:'刪除無效步驟，為重要決定寫下必要條件與停止條件'},
-  水:{use:'觀察、變通與保存能量',practice:'保留安靜思考與休息時間，為計畫準備替代路線與緩衝'}
-};
+var ELEMENT={木:{use:'規劃、協商與展開',practice:'把下一步寫成七天內可開始的安排'},火:{use:'啟動、表達與讓人看見',practice:'白天完成一次主動說明或公開交付，不靠顏色或飾品補火'},土:{use:'承接、落地與劃分責任',practice:'固定負責人、期限與完成標準'},金:{use:'判斷、界線與刪減',practice:'替一項承諾寫下必要與停止條件'},水:{use:'觀察、緩衝與變通',practice:'決定前保留一次隔夜檢查與替代路線'}};
 var ISSUE={
-  work:{label:'工作與方向',scene:'你正在找的不是一個漂亮職稱，而是哪種工作方式能讓能力被持續使用',questions:['過去三次工作轉折，是你主動離開、環境中斷，還是責任突然增加？','你最常被交付的是救火、整理、對人，還是創造新方法？','最近一次真正有成就感的成果，是否符合本盤顯示的主要十神功能？']},
-  relationship:{label:'感情與關係',scene:'要核對的不是「遇見誰」，而是你在靠近、承諾與衝突時是否重複同一種位置',questions:['過去重要關係中，你通常是先承擔、先退讓，還是先要求答案的人？','關係改變前，是否都出現相似的沉默、責任或界線問題？','目前這段關係有沒有一個能在期限內確認的實際回應？']},
-  family:{label:'家庭與責任',scene:'這個領域的核心是哪些責任真的是你的，哪些只是長期習慣由你接住',questions:['家中出現問題時，第一個被找的人通常是不是你？','你承擔最多的部分，是金錢、情緒、決定，還是日常照顧？','如果少做一件事，哪件最能看出家人是否願意重新分工？']},
-  money:{label:'金錢與安全感',scene:'這裡要看的不是偏財運口號，而是收入、責任與風險如何反覆影響你的選擇',questions:['最近三次金錢壓力，分別來自收入中斷、支出增加、合作，還是決策過快？','你較容易因為責任、人情，還是新機會改變原本預算？','目前哪一筆投入能設定明確上限與停止條件？']},
-  self:{label:'自我與內在',scene:'反覆感不是命定懲罰，而是舊有保護方式在新階段仍自動啟動',questions:['壓力來時，你最先出現的是控制、逃開、討好，還是獨自硬撐？','哪一種稱讚或批評最容易讓你立刻改變決定？','如果不需要證明自己，你現在最想保留哪一件事？']}
+work:{label:'工作與方向',place:'工作分工、主管授權與成果歸屬',replay:'你容易先看見流程漏洞並直接補位；成果完成了，主管或同事卻可能覺得被越過，最後你又成為最會救火、也最難被真正授權的人',repair:'改流程前先留下「問題、影響、提案、誰決定、誰執行」五欄紀錄；未取得決定權，不替團隊默默收尾',questions:['過去三次工作轉折前，是否都發生「你先補位、後來權責不清」？','誰最常把難題交給你，卻沒有同時交出決定權？','哪個交接點最能驗證這次是否不同？']},
+relationship:{label:'感情與關係',place:'親密關係中的承諾、說明與被理解感',replay:'你可能用處理問題、提供資源或做決定來表達在乎，但對方需要先被告知與參與；事情被解決，關係卻留下「你沒有把我算進去」的感受',repair:'重要決定先說三句：我看見什麼、我擔心什麼、我希望一起決定什麼；對方回應前，不先替兩人完成結論',questions:['是否常出現「事情有處理，感受沒有被處理」？','你最怕說出口的是需要、脆弱，還是不同意？','下一個共同決定能否在行動前取得雙方回覆？']},
+family:{label:'家庭與責任',place:'家族分工、金錢照顧與誰有決定權',replay:'家中一有問題，你容易成為第一個被找的人；一邊覺得不能不管，一邊又對反覆依賴不平，於是接手、忍住、最後一次說重話的循環再出現',repair:'把責任分成「我決定我負責、共同決定共同負責、對方決定對方負責」；挑一件共同責任，約定金額、頻率與未完成時由誰承擔',questions:['家中出現問題時，第一個被找的人是否通常是你？','你承擔最多的是金錢、情緒、決定，還是照顧？','停止代辦哪件事，最能看出家人是否願意重新分工？']},
+money:{label:'金錢與安全感',place:'收入、支出、人情與資源控制',replay:'你容易先守必要支出或替人補缺口，再用下一筆收入補自己的需求；表面帳目能運作，人情與責任卻沒有記入成本',repair:'將非固定支出標為「自己、共同、人情」；共同與人情支出先設上限、付款人及歸還日，少一項就暫不承諾',questions:['最近三次金錢壓力是否都混入家人、合作或人情？','哪筆支出看似自願，實際上你覺得不能拒絕？','哪筆投入能立刻補上上限與停止日期？']},
+self:{label:'自我與內在',place:'自我要求、界線與允許自己被看見',replay:'你常先當可靠、看得懂問題的人，疲累或受傷要等事情結束才承認；別人只看見能力，看不見你的選擇與代價',repair:'遇到想直接接手的時刻，先說「我可以做到哪裡、我需要誰補上什麼」；把求助當重新分配責任',questions:['壓力來時，你最先控制、逃開、討好，還是硬撐？','哪種稱讚最容易讓你又接下別人的責任？','若不必證明可靠，你最想停止哪個角色？']}
 };
-var REL={子:{午:'六沖',丑:'六合'},丑:{未:'六沖',子:'六合'},寅:{申:'六沖',亥:'六合'},卯:{酉:'六沖',戌:'六合'},辰:{戌:'六沖',酉:'六合'},巳:{亥:'六沖',申:'六合'},午:{子:'六沖',未:'六合'},未:{丑:'六沖',午:'六合'},申:{寅:'六沖',巳:'六合'},酉:{卯:'六沖',辰:'六合'},戌:{辰:'六沖',卯:'六合'},亥:{巳:'六沖',寅:'六合'}};
+var PAIRS={六合:['子丑','寅亥','卯戌','辰酉','巳申','午未'],六沖:['子午','丑未','寅申','卯酉','辰戌','巳亥'],六害:['子未','丑午','寅巳','卯辰','申亥','酉戌'],六破:['子酉','丑辰','寅亥','卯午','巳申','未戌']};
+var DYNAMIC={六合:'彼此綁定、責任不易分開',六沖:'立場碰撞，常以分離或重新定位處理',六害:'表面維持，內裡累積誤解、委屈或被忽略感',六破:'細節、承諾或信任反覆出現裂口',伏吟:'同一角色與方法被重複強化',自刑:'壓力轉回自己，形成反覆要求或自我消耗'};
+var ROLE={年柱:'家族、群體與早期規則',月柱:'家內分工、工作制度與生存資源',日柱:'自己與親密關係',時柱:'晚年、計畫、學生或下一代'};
 function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function relation(a,b){return REL[a]&&REL[a][b]||a===b&&'伏吟'||'無直接合沖'}
-function currentYun(r,year){return r.dayun.list.find(function(x){return year>=x.startYear&&year<x.startYear+10})||r.dayun.list[0]}
-function interactions(r){var day=r.pillars[2].zhi;return r.pillars.filter(function(x,i){return i!==2}).map(function(x){return{label:x.label,zhi:x.zhi,type:relation(day,x.zhi)}}).filter(function(x){return x.type!=='無直接合沖'})}
-function build(pack,issueKey,year){var r=pack.r,a=pack.a,issue=ISSUE[issueKey]||ISSUE.self,rank=Object.entries(r.strength.counts).sort(function(a,b){return b[1]-a[1]}),high=rank[0],low=rank[rank.length-1],theme=a&&GOD[a.geJu.shiShen]?a.geJu.shiShen:r.details[1].tenGod,meta=GOD[theme]||GOD.正印,links=interactions(r),yun=currentYun(r,year),yunGod=root.TianhengBaziChartV1.tenGod(r.pillars[2].gan,yun.gan),yunMeta=GOD[yunGod]||GOD.正印,yunRel=relation(r.pillars[2].zhi,yun.zhi),pattern=a?a.geJu.geJu:'格局待核',linkText=links.length?links.map(function(x){return x.label+x.zhi+'與日支'+x.type}).join('；'):'日支與其餘三支未見直接六合、六沖或伏吟';
-  return{
-    title:'從「'+meta.role+'」走向能選擇自己的人',
-    lead:'這份故事的核心不是替你指定某個前世身分，而是辨認一個熟悉的生存角色：'+meta.role+'。它可能曾保護你，也可能在今天變成反覆消耗。',
-    chapters:[
-      {title:'一、前世象徵｜曾經熟悉的角色',text:'以'+pattern+'為主軸，月柱'+r.pillars[1].gan+r.pillars[1].zhi+'把「'+theme+'」推到故事中央。象徵上，你像是'+meta.role+'；重點不是年代與姓名，而是你很熟悉如何在這種位置上生存。',proof:'月令 '+r.pillars[1].zhi+'・格局 '+pattern+'・主題十神 '+theme},
-      {title:'二、未完課題｜為什麼同類問題會再來',text:meta.habit+'。'+linkText+'。因此反覆出現的往往不是同一個人或同一件事，而是你又站回熟悉的位置，用舊方法處理新的關係。',proof:'十神慣性 '+theme+'・'+linkText},
-      {title:'三、帶來今生的能力',text:'這個模式留下的不是只有負擔，也帶來「'+meta.gift+'」的能力。命盤中'+high[0]+'為 '+high[1].toFixed(1)+'，代表你較常先動用'+ELEMENT[high[0]].use+'；它是資源，但用得太快也可能蓋過其他選擇。',proof:'主題十神 '+theme+'・五行最高 '+high[0]+' '+high[1].toFixed(1)},
-      {title:'四、今生課題｜這次可以換一種活法',text:'你現在關注的是「'+issue.label+'」。'+issue.scene+'。真正需要鬆開的是：'+meta.cost+'。'+low[0]+'只有 '+low[1].toFixed(1)+' 並不代表一定要硬補，而是提醒你較少主動使用'+ELEMENT[low[0]].use+'。',proof:'使用者選擇 '+issue.label+'・五行最低 '+low[0]+' '+low[1].toFixed(1)}
-    ],
-    current:{title:'五、目前大運正在引動什麼',text:'目前落在 '+yun.gan+yun.zhi+' 大運（'+yun.startYear+'–'+(yun.startYear+9)+'），大運天干對日主為'+yunGod+'，把「'+yunMeta.role+'」的議題帶到前面。運支與日支為'+yunRel+'；這是當前容易被碰到的主題，不代表特定事件一定發生。',proof:'目前年份 '+year+'・'+yun.gan+yun.zhi+'大運・'+yunGod+'・運支與日支 '+yunRel},
-    action:{title:'未來三十天的練習',text:meta.step+'；同時，'+ELEMENT[low[0]].practice+'。只選一項執行，三十天後用實際結果判斷是否有效。',proof:'主題十神的修正方式＋較少使用的'+low[0]+'元素'},
-    avoid:{title:'先避免',text:'不要把「前世」當成替現在決定的理由，也不要只靠顏色、飾品或一次性消費改運。若故事與你的經歷對不上，就保留差異，不勉強套用。',proof:'象徵敘事邊界'},
-    questions:issue.questions,
-    evidence:['四柱：'+r.pillars.map(function(x){return x.label+x.gan+x.zhi}).join('・'),'日主：'+r.details[2].gan+r.details[2].ganElement+'；身勢：'+r.strength.label+'；扶助比例 '+(r.strength.ratio*100).toFixed(1)+'%','格局：'+pattern+'；主題十神：'+theme,'日支互動：'+linkText,'目前大運：'+yun.gan+yun.zhi+'（'+yunGod+'）','精度限制：未納入出生地真太陽時、個人完整經歷與可驗證的前世資料']
-  }
-}
+function pair(list,a,b){return list.indexOf(a+b)>=0||list.indexOf(b+a)>=0}
+function relationTypes(a,b){var out=[];Object.keys(PAIRS).forEach(function(k){if(pair(PAIRS[k],a,b))out.push(k)});if(a===b){out.push('伏吟');if('辰午酉亥'.indexOf(a)>=0)out.push('自刑')}return out}
+function relation(a,b){var x=relationTypes(a,b);return x.length?x.join('、'):'無直接作用'}
+function currentYun(r,y){return r.dayun.list.find(function(x){return y>=x.startYear&&y<x.startYear+10})||r.dayun.list[0]}
+function repeats(r){var by={};r.pillars.forEach(function(x){(by[x.zhi]||(by[x.zhi]=[])).push(x.label)});return Object.keys(by).filter(function(k){return by[k].length>1}).map(function(k){return{zhi:k,labels:by[k],count:by[k].length}})}
+function dayLinks(r){var d=r.pillars[2].zhi,out=[];r.pillars.forEach(function(x,i){if(i!==2)relationTypes(d,x.zhi).forEach(function(t){out.push({label:x.label,zhi:x.zhi,type:t,meaning:DYNAMIC[t]})})});return out}
+function punishments(r){var z=r.pillars.map(function(x){return x.zhi}),o=[];if(z.includes('子')&&z.includes('卯'))o.push('子卯相刑');if(['寅','巳','申'].every(function(x){return z.includes(x)}))o.push('寅巳申三刑');if(['丑','未','戌'].every(function(x){return z.includes(x)}))o.push('丑未戌三刑');return o}
+function positions(x){return x.labels.map(function(k){return ROLE[k]}).join('與')}
+function structure(r,reps,links,pun){var b=[];reps.forEach(function(x){b.push(x.labels.join('、')+'同見'+x.zhi+'，表示「'+positions(x)+'」重複同一套規則')});links.forEach(function(x){b.push(x.label+x.zhi+'與日支'+r.pillars[2].zhi+'成'+x.type+'，'+x.meaning)});pun.forEach(function(x){b.push(x+'，責任與立場容易互相施壓')});return b.length?b.join('；'):'四支未形成明顯合、沖、害、破、刑或重複支，故事改由月令與十神判讀'}
+function build(pack,issueKey,year){var r=pack.r,a=pack.a,issue=ISSUE[issueKey]||ISSUE.self,rank=Object.entries(r.strength.counts).sort(function(a,b){return b[1]-a[1]}),low=rank[rank.length-1],theme=a&&a.geJu&&GOD[a.geJu.shiShen]?a.geJu.shiShen:r.details[1].tenGod,meta=GOD[theme]||GOD.正印,reps=repeats(r),links=dayLinks(r),pun=punishments(r),pattern=a&&a.geJu?a.geJu.geJu:'格局待核',monthGod=r.details[1].tenGod,month=GOD[monthGod]||GOD.正印,st=structure(r,reps,links,pun),yun=currentYun(r,year),yunGod=root.TianhengBaziChartV1.tenGod(r.pillars[2].gan,yun.gan),yunTypes=relationTypes(r.pillars[2].zhi,yun.zhi);
+var past='象徵性地看，你像曾在家族與組織交疊的環境裡，'+meta.scene+'。月柱'+r.pillars[1].gan+r.pillars[1].zhi+'為'+monthGod+'，又加上一層「'+month.scene+'」的現實任務。'+(reps[0]?reps[0].labels.join('、')+'同見'+reps[0].zhi+'，使責任同時出現在'+positions(reps[0])+'，不是一次任務，而是長期被當成你的本分。':'');
+var cause='當時種下的「因」不是做錯神祕的事，而是反覆採用同一個選擇：'+meta.choice+'。';if(links.length){var first=links[0],same=links.filter(function(x){return x.type===first.type&&x.zhi===first.zhi});cause+='尤其'+same.map(function(x){return x.label+x.zhi}).join('、')+'同時對日支'+r.pillars[2].zhi+'形成'+first.type+(same.length>1?'（共 '+same.length+' 次）':'')+'，表示它進入親密關係與私人生活。'}
+var consequence='留下的「果」是：事情可能被完成、秩序可能被保住，但'+meta.shadow+'。'+(links.length?links.map(function(x){return x.type+'所示的「'+DYNAMIC[x.type]+'」'}).filter(function(x,i,a){return a.indexOf(x)===i}).join('，以及 '):'十神慣性形成的角色固定')+'，使未說清的責任、感受或承諾留到下一段關係再處理。這裡的因果指行為後續，不是報應判決。';
+var replay='你選擇核對「'+issue.label+'」，對應'+issue.place+'。'+issue.replay+'。這是由'+pattern+'、'+theme+'與「'+st+'」交叉後得到的重演路徑。';var repair='化解不是補顏色或買物品，而是改掉造成後果的那一步：'+issue.repair+'。再用較少啟動的'+low[0]+'功能——'+ELEMENT[low[0]].use+'——做行為補足：'+ELEMENT[low[0]].practice+'。';
+var current='目前為'+yun.gan+yun.zhi+'大運（'+yun.startYear+'–'+(yun.startYear+9)+'），天干為'+yunGod+'。'+(yunTypes.length?'運支'+yun.zhi+'與日支'+r.pillars[2].zhi+'形成'+yunTypes.join('、')+'，舊模式較易由關係、合作或居家決定觸發。':'運支與日支無直接作用，觸發較可能先從'+yunGod+'所代表的人際與責任出現。')+'這只表示題目被放大，不預告特定事件。';
+return{title:'前世未完的不是身分，而是「'+meta.choice+'」留下的後果',lead:'這張'+r.pillars.map(function(x){return x.gan+x.zhi}).join('、')+'的命盤，以'+pattern+'為主線，拆成一條可核對的因果鏈：身處什麼位置、做了什麼選擇、誰承受後果，以及今生在哪一步改寫。',pastScene:past,cause:cause,consequence:consequence,replay:replay,repair:repair,chapters:[{title:'一、前世畫面｜當時身處的位置',text:past,proof:'格局 '+pattern+'・年柱 '+r.details[0].tenGod+'・月柱 '+monthGod},{title:'二、種下的因｜反覆做的選擇',text:cause,proof:'主題十神 '+theme+'・'+st},{title:'三、留下的果｜事情完成，關係未完',text:consequence,proof:links.length?links.map(function(x){return x.label+x.zhi+'—日支'+r.pillars[2].zhi+' '+x.type}).join('・'):'十神慣性'},{title:'四、今生重演｜這次出現在哪裡',text:replay,proof:'使用者選擇 '+issue.label+'・格局 '+pattern},{title:'五、今生化解｜改寫關鍵一步',text:repair,proof:'問題領域 '+issue.label+'・較少使用 '+low[0]+' '+low[1].toFixed(1)}],current:{title:'六、目前大運｜誰把舊題目叫回來',text:current,proof:year+'・'+yun.gan+yun.zhi+'・'+yunGod+'・'+(yunTypes.join('、')||'無直接作用')},action:{title:'七、三十天因果中斷練習',text:meta.step+'。記錄原本想怎麼反應、改做什麼、對方實際回應；三十天後看循環是否被打斷。',proof:'主題十神 '+theme+' 的行為修正'},counter:{title:'另一種可能｜何時故事不成立',text:'若實際經歷不是「'+issue.replay.split('；')[0]+'」，或重要事件沒有反覆出現在'+issue.place+'，就不應把這條故事當成你的因果。也可能你已把同一結構用成'+meta.gift+'，未形成關係代價；以三件往事核對再決定。',proof:'同一結構可有成熟與失衡兩種表現'},avoid:{title:'解讀邊界',text:'不要把前世當成替現在決定的理由，也不要把不順解釋成受罰。這是命理文化的象徵敘事，不是歷史紀錄；對不上就保留差異。',proof:'象徵敘事與事實邊界'},questions:issue.questions,evidence:['四柱：'+r.pillars.map(function(x){return x.label+x.gan+x.zhi}).join('・'),'日主：'+r.details[2].gan+r.details[2].ganElement+'；身勢：'+r.strength.label,'格局：'+pattern+'；主題十神：'+theme,'結構：'+st,'五行：'+rank.map(function(x){return x[0]+' '+x[1].toFixed(1)}).join('・'),'目前大運：'+yun.gan+yun.zhi+'（'+yunGod+'）','精度限制：未納入真太陽時、流月流日、完整經歷與可驗證的前世資料']};}
 function analyze(input,issueKey,year){var r=root.TianhengBaziChartV1.analyze(input),adv=root.TianhengBaziEngine.safeAnalyze(r.pillars);return{r:r,a:adv.ok?adv.data:null,story:build({r:r,a:adv.ok?adv.data:null},issueKey,year)}}
-root.TianhengLifeStoryV1=Object.freeze({version:'1.0.0',build:build,analyze:analyze,relation:relation,GOD:GOD,ELEMENT:ELEMENT,ISSUE:ISSUE});
-if(typeof document==='undefined')return;
-var $=function(id){return document.getElementById(id)};
-function chapter(x,no,cls){return'<article class="chapter '+(cls||'')+'" data-no="'+esc(no)+'"><h3>'+esc(x.title)+'</h3><p>'+esc(x.text)+'</p><small class="proof">依據：'+esc(x.proof)+'</small></article>'}
-function render(pack){var r=pack.r,s=pack.story,name=$('name').value.trim(),prefix=name?name+'，':'';$('opening').innerHTML='<small>本次核心課題</small><h2>'+esc(s.title)+'</h2><p>'+esc(prefix+s.lead)+'</p>';$('pillars').innerHTML=r.details.map(function(x){return'<div class="pillar"><small>'+esc(x.label)+'</small><b>'+esc(x.gan+x.zhi)+'</b><em>'+esc(x.tenGod)+'</em></div>'}).join('');$('chapters').innerHTML=s.chapters.map(function(x,i){return chapter(x,'0'+(i+1))}).join('');$('practice').innerHTML=chapter(s.current,'05')+chapter(s.action,'06','action')+chapter(s.avoid,'07','avoid')+'<article class="chapter" data-no="問"><h3>三個現實核對問題</h3><ol class="questions">'+s.questions.map(function(x){return'<li>'+esc(x)+'</li>'}).join('')+'</ol><small class="proof">只有能被經歷反覆核對的部分才保留</small></article>';$('evidence').innerHTML='<ul>'+s.evidence.map(function(x){return'<li><b>'+esc(x.split('：')[0])+'：</b>'+esc(x.split('：').slice(1).join('：'))+'</li>'}).join('')+'</ul><p class="disclaimer">本功能屬命理文化的象徵性自我整理，不是宗教認證、心理診斷或歷史事實證明，也不替代醫療、法律、財務與重大人生決策。</p>';$('result').classList.remove('hidden');$('result').scrollIntoView({behavior:'smooth'})}
-$('go').addEventListener('click',function(){try{var date=$('birth').value,time=$('time').value;if(!date||!time)throw Error('請完整輸入出生日期與時間');var d=date.split('-').map(Number),t=time.split(':').map(Number);$('error').textContent='';render(analyze({year:d[0],month:d[1],day:d[2],hour:t[0],minute:t[1],sex:$('sex').value,ziSchool:$('zi').value},$('issue').value,new Date().getFullYear()))}catch(e){$('error').textContent=e&&e.message||String(e)}});
-$('clear').addEventListener('click',function(){$('result').classList.add('hidden');$('opening').innerHTML='';$('chapters').innerHTML='';$('practice').innerHTML='';window.scrollTo({top:0,behavior:'smooth'})});
+root.TianhengLifeStoryV1=Object.freeze({version:'2.0.0',build:build,analyze:analyze,relation:relation,relationTypes:relationTypes,repeats:repeats,dayLinks:dayLinks,GOD:GOD,ELEMENT:ELEMENT,ISSUE:ISSUE});if(typeof document==='undefined')return;
+var $=function(id){return document.getElementById(id)};function chapter(x,no,cls){return'<article class="chapter '+(cls||'')+'" data-no="'+esc(no)+'"><h3>'+esc(x.title)+'</h3><p>'+esc(x.text)+'</p><small class="proof">依據：'+esc(x.proof)+'</small></article>'}
+function render(pack){var r=pack.r,s=pack.story,name=$('name').value.trim(),prefix=name?name+'，':'';$('opening').innerHTML='<small>本次前世因果主線</small><h2>'+esc(s.title)+'</h2><p>'+esc(prefix+s.lead)+'</p>';$('pillars').innerHTML=r.details.map(function(x){return'<div class="pillar"><small>'+esc(x.label)+'</small><b>'+esc(x.gan+x.zhi)+'</b><em>'+esc(x.tenGod)+'</em></div>'}).join('');$('chapters').innerHTML='<div class="causal-route"><span>前世處境</span><i>→</i><span>當時選擇</span><i>→</i><span>留下後果</span><i>→</i><span>今生重演</span><i>→</i><span>具體化解</span></div>'+s.chapters.map(function(x,i){return chapter(x,'0'+(i+1),i===4?'repair':'')}).join('');$('practice').innerHTML=chapter(s.current,'06')+chapter(s.action,'07','action')+chapter(s.counter,'異','counter')+chapter(s.avoid,'界','avoid')+'<article class="chapter" data-no="問"><h3>三個現實核對問題</h3><ol class="questions">'+s.questions.map(function(x){return'<li>'+esc(x)+'</li>'}).join('')+'</ol><small class="proof">只有能被三件經歷反覆核對的部分才保留</small></article>';$('evidence').innerHTML='<ul>'+s.evidence.map(function(x){return'<li><b>'+esc(x.split('：')[0])+'：</b>'+esc(x.split('：').slice(1).join('：'))+'</li>'}).join('')+'</ul><p class="disclaimer">本功能屬命理文化的象徵性自我整理，不是宗教認證、心理診斷或歷史事實證明，也不替代專業決策。</p>';$('result').classList.remove('hidden');$('result').scrollIntoView({behavior:'smooth'})}
+$('go').addEventListener('click',function(){try{var d=$('birth').value.split('-').map(Number),t=$('time').value.split(':').map(Number);if(d.length!==3||t.length!==2)throw Error('請完整輸入出生日期與時間');$('error').textContent='';render(analyze({year:d[0],month:d[1],day:d[2],hour:t[0],minute:t[1],sex:$('sex').value,ziSchool:$('zi').value},$('issue').value,new Date().getFullYear()))}catch(e){$('error').textContent=e&&e.message||String(e)}});$('clear').addEventListener('click',function(){$('result').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'})});
 })(typeof window!=='undefined'?window:globalThis);
