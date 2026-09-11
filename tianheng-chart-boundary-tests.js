@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('node:assert/strict');
+const chart=require('./tianheng-bazi-chart-v1.js');
+const base={year:2000,month:2,day:29,hour:23,minute:15,sex:'男',ziSchool:'late'};
+const late=chart.analyze(base),same=chart.analyze({...base,ziSchool:'none'});
+assert.equal(late.birthJde,same.birthJde,'換日流派不能改變物理出生時刻');
+assert.deepEqual(late.pillars.slice(0,2),same.pillars.slice(0,2),'換日不影響節氣年月柱');
+assert.notEqual(late.pillars[2].gan,same.pillars[2].gan,'晚子時應改變日柱');
+assert.ok(Math.abs((chart.analyze({...base,minute:16}).birthJde-late.birthJde)*1440-1)<.0001,'分鐘應参与計算');
+for(const invalid of [{year:2001},{month:13},{day:30},{hour:24},{minute:60},{sex:'?'},{ziSchool:'?'},{year:1800}])assert.throws(()=>chart.analyze({...base,...invalid}));
+console.log('PASS 時刻、換日與8項無效輸入邊界檢查');

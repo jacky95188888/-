@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#100817">
+  <title>天衡｜前世今生・生命課題書</title><link rel="icon" href="./tianheng-icon.svg"><link rel="stylesheet" href="./tianheng-life-story-v1.css?v=20260911-life1">
+</head>
+<body><main class="wrap">
+  <a class="back" href="./?v=20260911-life1">‹ 返回天衡主頁</a>
+  <header class="hero"><small>SYMBOLIC LIFE ARCHIVE</small><h1>前世今生・生命課題書</h1><p>從八字結構整理反覆出現的生命模式。這不是前世身分鑑定，而是一份可以拿現實經歷核對的象徵性故事。</p><div class="hero-tags"><span>前世象徵</span><span>未完課題</span><span>今生能力</span><span>當前引動</span><span>現實核對</span></div></header>
+  <section class="panel tone-input"><div class="panel-head"><span class="mark">入</span><div><h2>輸入出生資料</h2><p class="sub">加入目前反覆發生的領域，讓故事回到你的真實生活</p></div></div><div class="grid">
+    <label class="field"><span>稱呼（選填）</span><input id="name" type="text" maxlength="12" placeholder="例如：貞誠"><small>只顯示在本次結果，不會上傳</small></label>
+    <label class="field"><span>最近反覆出現的問題</span><select id="issue"><option value="work">工作與方向</option><option value="relationship">感情與關係</option><option value="family">家庭與責任</option><option value="money">金錢與安全感</option><option value="self">自我與內在</option></select><small>用來調整核對問題，不會改動命盤</small></label>
+    <label class="field"><span>出生日期（國曆）</span><input id="birth" type="date" min="1901-01-01" max="2100-12-31"><small>節氣交界日建議人工核盤</small></label>
+    <label class="field"><span>出生時間</span><input id="time" type="time" value="12:00"><small>不知道時辰就不應產生完整故事</small></label>
+    <label class="field"><span>性別</span><select id="sex"><option>男</option><option>女</option></select><small>只用於大運順逆</small></label>
+    <label class="field"><span>子時換日</span><select id="zi"><option value="late">晚子時算隔日</option><option value="none">晚子時仍算當日</option></select><small>兩種流派分開使用</small></label>
+  </div><div class="notice">所有內容在手機本機依輸入資料生成，不會把象徵敘事冒充可證明的前世事實。</div><button id="go" class="primary" type="button">開 啟 生 命 課 題 書</button><div id="error" class="notice error" role="alert"></div></section>
+  <section id="result" class="hidden" aria-live="polite">
+    <section class="panel tone-story"><div id="opening" class="story-opening"></div><div id="pillars" class="pillars"></div></section>
+    <section class="panel tone-story"><div class="panel-head"><span class="mark">緣</span><div><h2>故事版</h2><p class="sub">用象徵語言整理命盤反覆出現的模式</p></div></div><div id="chapters" class="chapter-list"></div></section>
+    <section class="panel tone-now"><div class="panel-head"><span class="mark">今</span><div><h2>今生行動與核對</h2><p class="sub">不只讀故事，也要知道如何驗證與調整</p></div></div><div id="practice" class="chapter-list"></div></section>
+    <section class="panel tone-proof"><div class="panel-head"><span class="mark">證</span><div><h2>命盤依據</h2><p class="sub">故事與技術證據分開保存，不讓文學取代排盤</p></div></div><details><summary>展開查看本次判讀依據與限制</summary><div id="evidence" class="evidence-box"></div></details><button id="clear" class="clear" type="button">清除本次結果</button></section>
+  </section>
+</main>
+<script src="./tianheng-bazi-chart-v1.js?v=20260910-chart2"></script><script src="./tianheng-bazi-advanced-v1.js?v=20260910-chart2"></script><script src="./tianheng-bazi-combinations-v1.js?v=20260910-chart2"></script><script src="./tianheng-bazi-geju-tiaohou-v1.js?v=20260910-chart2"></script><script src="./tianheng-bazi-quality-v1.js?v=20260910-chart2"></script><script src="./tianheng-bazi-engine-v1.js?v=20260910-chart2"></script><script src="./tianheng-life-story-v1.js?v=20260911-life1"></script><script src="./tianheng-support-v1.js?v=20260910-quality2"></script>
+</body></html>

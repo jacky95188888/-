@@ -11,17 +11,28 @@
   function termJde(y,deg){let m=Math.floor(deg/30)+3;if(m>12)m-=12;let j=jde(y,m,1);for(let i=0;i<10;i++){let x=deg-sun(j);if(x>180)x-=360;if(x<-180)x+=360;j+=x*(365.25/360);if(Math.abs(x)<.00001)break}return j}
   function adjustedDate(y,m,d,h,school){if(h===23&&school==='late'){const n=new Date(Date.UTC(y,m-1,d)+864e5);return[n.getUTCFullYear(),n.getUTCMonth()+1,n.getUTCDate()]}return[y,m,d]}
   function pillars(input){
-    let {year:y,month:m,day:d,hour:h=12,ziSchool='late'}=input;[y,m,d]=adjustedDate(y,m,d,h,ziSchool);const bj=jde(y,m,d)+(h-8)/24;
+    let {year:y,month:m,day:d,hour:h=12,minute=0,ziSchool='late'}=input;
+    const bj=jde(y,m,d)+(h-8)/24+minute/1440;
+    const dayDate=adjustedDate(y,m,d,h,ziSchool);
     const terms=[];for(let yr=y-1;yr<=y+1;yr++)JIE.forEach(x=>terms.push({...x,year:yr,jde:termJde(yr,x.deg)}));terms.sort((a,b)=>a.jde-b.jde);
     let cur=terms[0],ly=y;terms.forEach(t=>{if(t.jde<=bj){cur=t;if(t.deg===315)ly=t.year}});
     const yg=GAN[((ly-4)%10+10)%10],yz=ZHI[((ly-4)%12+12)%12],wuhu={甲:2,己:2,乙:4,庚:4,丙:6,辛:6,丁:8,壬:8,戊:0,癸:0},order=(ZHI.indexOf(cur.zhi)-2+12)%12,mg=GAN[(wuhu[yg]+order)%10];
-    const jdn=Math.floor(jde(y,m,d)+.5),dg=GAN[(jdn+9)%10],dz=ZHI[(jdn+1)%12],zi=Math.floor(((h+1)%24)/2),wushu={甲:0,己:0,乙:2,庚:2,丙:4,辛:4,丁:6,壬:6,戊:8,癸:8},hg=GAN[(wushu[dg]+zi)%10],hz=ZHI[zi];
+    const jdn=Math.floor(jde(...dayDate)+.5),dg=GAN[(jdn+9)%10],dz=ZHI[(jdn+1)%12],zi=Math.floor(((h+1)%24)/2),wushu={甲:0,己:0,乙:2,庚:2,丙:4,辛:4,丁:6,壬:6,戊:8,癸:8},hg=GAN[(wushu[dg]+zi)%10],hz=ZHI[zi];
     return{pillars:[{gan:yg,zhi:yz,label:'年柱'},{gan:mg,zhi:cur.zhi,label:'月柱'},{gan:dg,zhi:dz,label:'日柱'},{gan:hg,zhi:hz,label:'時柱'}],birthJde:bj,year:input.year,month:input.month,day:input.day,hour:h};
   }
   function tenGod(day,target){const a=WX[day],b=WX[target],same=YY[day]===YY[target];if(a===b)return same?'比肩':'劫財';if(SHENG[a]===b)return same?'食神':'傷官';if(KE[a]===b)return same?'偏財':'正財';if(KE[b]===a)return same?'七殺':'正官';return same?'偏印':'正印'}
   function tally(ps){const t={木:0,火:0,土:0,金:0,水:0};ps.forEach(p=>{t[WX[p.gan]]+=1;HIDDEN[p.zhi].forEach(x=>t[WX[x[0]]]+=x[1])});return t}
   function strength(ps){const day=WX[ps[2].gan],t=tally(ps),support=t[day]+t[Object.keys(SHENG).find(k=>SHENG[k]===day)],total=Object.values(t).reduce((a,b)=>a+b,0),ratio=support/total;return{label:ratio>=.58?'身強':ratio<=.38?'身弱':'中和',ratio,counts:t}}
   function dayun(data,sex){const ps=data.pillars,yg=ps[0].gan,male=sex==='男',forward=(YY[yg]==='陽'&&male)||(YY[yg]==='陰'&&!male),terms=[];for(let y=data.year-1;y<=data.year+1;y++)JIE.forEach(x=>terms.push(termJde(y,x.deg)));terms.sort((a,b)=>a-b);const target=forward?terms.find(x=>x>data.birthJde):terms.filter(x=>x<data.birthJde).pop(),ageF=Math.abs(target-data.birthJde)/3,startAge=Math.floor(ageF),startMonth=Math.round((ageF-startAge)*12);let gi=GAN.indexOf(ps[1].gan),zi=ZHI.indexOf(ps[1].zhi);const list=[];for(let i=0;i<10;i++){gi=(gi+(forward?1:9))%10;zi=(zi+(forward?1:11))%12;list.push({gan:GAN[gi],zhi:ZHI[zi],startAge:startAge+i*10,startYear:data.year+startAge+i*10})}return{direction:forward?'順排':'逆排',startAge,startMonth,list}}
-  function analyze(input){const data=pillars(input),ps=data.pillars,day=ps[2].gan,s=strength(ps),dy=dayun(data,input.sex);return{...data,sex:input.sex,strength:s,dayun:dy,details:ps.map(p=>({...p,ganElement:WX[p.gan],zhiElement:WX[p.zhi],tenGod:p.label==='日柱'?'日主':tenGod(day,p.gan),hidden:HIDDEN[p.zhi].map(x=>({gan:x[0],weight:x[1],tenGod:tenGod(day,x[0])}))}))}}
+  function validate(input){
+    if(!input||typeof input!=='object')throw Error('請輸入出生資料');
+    const {year,month,day,hour=12,minute=0,sex,ziSchool='late'}=input;
+    if(![year,month,day,hour,minute].every(Number.isInteger)||year<1901||year>2100||month<1||month>12||hour<0||hour>23||minute<0||minute>59)throw Error('請輸入 1901–2100 年間有效的出生日期與時間');
+    const date=new Date(Date.UTC(year,month-1,day));
+    if(date.getUTCFullYear()!==year||date.getUTCMonth()!==month-1||date.getUTCDate()!==day)throw Error('出生日期不存在，請核對月份與日期');
+    if(!['男','女'].includes(sex))throw Error('請選擇排大運使用的性別');
+    if(!['late','none'].includes(ziSchool))throw Error('請選擇子時換日規則');
+  }
+  function analyze(input){validate(input);const data=pillars(input),ps=data.pillars,day=ps[2].gan,s=strength(ps),dy=dayun(data,input.sex);return{...data,sex:input.sex,strength:s,dayun:dy,details:ps.map(p=>({...p,ganElement:WX[p.gan],zhiElement:WX[p.zhi],tenGod:p.label==='日柱'?'日主':tenGod(day,p.gan),hidden:HIDDEN[p.zhi].map(x=>({gan:x[0],weight:x[1],tenGod:tenGod(day,x[0])}))}))}}
   root.TianhengBaziChartV1=Object.freeze({version:'1.0.0',analyze,tenGod,tally,strength});if(typeof module!=='undefined'&&module.exports)module.exports=root.TianhengBaziChartV1;
 })(typeof window!=='undefined'?window:globalThis);

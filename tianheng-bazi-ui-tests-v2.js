@@ -6,5 +6,7 @@ const home=fs.readFileSync('index.html','utf8');
 for(const id of ['annualYear','annualReading','overview','pillars','dayun','reading'])assert.ok(html.includes(`id="${id}"`),`missing ${id}`);
 assert.ok(html.includes('renderAnnual')&&html.includes('流年行運導航'),'流年功能未完成');
 assert.ok(html.includes('insight-grid')&&html.includes('依據：')&&html.includes('核對方法'),'講解未分層');
+assert.ok(html.includes('tianheng-bazi-reading-v3.js'),'未載入個人化解盤模組');
+assert.ok(html.includes('tianheng-bazi-reading-v3.css'),'未載入個人化解盤樣式');
 assert.ok(home.includes('<b>流年行運</b>')&&home.includes('focus=annual'),'首頁第八格未加入');
 console.log('PASS 專業排盤彩色分層、證據講解與首頁流年入口');
