@@ -14,6 +14,7 @@ const base={year:1974,month:1,day:29,hour:4,minute:0,sex:'男',ziSchool:'late'};
 const work=api.analyze(base,'work',2026);
 const love=api.analyze(base,'relationship',2026);
 const other=api.analyze({year:1988,month:6,day:9,hour:15,minute:30,sex:'女',ziSchool:'late'},'work',2026);
+const grounded=api.analyze(base,'family',2026,{event:'家人又要我處理共同債務',person:'手足或親族'});
 
 assert.equal(work.r.pillars.length,4,'必須保存完整四柱');
 assert.equal(work.story.chapters.length,5,'因果版必須有五個核心章節');
@@ -33,10 +34,17 @@ assert.ok(work.story.consequence.includes('事情可能被完成')&&work.story.c
 assert.ok(work.story.replay.includes('工作分工')&&love.story.replay.includes('親密關係'),'今生重演必須依問題改寫');
 assert.ok(work.story.repair.includes('問題、影響、提案')&&love.story.repair.includes('我看見什麼'),'化解方法不得共用罐頭文案');
 assert.ok(work.story.counter.title.includes('不成立'),'必須提供反證');
+assert.equal(api.version,'3.0.0','必須載入事件錨定版引擎');
+assert.ok(grounded.story.signature.code.includes('傷官格')&&grounded.story.signature.code.includes('六害'),'命盤指紋必須合併格局與地支作用');
+assert.ok(grounded.story.signature.occupation.includes('制度查核者'),'前世職分必須依主題十神產生');
+assert.ok(grounded.story.chapters[3].text.includes('家人又要我處理共同債務'),'今生重演必須引用具體事件');
+assert.ok(grounded.story.chapters[3].text.includes('手足或親族'),'今生重演必須引用關鍵人物');
+assert.ok(grounded.story.chapters[4].text.includes('誰決定、誰執行、何時回覆'),'化解必須回到事件操作');
+assert.notDeepEqual(grounded.story.questions,work.story.questions,'填入現實事件後核對題必須改寫');
 
 const html=fs.readFileSync('tianheng-life-story-v1.html','utf8');
 const home=fs.readFileSync('index.html','utf8');
-for(const id of ['name','issue','birth','time','sex','zi','opening','pillars','chapters','practice','evidence'])assert.ok(html.includes(`id="${id}"`),`頁面缺少 ${id}`);
+for(const id of ['name','issue','event','person','birth','time','sex','zi','opening','pillars','chapters','practice','evidence'])assert.ok(html.includes(`id="${id}"`),`頁面缺少 ${id}`);
 assert.ok(html.includes('不是前世身分鑑定')&&html.includes('前世處境 → 當時選擇 → 留下後果'),'必須在第一屏標明因果鏈');
 assert.ok(home.includes('前世今生・因果課題書')&&home.includes('tianheng-life-story-v1.html'),'首頁第九功能未接入');
 console.log('PASS 前世今生依命盤生成、依問題改寫、提供證據且不冒充事實');
