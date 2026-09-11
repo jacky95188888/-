@@ -16,7 +16,7 @@ const love=api.analyze(base,'relationship',2026);
 const other=api.analyze({year:1988,month:6,day:9,hour:15,minute:30,sex:'女',ziSchool:'late'},'work',2026);
 
 assert.equal(work.r.pillars.length,4,'必須保存完整四柱');
-assert.equal(work.story.chapters.length,4,'故事版必須有四個核心章節');
+assert.equal(work.story.chapters.length,5,'因果版必須有五個核心章節');
 assert.equal(work.story.questions.length,3,'必須提供三個現實核對問題');
 assert.ok(work.story.current.text.includes('大運'),'當前引動必須引用大運');
 assert.ok(work.story.evidence.some(x=>x.startsWith('四柱：')),'必須列出四柱依據');
@@ -24,10 +24,19 @@ assert.notDeepEqual(work.story.questions,love.story.questions,'不同生活問�
 assert.notEqual(work.story.lead,other.story.lead,'不同命盤不得共用同一核心故事');
 assert.ok(!JSON.stringify(work.story).includes('你前世一定'),'不得把象徵敘事冒充事實');
 assert.ok(work.story.avoid.text.includes('對不上'),'必須允許使用者否定不符合的故事');
+assert.equal(api.relation('丑','午'),'六害','必須辨認丑午六害');
+assert.equal(api.relation('丑','辰'),'六破','必須辨認丑辰六破');
+assert.ok(api.relation('午','午').includes('自刑'),'必須辨認午午自刑');
+assert.ok(work.story.pastScene.includes('年柱、月柱同見丑'),'重複支必須寫入具體前世處境');
+assert.ok(work.story.cause.includes('年柱丑、月柱丑')&&work.story.cause.includes('六害（共 2 次）'),'必須寫出丑午二重相害');
+assert.ok(work.story.consequence.includes('事情可能被完成')&&work.story.consequence.includes('關係'),'必須說明所種之因留下什麼果');
+assert.ok(work.story.replay.includes('工作分工')&&love.story.replay.includes('親密關係'),'今生重演必須依問題改寫');
+assert.ok(work.story.repair.includes('問題、影響、提案')&&love.story.repair.includes('我看見什麼'),'化解方法不得共用罐頭文案');
+assert.ok(work.story.counter.title.includes('不成立'),'必須提供反證');
 
 const html=fs.readFileSync('tianheng-life-story-v1.html','utf8');
 const home=fs.readFileSync('index.html','utf8');
 for(const id of ['name','issue','birth','time','sex','zi','opening','pillars','chapters','practice','evidence'])assert.ok(html.includes(`id="${id}"`),`頁面缺少 ${id}`);
-assert.ok(html.includes('不是前世身分鑑定')&&html.includes('象徵性故事'),'必須在第一屏標明定位');
-assert.ok(home.includes('前世今生・生命課題書')&&home.includes('tianheng-life-story-v1.html'),'首頁第九功能未接入');
+assert.ok(html.includes('不是前世身分鑑定')&&html.includes('前世處境 → 當時選擇 → 留下後果'),'必須在第一屏標明因果鏈');
+assert.ok(home.includes('前世今生・因果課題書')&&home.includes('tianheng-life-story-v1.html'),'首頁第九功能未接入');
 console.log('PASS 前世今生依命盤生成、依問題改寫、提供證據且不冒充事實');

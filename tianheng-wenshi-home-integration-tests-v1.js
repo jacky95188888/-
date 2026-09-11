@@ -34,9 +34,9 @@ test("首頁提供六爻問事入口", () => {
   assert.ok(html.includes("六爻問事開放驗證"));
 });
 
-test("首頁提供前世今生生命課題書入口", () => {
+test("首頁提供前世今生因果課題書入口", () => {
   assert.ok(html.includes('tianheng-life-story-v1.html'));
-  assert.ok(html.includes('前世今生・生命課題書'));
+  assert.ok(html.includes('前世今生・因果課題書'));
 });
 
 test("首頁採主功能卡與四格快捷入口", () => {
