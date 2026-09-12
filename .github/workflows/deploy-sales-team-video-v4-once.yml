@@ -1,0 +1,45 @@
+name: Deploy Sales Team Video V4 Once
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/deploy-sales-team-video-v4-once.yml
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_ACCOUNT_ID: 22bd6a71b50e9eeaa0daa802615a3459
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: jacky95188888/sales-team
+          ref: main
+      - name: Validate and deploy
+        run: |
+          set -euo pipefail
+          node --check sales-team-worker.js
+          node scripts/check-worker.mjs
+          node scripts/test-hq-worker.mjs
+          npx --yes wrangler@4 deploy --config wrangler.jsonc
+      - name: Verify YouTube production channel
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5; do
+            status=$(curl --silent --show-error --max-time 90 --output response.json --write-out '%{http_code}' \
+              --header 'Origin: https://jacky95188888.github.io' \
+              --header 'Content-Type: application/json' \
+              --data '{"task":"系統測試：製作一段15秒產品介紹","channel":"youtube","profile":{"name":"測試產品"},"reports":[]}' \
+              https://sales-team.rhtm9y855y.workers.dev/execute) || status=000
+            if [ "$status" = "200" ] && jq -e '(.output // "") | length > 0' response.json >/dev/null; then
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
