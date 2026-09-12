@@ -1,0 +1,43 @@
+name: Deploy HeyGen Validation
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/deploy-heygen-validation.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: jacky95188888/sales-team
+          ref: main
+          path: app
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - working-directory: app
+        run: |
+          node --check sales-team-worker.js
+          node scripts/check-worker.mjs
+          node scripts/test-hq-worker.mjs
+      - uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 22bd6a71b50e9eeaa0daa802615a3459
+          wranglerVersion: "4"
+          workingDirectory: app
+          command: deploy --config wrangler.jsonc
+      - name: Verify validation response
+        run: |
+          curl --fail --silent --show-error \
+            --request POST \
+            --header 'Origin: https://jacky95188888.github.io' \
+            --header 'Content-Type: application/json' \
+            --data '{}' \
+            https://sales-team.rhtm9y855y.workers.dev/video-config |
+            jq -e 'has("apiValid")'
