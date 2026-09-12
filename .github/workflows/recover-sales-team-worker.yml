@@ -30,7 +30,16 @@ jobs:
             --dump-header recovered-worker/response-headers.txt \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$WORKER_NAME" \
             --output recovered-worker/worker-response.bin
+          curl --fail-with-body --silent --show-error \
+            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$WORKER_NAME/settings" \
+            --output recovered-worker/settings.json
+          curl --silent --show-error \
+            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$WORKER_NAME/schedules" \
+            --output recovered-worker/schedules.json
           test -s recovered-worker/worker-response.bin
+          test -s recovered-worker/settings.json
           sha256sum recovered-worker/worker-response.bin > recovered-worker/sha256.txt
           sed -i '/^set-cookie:/Id;/^cf-ray:/Id' recovered-worker/response-headers.txt
 
