@@ -108,10 +108,10 @@
     <div class="hero-sigil" aria-hidden="true">問</div>
     <p class="eyebrow">TIANHENG LIUYAO ORACLE</p>
     <h1>六爻問事</h1>
-    <p class="lead">一事一問，由原始起卦、日月證據到暫定結果逐層保存，不以單一吉凶句取代證據。</p>
+    <p class="lead">一事一問，先給直接結論，再把最關鍵的卦象依據、助力、阻力與近期做法分開說清楚。</p>
     <div class="steps" aria-label="判讀流程">
       <div class="step"><b>01</b>明確提問</div><div class="step"><b>02</b>六次起卦</div>
-      <div class="step"><b>03</b>證據裁決</div><div class="step"><b>04</b>近期建議</div>
+      <div class="step"><b>03</b>關鍵判斷</div><div class="step"><b>04</b>近期建議</div>
     </div>
     <div id="runtimeNotice" class="error">頁面程式尚未啟動。若這段提示持續顯示，代表目前的檔案預覽器封鎖了 JavaScript；請勿把此頁的空白欄位當成系統結果。</div>
   </header>
@@ -140,11 +140,11 @@
     <details class="optional-context" id="eventContextBox">
       <summary>讓答案對準這一次事件</summary>
       <div class="inner">
-        <p id="eventGuide" style="margin:0 0 12px;color:#948a7c;font-size:11px">以下欄位皆為選填，不確定或懶得填都可以直接跳過，系統不會用套話補答案；若問的是官司或靈異怪事，建議盡量填寫，判讀依據會更足。</p>
+        <p id="eventGuide" style="margin:0 0 12px;color:#948a7c;font-size:11px">以下欄位皆為選填，不確定或懶得填都可以直接跳過，系統不會用套話補答案；若問的是官司或靈異怪事，建議盡量填寫；一般選擇、感情與日常決策可直接跳過，系統仍會依卦象判讀。</p>
         <div class="grid"><label>本次狀態<select id="eventAttempt"><option value="">請選擇</option><option>第一次</option><option>再次嘗試／重考</option><option>事件延續中</option><option>過去結果核對</option></select></label><label>事件日期<input id="eventDate" type="date"></label></div>
         <label>這次怎樣才算成功？<input id="successDefinition" placeholder="例如：收到正式錄取通知"></label>
         <label>目前最可能卡在哪裡？<input id="knownObstacle" placeholder="例如：名額、資格、對方尚未決定"></label>
-        <label>目前最強的現實證據<input id="strongestEvidence" placeholder="例如：已收到二次面試通知"></label>
+        <label>目前已知的現實情況（選填）<input id="strongestEvidence" placeholder="例如：對方最近有回覆、公司已通知二次面試；沒有也可留白"></label>
         <label>上次結果或差距<input id="priorResult" placeholder="例如：上次未錄取、仍差一個條件"></label>
         <label>目前準備與已知事實<textarea id="preparation" placeholder="請只填已知事實，不用猜測"></textarea></label>
         <div id="specificMetrics" class="grid"><label><span id="specificOneLabel">目前進度</span><input id="specificOne"></label><label><span id="specificTwoLabel">正式確認點</span><input id="specificTwo"></label></div>
@@ -161,17 +161,17 @@
       <label>日支<select id="dayZhi"><option value="子">子</option><option value="丑">丑</option><option value="寅">寅</option><option value="卯">卯</option><option value="辰">辰</option><option value="巳">巳</option><option value="午">午</option><option value="未">未</option><option value="申">申</option><option value="酉">酉</option><option value="戌">戌</option><option value="亥">亥</option></select></label>
     </div>
     <details class="advanced"><summary>曆法核對來源</summary><label>曆法來源<input id="calendarSource" value="QA 人工核對干支曆"></label></details></div>
-    <div class="form-step"><div class="form-step-head"><b>4</b>查看完整分層判讀</div><p class="form-step-note">保留卦象、動爻、用神、阻力與判斷依據；目前免費開放完整使用</p><div class="actions"><button id="analyze" data-feature-analyze>執行分層判讀</button><button class="secondary" id="reset">清除結果</button></div></div>
+    <div class="form-step"><div class="form-step-head"><b>4</b>查看完整分層判讀</div><p class="form-step-note">先看結論，再看最關鍵判斷依據、助力／阻力、時間變化與可以怎麼做；目前免費開放完整使用</p><div class="actions"><button id="analyze" data-feature-analyze>執行分層判讀</button><button class="secondary" id="reset">清除結果</button></div></div>
   </section>
 
   <div id="error" class="error hidden" role="alert"></div>
   <section id="result" class="hidden" aria-live="polite">
     <div class="panel"><h2 class="section-title"><span>判</span>先看核心結論</h2><div id="verdict" class="verdict"></div><div id="pastValidation" class="verify-box hidden"><h3>此題已進入過去驗證模式</h3><p>系統已保留原始判讀。請在知道真實結果後另行記錄，不會回寫或改動原判。</p><div class="grid"><label>實際結果<select id="actualOutcome"><option value="">尚未揭曉</option><option value="positive">通過／達成</option><option value="negative">未通過／未達成</option><option value="partial">部分符合</option><option value="unresolved">仍無法確認</option></select></label><label>結果依據<input id="actualNote" placeholder="例如：成績通知、錄取信或當事人回覆"></label></div><button type="button" id="saveActual">保存原判與實際結果</button><div id="verifyStatus" class="verify-status" aria-live="polite"></div></div></div>
-    <div class="panel"><h2 class="section-title"><span>貳</span>卦局摘要</h2><div id="summary" class="summary"></div></div>
-    <div class="panel"><h2 class="section-title"><span>參</span>六爻證據表</h2><div class="notice">表格可左右滑動查看完整證據；原始爻位與修正事件不互相覆蓋。</div><div class="scroll"><table><thead><tr><th>爻位</th><th>世應</th><th>動靜</th><th>納甲</th><th>六親</th><th>月令</th><th>旬空</th><th>月破</th><th>日沖</th></tr></thead><tbody id="lineRows"></tbody></table></div></div>
+    <div class="panel"><h2 class="section-title"><span>貳</span>最關鍵判斷依據</h2><div class="notice">這裡只回答「為什麼得到上面的結論」。先看最重要的卦象與作用關係；完整技術細節仍保留在後面。</div><div id="summary" class="summary"></div></div>
+    <div class="panel"><h2 class="section-title"><span>參</span>六爻判讀依據</h2><div class="notice">想看細節再展開這一段。表格可左右滑動；原始爻位、旺衰與作用關係分開保存，不把技術欄位當成「現實證據」。</div><div class="scroll"><table><thead><tr><th>爻位</th><th>世應</th><th>動靜</th><th>納甲</th><th>六親</th><th>月令</th><th>旬空</th><th>月破</th><th>日沖</th></tr></thead><tbody id="lineRows"></tbody></table></div></div>
     <div class="panel"><h2 class="section-title"><span>肆</span>用神與作用事件</h2><div id="useful"></div><h3 class="sub-title">◇ 動變</h3><div id="changes"></div><h3 class="sub-title">◇ 伏神與沖合</h3><div id="interactions"></div></div>
-    <div class="panel"><h2 class="section-title"><span>伍</span>支持、阻力與未定處</h2><div class="grid three"><div class="evidence-box support-box"><h3 class="support">支持</h3><div id="support"></div></div><div class="evidence-box resistance-box"><h3 class="resistance">阻力</h3><div id="resistance"></div></div><div class="evidence-box unresolved-box"><h3 class="unresolved">尚未裁定</h3><div id="unresolved"></div></div></div></div>
-    <div class="panel"><h2 class="section-title"><span>陸</span>暫定結論與近期做法</h2><div id="explanation"></div><div class="grid three"><div class="advice-card can"><h3 class="support">可以做</h3><div id="canDo"></div></div><div class="advice-card avoid"><h3 class="resistance">先避免</h3><div id="avoid"></div></div><div class="advice-card verify"><h3>需要查證</h3><div id="verify"></div></div></div><h3 class="sub-title">◇ 時間條件</h3><div id="timing"></div><div class="notice">此結果尚未完成真實歷史盲測校準，不能代替醫療、法律、投資或其他專業判斷。</div><button class="secondary" id="export">匯出本次判讀 JSON</button></div>
+    <div class="panel"><h2 class="section-title"><span>伍</span>有利訊號、阻力與未定處</h2><div class="grid three"><div class="evidence-box support-box"><h3 class="support">支持</h3><div id="support"></div></div><div class="evidence-box resistance-box"><h3 class="resistance">阻力</h3><div id="resistance"></div></div><div class="evidence-box unresolved-box"><h3 class="unresolved">尚未裁定</h3><div id="unresolved"></div></div></div></div>
+    <div class="panel"><h2 class="section-title"><span>陸</span>最後怎麼做</h2><div id="explanation"></div><div class="grid three"><div class="advice-card can"><h3 class="support">可以做</h3><div id="canDo"></div></div><div class="advice-card avoid"><h3 class="resistance">先避免</h3><div id="avoid"></div></div><div class="advice-card verify"><h3>現實確認點</h3><div id="verify"></div></div></div><h3 class="sub-title">◇ 時間條件</h3><div id="timing"></div><div class="notice">此結果尚未完成真實歷史盲測校準，不能代替醫療、法律、投資或其他專業判斷。</div><button class="secondary" id="export">匯出本次判讀 JSON</button></div>
   </section>
   <section class="unlock-contact" id="contact-sambo"><div class="mark">問</div><h2>聯絡三寶爸・人工核對與建議</h2><p>完整功能目前免費開放。若需要人工核對卦象、深入討論或回報實際結果，可以從這裡聯絡。</p><a href="https://line.me/R/ti/p/@788ldzke" target="_blank" rel="noopener">LINE 聯絡三寶爸</a><small>LINE：三寶爸的命理分析・@788ldzke</small></section>
   <footer class="page-foot">天衡・九維命理｜六爻問事公開驗證版<br>推演供文化研究與生活規劃參考，重大決策仍應依現實資訊判斷。</footer>
