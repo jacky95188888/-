@@ -293,7 +293,8 @@
     content:"";position:absolute;inset:34px 18px 8px;z-index:-1;border-radius:190px 190px 24px 24px;
     border:1px solid rgba(217,182,106,.17);
     background:linear-gradient(180deg,rgba(12,8,18,.10),rgba(10,7,15,.50));
-    box-shadow:inset 0 0 70px rgba(217,182,106,.035),0 30px 70px rgba(0,0,0,.28)
+    box-shadow:inset 0 0 70px rgba(217,182,106,.035),0 30px 70px rgba(0,0,0,.28);
+    animation:heroBreath 8s ease-in-out infinite
   }
   .th-luxe .hero::after{
     content:"✦";position:absolute;top:59px;left:50%;transform:translateX(-50%);
@@ -301,13 +302,13 @@
   }
   .th-luxe .sigil{
     margin-bottom:19px;color:#e2c982;font-size:11px;letter-spacing:.72em;
-    padding-left:.72em;opacity:.96
+    padding-left:.72em;opacity:.96;animation:sigilFloat 4.8s ease-in-out infinite
   }
   .th-luxe .title{
     font-size:68px;line-height:1.1;letter-spacing:.20em;padding-left:.20em;
     background:linear-gradient(180deg,#fff7dc 0%,#e8c979 44%,#9c6e30 100%);
     -webkit-background-clip:text;background-clip:text;
-    filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))
+    filter:drop-shadow(0 10px 24px rgba(0,0,0,.45));animation:titleGlow 5.5s ease-in-out infinite
   }
   .th-luxe .subtitle{margin-top:15px;color:#ddcba8;font-size:13px;letter-spacing:.34em}
   .th-luxe .daily-entry{
@@ -517,7 +518,8 @@
     background:
       radial-gradient(circle at 83% 12%,rgba(218,170,255,.20),transparent 34%),
       linear-gradient(120deg,rgba(91,42,108,.88),rgba(51,27,70,.92) 48%,rgba(21,14,32,.96));
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 13px 30px rgba(42,13,55,.36)
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 13px 30px rgba(42,13,55,.36);
+    animation:featureFloat 6s ease-in-out infinite
   }
   .th-luxe .gateway-feature::after{
     content:"";position:absolute;inset:0;pointer-events:none;
@@ -548,11 +550,17 @@
     padding:10px 11px;border:1px solid rgba(217,182,106,.25);border-radius:14px;
     background:linear-gradient(145deg,rgba(29,20,37,.80),rgba(9,7,15,.86));
     color:#ebdfc8;text-decoration:none;text-align:left;font-family:inherit;cursor:pointer;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.035);transition:transform .2s,border-color .2s,background .2s
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.035);transition:transform .2s,border-color .2s,background .2s;
+    animation:gatewayReveal .55s cubic-bezier(.2,.75,.2,1) both
   }
+  .th-luxe .gateway-item:nth-child(1){animation-delay:.08s}.th-luxe .gateway-item:nth-child(2){animation-delay:.14s}
+  .th-luxe .gateway-item:nth-child(3){animation-delay:.20s}.th-luxe .gateway-item:nth-child(4){animation-delay:.26s}
+  .th-luxe .gateway-item:nth-child(5){animation-delay:.32s}.th-luxe .gateway-item:nth-child(6){animation-delay:.38s}
+  .th-luxe .gateway-item:nth-child(7){animation-delay:.44s}.th-luxe .gateway-item:nth-child(8){animation-delay:.50s}
   .th-luxe button.gateway-item{width:100%}
   .th-luxe .gateway-item:active{transform:scale(.975)}
   .th-luxe .gateway-item:hover{border-color:rgba(217,182,106,.50);background:rgba(34,24,42,.92)}
+  .th-luxe .gateway-item:hover{transform:translateY(-3px)}
   .th-luxe .gateway-icon{
     width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(217,182,106,.38);
     border-radius:50%;color:#e6c978;font-size:14px;background:rgba(176,133,66,.06)
@@ -572,6 +580,12 @@
     content:"";position:absolute;left:18%;right:18%;top:-1px;height:1px;
     background:linear-gradient(90deg,transparent,#e0bd6c,transparent);box-shadow:0 0 16px rgba(217,182,106,.48)
   }
+  @keyframes heroBreath{0%,100%{opacity:.72;transform:scale(1)}50%{opacity:1;transform:scale(1.012)}}
+  @keyframes sigilFloat{0%,100%{transform:translateY(0);text-shadow:0 0 8px rgba(217,182,106,.15)}50%{transform:translateY(-3px);text-shadow:0 0 18px rgba(217,182,106,.55)}}
+  @keyframes titleGlow{0%,100%{filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}50%{filter:drop-shadow(0 10px 30px rgba(217,182,106,.28))}}
+  @keyframes featureFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes gatewayReveal{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.th-luxe .hero::before,.th-luxe .sigil,.th-luxe .title,.th-luxe .gateway-feature,.th-luxe .gateway-item,.th-luxe .gateway-feature::after{animation:none!important}.th-luxe .gateway-item{opacity:1}}
   @media(max-width:390px){
     .th-luxe .hero{padding:82px 11px 25px}
     .th-luxe .home-gateway{padding:11px;border-radius:20px}
