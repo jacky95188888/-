@@ -528,10 +528,15 @@
   }
   @keyframes gatewaySheen{0%,58%{transform:translateX(-110%)}82%,100%{transform:translateX(110%)}}
   .th-luxe .gateway-seal{
-    width:54px;height:54px;display:grid;place-items:center;border:1px solid rgba(238,205,128,.76);
+    position:relative;width:54px;height:54px;display:grid;place-items:center;border:1px solid rgba(238,205,128,.76);
     border-radius:50%;color:#f3dda4;font-size:21px;font-weight:700;
     background:rgba(21,11,29,.28);box-shadow:0 0 24px rgba(219,176,255,.16),inset 0 0 16px rgba(217,182,106,.08)
   }
+  .th-luxe .gateway-seal::before,.th-luxe .gateway-seal::after{
+    content:"";position:absolute;inset:-7px;border:1px solid rgba(232,204,110,.28);border-radius:50%;
+    border-top-color:#f8e7a4;border-bottom-color:transparent;pointer-events:none;animation:sealOrbit 9s linear infinite
+  }
+  .th-luxe .gateway-seal::after{inset:-12px;border-color:rgba(221,214,254,.18);border-left-color:#d8c7ff;animation:sealOrbitReverse 14s linear infinite}
   .th-luxe .gateway-copy{text-align:left;min-width:0}
   .th-luxe .gateway-copy b{display:block;color:#fff0c5;font-size:18px;letter-spacing:.10em}
   .th-luxe .gateway-copy small{display:block;margin-top:3px;color:#cdbda7;font-size:10.5px;letter-spacing:.06em}
@@ -585,7 +590,17 @@
   @keyframes titleGlow{0%,100%{filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}50%{filter:drop-shadow(0 10px 30px rgba(217,182,106,.28))}}
   @keyframes featureFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
   @keyframes gatewayReveal{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:none}}
-  @media (prefers-reduced-motion:reduce){.th-luxe .hero::before,.th-luxe .sigil,.th-luxe .title,.th-luxe .gateway-feature,.th-luxe .gateway-item,.th-luxe .gateway-feature::after{animation:none!important}.th-luxe .gateway-item{opacity:1}}
+  @keyframes sealOrbit{to{transform:rotate(1turn)}}
+  @keyframes sealOrbitReverse{to{transform:rotate(-1turn)}}
+  .th-luxe .mobile-quick-nav{display:none}
+  @media(max-width:700px){
+    .th-luxe{padding-bottom:88px}
+    .th-luxe .mobile-quick-nav{position:fixed;z-index:90;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);display:grid;grid-template-columns:repeat(5,1fr);width:min(calc(100% - 20px),520px);padding:7px 6px;border:1px solid rgba(217,182,106,.30);border-radius:20px;background:rgba(10,7,17,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 16px 38px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.05)}
+    .th-luxe .mobile-quick-nav a{display:grid;place-items:center;gap:1px;min-height:48px;border-radius:14px;color:#a99a83;text-decoration:none;font-size:10px;line-height:1.25;transition:color .2s,background .2s,transform .2s}
+    .th-luxe .mobile-quick-nav a b{font-size:17px;line-height:1;color:#d9b66a;font-weight:600}
+    .th-luxe .mobile-quick-nav a:active{transform:scale(.91);background:rgba(217,182,106,.12);color:#fff0c5}
+  }
+  @media (prefers-reduced-motion:reduce){.th-luxe .hero::before,.th-luxe .sigil,.th-luxe .title,.th-luxe .gateway-feature,.th-luxe .gateway-item,.th-luxe .gateway-feature::after,.th-luxe .gateway-seal::before,.th-luxe .gateway-seal::after{animation:none!important}.th-luxe .gateway-item{opacity:1}}
   @media(max-width:390px){
     .th-luxe .hero{padding:82px 11px 25px}
     .th-luxe .home-gateway{padding:11px;border-radius:20px}
@@ -765,6 +780,13 @@
   </div>
   <p class="support-note">隨喜完全自由，支持與否不影響任何功能或解析內容。命理推演僅供文化研究與人生思考參考。</p>
 </section>
+<nav class="mobile-quick-nav" aria-label="天衡快速導覽">
+  <a href="#form"><b>衡</b><span>首頁</span></a>
+  <a href="./tianheng-wenshi-qa-v1.html?v=20260928-coins1"><b>爻</b><span>六爻</span></a>
+  <a href="./tianheng-meihua-qa-v1.html?v=20260928-image1"><b>梅</b><span>梅花</span></a>
+  <a href="./tianheng-bazi-chart-v1.html?v=20260928-chart1"><b>命</b><span>八字</span></a>
+  <a href="./tianheng-life-story-v1.html?v=20260928-story1"><b>緣</b><span>前世</span></a>
+</nav>
 </div>
 <script src="./tianheng-bazi-advanced-v1.js"></script>
 <script src="./tianheng-bazi-combinations-v1.js"></script>
