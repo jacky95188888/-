@@ -1,7 +1,7 @@
 'use strict';
 
 (function attachWenshiNarrative(root){
-  const VERSION='1.2.0';
+  const VERSION='1.3.0';
   const TOPICS={
     exam_certification:{subject:'考試／證照結果',checkpoint:'官方成績、合格通知或證照核發結果',action:'核對及格標準、放榜日期與補考規則，考後另記有把握與不確定題目'},
     career_job:{subject:'求職／工作進展',checkpoint:'職缺是否仍有效、誰有決定權、何時正式回覆',action:'把職務條件、決策人與回覆期限整理成可追蹤事項'},
@@ -72,6 +72,18 @@
     if(!items.length)return empty;
     return items.map(item=>CODE_TEXT[item.code]||item.text).join('；')+'。';
   }
+  function obstacleText(input,t,resistance){
+    const supplied=input?.eventContext?.knownObstacle;
+    if(supplied)return supplied;
+    if(resistance.length)return`卦局目前最明確的卡點是：${resistance.map(x=>CODE_TEXT[x.code]||x.text).join('；')}`;
+    return`卦局未見可確定的硬阻力；現實面仍要核對${t.checkpoint}`;
+  }
+  function strongestEvidenceText(input,t,support){
+    const supplied=input?.eventContext?.strongestEvidence;
+    if(supplied)return supplied;
+    if(support.length)return`卦局目前可見的支持是：${support.map(x=>CODE_TEXT[x.code]||x.text).join('；')}`;
+    return`目前還沒有足以落實結果的現實證據，下一個確認點是${t.checkpoint}`;
+  }
   function changeSentence(synthesis,selected){
     if(!selected)return'用神未明現，需先完成伏神與出伏條件，不能跳過此層硬斷成敗。';
     const changes=synthesis.interactions.adjudication.changeEvents.filter(x=>x.position===selected.position);
@@ -103,7 +115,7 @@
       paragraph('問題與卦局',`你問的是「${input.question}」。主卦${structure.casting.primary.fullName}、變卦${structure.casting.changed.fullName}，所問類型是${t.subject}。卦名只描述局勢背景，真正裁決仍由用神、日月、動變與沖合共同完成。`,['REQUEST','PRIMARY_HEXAGRAM','CHANGED_HEXAGRAM']),
       paragraph('直接回答',directAnswer(synthesis,input,t).replace('有機會達成',`較可能${eventWord(input)}`).replace('不容易達成',`較可能未${eventWord(input)}`),['QUESTION_DIRECT_ANSWER',`OUTCOME_${synthesis.outcome.direction}`]),
       paragraph('本次事件校正',contextText(input,t),['USER_EVENT_CONTEXT','REALITY_CHECK']),
-      paragraph('成功標準與真正阻力',`本題的成功標準是「${input?.eventContext?.successDefinition||t.checkpoint}」；目前最需要排除的阻力是「${input?.eventContext?.knownObstacle||'尚未提供'}」。已知最強證據為「${input?.eventContext?.strongestEvidence||'尚未提供'}」。未提供的部分維持未判，不用套語補成答案。`,['SUCCESS_DEFINITION','KNOWN_OBSTACLE','STRONGEST_REALITY_EVIDENCE']),
+      paragraph('成功條件、目前卡點與確認方式',`本題只有在「${input?.eventContext?.successDefinition||t.checkpoint}」出現時才算成功。目前需要處理的是「${obstacleText(input,t,resistance)}」。可用來支持判斷的訊號是「${strongestEvidenceText(input,t,support)}」。這三項分開看，避免把卦象方向誤當成正式結果。`,['SUCCESS_DEFINITION','KNOWN_OBSTACLE','STRONGEST_REALITY_EVIDENCE','EVIDENCE_LEDGER']),
       paragraph('具體補強目標',specificAction(input,t),['REALITY_THRESHOLD','ACTIONABLE_NEXT_STEP']),
       paragraph('過程不等於結果',processOutcome(synthesis,t),['CHANGE_EVENTS','USEFUL_GOD','DECISION_CHECKPOINT']),
       paragraph('用神落點',usefulText,['USEFUL_GOD',selected?`LINE_${selected.position}`:'USEFUL_HIDDEN',selected?`SEASON_${selected.calendar.seasonalState}`:null]),

@@ -4,8 +4,8 @@ function assert(name,fn){try{if(!fn())throw new Error('assert false');console.lo
 assert('正式入口仍以獨立頁安全接入',()=>html.includes('正式入口・公開驗證中')&&html.includes('href="./?v=20260831-wenshi-beauty"'));
 assert('問事頁套用天衡黑金紫視覺系統',()=>html.includes('BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png')&&html.includes('class="hero-sigil"')&&html.includes('class="steps"'));
 assert('十個問事模組含本地敘事層依序載入',()=>['validation','liuyao-v1','liuyao-structure','liuyao-evidence','liuyao-adjudication','liuyao-interactions','liuyao-synthesis','wenshi-narrative','wenshi-engine','history-study'].every(x=>html.includes(x)));
-assert('升級判讀與敘事會避開舊手機快取',()=>html.includes('tianheng-wenshi-liuyao-evidence-v1.js?v=20260903-detail2')&&html.includes('tianheng-wenshi-narrative-v1.js?v=20260904-event5'));
-assert('六次起卦由初爻至上爻輸入',()=>html.includes('初爻到上爻')&&html.includes('Array.from({length:6}'));
+assert('升級判讀與敘事會避開舊手機快取',()=>html.includes('tianheng-wenshi-liuyao-evidence-v1.js?v=20260903-detail2')&&html.includes('tianheng-wenshi-narrative-v1.js?v=20260927-coins1'));
+assert('六次起卦由初爻至上爻記錄正反面並自動換算動靜',()=>html.includes('初爻到上爻')&&html.includes('Array.from({length:6}')&&html.includes('正面＝3、反面＝2')&&html.includes('替我連擲六次')&&html.includes("casts=[...document.querySelectorAll('.cast-line')]"));
 assert('題型不靠關鍵字猜測',()=>html.includes('value="career_job"')&&html.includes('value="relationship"')&&html.includes('value="family_peer"'));
 assert('考試證照有獨立題型且技術證據預設收合',()=>html.includes('value="exam_certification"')&&html.includes('查看判讀證據'));
 assert('本次事件補充可記錄成功標準阻力與既有事實',()=>['eventAttempt','eventDate','successDefinition','knownObstacle','strongestEvidence','priorResult','preparation','priorScore','passScore','mockScore'].every(id=>html.includes(`id="${id}"`))&&html.includes('再次嘗試／重考')&&html.includes('eventContext'));

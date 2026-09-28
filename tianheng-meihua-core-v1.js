@@ -1,7 +1,7 @@
 'use strict';
 
 (function attachMeihuaCore(root) {
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   const ZHI_ORDER = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
   const TRIGRAMS = {
     1: { number: 1, name: '乾', image: '天', element: '金', bits: [1,1,1], direction: '西北' },
@@ -138,12 +138,22 @@
     };
   }
 
+  function castFromImage(input) {
+    assertObject(input.imageObservation, 'imageObservation');
+    const o=input.imageObservation;
+    const upperSeed=positiveInteger(o.upperSeed,'imageObservation.upperSeed');
+    const lowerSeed=positiveInteger(o.lowerSeed,'imageObservation.lowerSeed');
+    const movingSeed=positiveInteger(o.movingSeed,'imageObservation.movingSeed');
+    return{method:'image_observation',original:{fileName:o.fileName||'',fileSize:Number(o.fileSize)||0,width:Number(o.width)||0,height:Number(o.height)||0,averageRGB:o.averageRGB||null,brightness:Number(o.brightness),contrast:Number(o.contrast),upperBrightness:Number(o.upperBrightness),lowerBrightness:Number(o.lowerBrightness),dominantTone:o.dominantTone||'未判',pixelHash:Number(o.pixelHash),objectNote:input.objectNote||'',source:o.source||'瀏覽器本機像素取象'},seeds:{upper:upperSeed,lower:lowerSeed,moving:movingSeed},upperNumber:remainder(upperSeed,8),lowerNumber:remainder(lowerSeed,8),movingLine:remainder(movingSeed,6)};
+  }
+
   function normalizeCasting(input) {
     const method = input.method;
     if (method === 'lunar_time') return castFromTime(input);
     if (method === 'two_numbers') return castFromNumbers(input);
     if (method === 'manual_verified') return castFromManual(input);
-    throw new Error('method 必須是 lunar_time、two_numbers 或 manual_verified');
+    if (method === 'image_observation') return castFromImage(input);
+    throw new Error('method 必須是 lunar_time、two_numbers、manual_verified 或 image_observation');
   }
 
   function trigramFromBits(bits) {

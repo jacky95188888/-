@@ -5,7 +5,8 @@ assert('梅花頁標示正式入口並可返回主頁',()=>html.includes('正式
 assert('套用天衡黑金紫手機視覺',()=>html.includes('BCCCDAF2-C8F0-45EB-88A4-00BE9C598ABE.png')&&html.includes('class="sigil"')&&html.includes('class="steps"'));
 assert('五個梅花模組含本地敘事層依序載入',()=>['meihua-core','meihua-judgment','meihua-validation','meihua-narrative','meihua-engine'].every(x=>html.includes(x)));
 assert('升級判讀與敘事會避開舊手機快取',()=>html.includes('tianheng-meihua-judgment-v1.js?v=20260903-detail2')&&html.includes('tianheng-meihua-narrative-v1.js?v=20260904-event5'));
-assert('三種起卦方法都有獨立介面',()=>['lunar_time','two_numbers','manual_verified'].every(x=>html.includes(`data-method="${x}"`)));
+assert('四種起卦方法都有獨立介面',()=>['lunar_time','two_numbers','image_observation','manual_verified'].every(x=>html.includes(`data-method="${x}"`)));
+assert('圖片取象會在手機本機分析並保存像素證據',()=>['imageFile','imagePreview','imageStatus','objectNote'].every(id=>html.includes(`id="${id}"`))&&html.includes('TianhengMeihuaImageV1.analyzePixels')&&html.includes('不會把圖片內容假裝成已被證實的事實'));
 assert('年月日時明示農曆且要求曆法來源',()=>['yearZhi','lunarMonth','lunarDay','hourZhi','calendarSource'].every(id=>html.includes(`id="${id}"`))&&html.includes('不可用國曆月份代替'));
 assert('兩數法保存兩個原始數字欄位',()=>html.includes('id="firstNumber"')&&html.includes('id="secondNumber"')&&html.includes('原始數字會完整保留'));
 assert('人工法提供上下八卦與六動爻',()=>html.includes('id="manualUpper"')&&html.includes('id="manualLower"')&&html.includes('id="manualMoving"')&&html.includes('<option value="6">上爻</option>'));

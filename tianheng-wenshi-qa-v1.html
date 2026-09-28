@@ -67,7 +67,7 @@
     select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#d8b774 50%),linear-gradient(135deg,#d8b774 50%,transparent 50%);background-position:calc(100% - 19px) calc(50% - 3px),calc(100% - 13px) calc(50% - 3px);background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:36px}
     .casts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
     .casts label{margin:0;padding:12px 10px;text-align:center;border:1px solid var(--line-soft);border-radius:15px;background:rgba(8,7,13,.5);color:#d1bc91}
-    .casts select{margin:8px 0 3px;padding:10px 28px 10px 10px;min-height:45px;text-align:center;font-size:12px}
+    .coin-row{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:9px 0 7px}.coin{min-height:42px;padding:7px 2px;border-radius:10px;font-size:11px;color:#8f877b;background:#0a0910}.coin[data-value="3"]{color:#f0d28d;border-color:#c89b4d;background:rgba(94,60,19,.35)}.coin[data-value="2"]{color:#b8d8ff;border-color:#6498d1;background:rgba(28,56,91,.35)}.cast-result{display:block;min-height:18px;color:#eee0bd;font-size:11px}.cast-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.cast-tools button{min-height:46px}
     .casts small{display:block;color:#736b60;font-size:9px;letter-spacing:.08em}
     button{cursor:pointer;border-color:#d4ad5b;background:linear-gradient(135deg,#9d3b31,#74302b 53%,#4e2027);color:#fff4d4;font-weight:700;letter-spacing:.15em;box-shadow:inset 0 1px 0 rgba(255,255,255,.13),0 12px 28px rgba(77,21,24,.28)}
     button:active{transform:scale(.985)}button.secondary{background:rgba(13,10,18,.78);color:#d8bd83;box-shadow:none}
@@ -108,10 +108,10 @@
     <div class="hero-sigil" aria-hidden="true">問</div>
     <p class="eyebrow">TIANHENG LIUYAO ORACLE</p>
     <h1>六爻問事</h1>
-    <p class="lead">一事一問，先給直接結論，再把最關鍵的卦象依據、助力、阻力與近期做法分開說清楚。</p>
+    <p class="lead">一事一問，由原始起卦、日月證據到暫定結果逐層保存，不以單一吉凶句取代證據。</p>
     <div class="steps" aria-label="判讀流程">
       <div class="step"><b>01</b>明確提問</div><div class="step"><b>02</b>六次起卦</div>
-      <div class="step"><b>03</b>關鍵判斷</div><div class="step"><b>04</b>近期建議</div>
+      <div class="step"><b>03</b>證據裁決</div><div class="step"><b>04</b>近期建議</div>
     </div>
     <div id="runtimeNotice" class="error">頁面程式尚未啟動。若這段提示持續顯示，代表目前的檔案預覽器封鎖了 JavaScript；請勿把此頁的空白欄位當成系統結果。</div>
   </header>
@@ -140,11 +140,11 @@
     <details class="optional-context" id="eventContextBox">
       <summary>讓答案對準這一次事件</summary>
       <div class="inner">
-        <p id="eventGuide" style="margin:0 0 12px;color:#948a7c;font-size:11px">以下欄位皆為選填，不確定或懶得填都可以直接跳過，系統不會用套話補答案；若問的是官司或靈異怪事，建議盡量填寫；一般選擇、感情與日常決策可直接跳過，系統仍會依卦象判讀。</p>
+        <p id="eventGuide" style="margin:0 0 12px;color:#948a7c;font-size:11px">以下欄位皆為選填，不確定或懶得填都可以直接跳過，系統不會用套話補答案；若問的是官司或靈異怪事，建議盡量填寫，判讀依據會更足。</p>
         <div class="grid"><label>本次狀態<select id="eventAttempt"><option value="">請選擇</option><option>第一次</option><option>再次嘗試／重考</option><option>事件延續中</option><option>過去結果核對</option></select></label><label>事件日期<input id="eventDate" type="date"></label></div>
         <label>這次怎樣才算成功？<input id="successDefinition" placeholder="例如：收到正式錄取通知"></label>
         <label>目前最可能卡在哪裡？<input id="knownObstacle" placeholder="例如：名額、資格、對方尚未決定"></label>
-        <label>目前已知的現實情況（選填）<input id="strongestEvidence" placeholder="例如：對方最近有回覆、公司已通知二次面試；沒有也可留白"></label>
+        <label>目前最強的現實證據<input id="strongestEvidence" placeholder="例如：已收到二次面試通知"></label>
         <label>上次結果或差距<input id="priorResult" placeholder="例如：上次未錄取、仍差一個條件"></label>
         <label>目前準備與已知事實<textarea id="preparation" placeholder="請只填已知事實，不用猜測"></textarea></label>
         <div id="specificMetrics" class="grid"><label><span id="specificOneLabel">目前進度</span><input id="specificOne"></label><label><span id="specificTwoLabel">正式確認點</span><input id="specificTwo"></label></div>
@@ -152,7 +152,8 @@
       </div>
     </details>
     <details class="advanced"><summary>進階紀錄（一般使用不用填）</summary><div class="grid"><label>時區<input id="timezone" value="Asia/Taipei"></label><label>案例編號（選填）<input id="caseId" placeholder="例如：QA-20260830-001"></label></div></details></div>
-    <div class="form-step"><div class="form-step-head"><b>3</b>輸入三枚銅錢六次結果</div><p class="form-step-note">依初爻到上爻、由下往上填寫</p>
+    <div class="form-step"><div class="form-step-head"><b>3</b>記錄三枚銅錢六次結果</div><p class="form-step-note">正面＝3、反面＝2；每爻三枚自動換算動靜，依初爻到上爻、由下往上記錄</p>
+    <div class="cast-tools"><button type="button" id="tossAll" class="secondary">替我連擲六次</button><button type="button" id="clearCasts" class="secondary">清除銅錢紀錄</button></div>
     <div class="casts" id="casts"></div>
     <h3 class="sub-title">◇ 當時曆法</h3>
     <div class="grid three">
@@ -161,17 +162,17 @@
       <label>日支<select id="dayZhi"><option value="子">子</option><option value="丑">丑</option><option value="寅">寅</option><option value="卯">卯</option><option value="辰">辰</option><option value="巳">巳</option><option value="午">午</option><option value="未">未</option><option value="申">申</option><option value="酉">酉</option><option value="戌">戌</option><option value="亥">亥</option></select></label>
     </div>
     <details class="advanced"><summary>曆法核對來源</summary><label>曆法來源<input id="calendarSource" value="QA 人工核對干支曆"></label></details></div>
-    <div class="form-step"><div class="form-step-head"><b>4</b>查看完整分層判讀</div><p class="form-step-note">先看結論，再看最關鍵判斷依據、助力／阻力、時間變化與可以怎麼做；目前免費開放完整使用</p><div class="actions"><button id="analyze" data-feature-analyze>執行分層判讀</button><button class="secondary" id="reset">清除結果</button></div></div>
+    <div class="form-step"><div class="form-step-head"><b>4</b>查看完整分層判讀</div><p class="form-step-note">保留卦象、動爻、用神、阻力與判斷依據；目前免費開放完整使用</p><div class="actions"><button id="analyze" data-feature-analyze>執行分層判讀</button><button class="secondary" id="reset">清除結果</button></div></div>
   </section>
 
   <div id="error" class="error hidden" role="alert"></div>
   <section id="result" class="hidden" aria-live="polite">
     <div class="panel"><h2 class="section-title"><span>判</span>先看核心結論</h2><div id="verdict" class="verdict"></div><div id="pastValidation" class="verify-box hidden"><h3>此題已進入過去驗證模式</h3><p>系統已保留原始判讀。請在知道真實結果後另行記錄，不會回寫或改動原判。</p><div class="grid"><label>實際結果<select id="actualOutcome"><option value="">尚未揭曉</option><option value="positive">通過／達成</option><option value="negative">未通過／未達成</option><option value="partial">部分符合</option><option value="unresolved">仍無法確認</option></select></label><label>結果依據<input id="actualNote" placeholder="例如：成績通知、錄取信或當事人回覆"></label></div><button type="button" id="saveActual">保存原判與實際結果</button><div id="verifyStatus" class="verify-status" aria-live="polite"></div></div></div>
-    <div class="panel"><h2 class="section-title"><span>貳</span>最關鍵判斷依據</h2><div class="notice">這裡只回答「為什麼得到上面的結論」。先看最重要的卦象與作用關係；完整技術細節仍保留在後面。</div><div id="summary" class="summary"></div></div>
-    <div class="panel"><h2 class="section-title"><span>參</span>六爻判讀依據</h2><div class="notice">想看細節再展開這一段。表格可左右滑動；原始爻位、旺衰與作用關係分開保存，不把技術欄位當成「現實證據」。</div><div class="scroll"><table><thead><tr><th>爻位</th><th>世應</th><th>動靜</th><th>納甲</th><th>六親</th><th>月令</th><th>旬空</th><th>月破</th><th>日沖</th></tr></thead><tbody id="lineRows"></tbody></table></div></div>
+    <div class="panel"><h2 class="section-title"><span>貳</span>卦局摘要</h2><div id="summary" class="summary"></div></div>
+    <div class="panel"><h2 class="section-title"><span>參</span>六爻證據表</h2><div class="notice">表格可左右滑動查看完整證據；原始爻位與修正事件不互相覆蓋。</div><div class="scroll"><table><thead><tr><th>爻位</th><th>世應</th><th>動靜</th><th>納甲</th><th>六親</th><th>月令</th><th>旬空</th><th>月破</th><th>日沖</th></tr></thead><tbody id="lineRows"></tbody></table></div></div>
     <div class="panel"><h2 class="section-title"><span>肆</span>用神與作用事件</h2><div id="useful"></div><h3 class="sub-title">◇ 動變</h3><div id="changes"></div><h3 class="sub-title">◇ 伏神與沖合</h3><div id="interactions"></div></div>
-    <div class="panel"><h2 class="section-title"><span>伍</span>有利訊號、阻力與未定處</h2><div class="grid three"><div class="evidence-box support-box"><h3 class="support">支持</h3><div id="support"></div></div><div class="evidence-box resistance-box"><h3 class="resistance">阻力</h3><div id="resistance"></div></div><div class="evidence-box unresolved-box"><h3 class="unresolved">尚未裁定</h3><div id="unresolved"></div></div></div></div>
-    <div class="panel"><h2 class="section-title"><span>陸</span>最後怎麼做</h2><div id="explanation"></div><div class="grid three"><div class="advice-card can"><h3 class="support">可以做</h3><div id="canDo"></div></div><div class="advice-card avoid"><h3 class="resistance">先避免</h3><div id="avoid"></div></div><div class="advice-card verify"><h3>現實確認點</h3><div id="verify"></div></div></div><h3 class="sub-title">◇ 時間條件</h3><div id="timing"></div><div class="notice">此結果尚未完成真實歷史盲測校準，不能代替醫療、法律、投資或其他專業判斷。</div><button class="secondary" id="export">匯出本次判讀 JSON</button></div>
+    <div class="panel"><h2 class="section-title"><span>伍</span>支持、阻力與未定處</h2><div class="grid three"><div class="evidence-box support-box"><h3 class="support">支持</h3><div id="support"></div></div><div class="evidence-box resistance-box"><h3 class="resistance">阻力</h3><div id="resistance"></div></div><div class="evidence-box unresolved-box"><h3 class="unresolved">尚未裁定</h3><div id="unresolved"></div></div></div></div>
+    <div class="panel"><h2 class="section-title"><span>陸</span>暫定結論與近期做法</h2><div id="explanation"></div><div class="grid three"><div class="advice-card can"><h3 class="support">可以做</h3><div id="canDo"></div></div><div class="advice-card avoid"><h3 class="resistance">先避免</h3><div id="avoid"></div></div><div class="advice-card verify"><h3>需要查證</h3><div id="verify"></div></div></div><h3 class="sub-title">◇ 時間條件</h3><div id="timing"></div><div class="notice">此結果尚未完成真實歷史盲測校準，不能代替醫療、法律、投資或其他專業判斷。</div><button class="secondary" id="export">匯出本次判讀 JSON</button></div>
   </section>
   <section class="unlock-contact" id="contact-sambo"><div class="mark">問</div><h2>聯絡三寶爸・人工核對與建議</h2><p>完整功能目前免費開放。若需要人工核對卦象、深入討論或回報實際結果，可以從這裡聯絡。</p><a href="https://line.me/R/ti/p/@788ldzke" target="_blank" rel="noopener">LINE 聯絡三寶爸</a><small>LINE：三寶爸的命理分析・@788ldzke</small></section>
   <footer class="page-foot">天衡・九維命理｜六爻問事公開驗證版<br>推演供文化研究與生活規劃參考，重大決策仍應依現實資訊判斷。</footer>
@@ -183,7 +184,7 @@
 <script src="tianheng-wenshi-liuyao-adjudication-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-liuyao-interactions-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-liuyao-synthesis-v1.js?v=20260901-narrative1"></script>
-<script src="tianheng-wenshi-narrative-v1.js?v=20260904-event5"></script>
+<script src="tianheng-wenshi-narrative-v1.js?v=20260927-coins1"></script>
 <script src="tianheng-wenshi-engine-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-wenshi-history-study-v1.js?v=20260901-narrative1"></script>
 <script src="tianheng-oracle-verification-v1.js?v=20260903"></script>
@@ -195,7 +196,14 @@
   const list=(items,empty='無')=>items?.length?`<ul class="list">${items.map(x=>`<li>${esc(typeof x==='string'?x:x.text||JSON.stringify(x))}</li>`).join('')}</ul>`:`<p class="empty">${empty}</p>`;
   const topicLabels={career_job:'事業／工作',exam_certification:'考試／證照',career_promotion:'事業／工作',finance_income:'財務／交易',cooperation:'合作／客戶',contract:'合約／文件',relationship:'感情／人際',family_peer:'家庭／生活',decision:'選擇／決策',legal_dispute:'官司／法律爭議',unusual_event:'靈異／怪異事件'};
   $('runtimeNotice').classList.add('hidden');
-  $('casts').innerHTML=Array.from({length:6},(_,i)=>`<label>${i===0?'初爻':i===5?'上爻':`${i+1}爻`}<select class="cast"><option value="6">6 老陰・動</option><option value="7" selected>7 少陽・靜</option><option value="8">8 少陰・靜</option><option value="9">9 老陽・動</option></select><small>由下往上</small></label>`).join('');
+  const castName={6:'老陰・動',7:'少陽・靜',8:'少陰・靜',9:'老陽・動'};
+  $('casts').innerHTML=Array.from({length:6},(_,i)=>`<label class="cast-line">${i===0?'初爻':i===5?'上爻':`${i+1}爻`}<span class="coin-row">${[0,1,2].map(n=>`<button type="button" class="coin" data-value="" aria-label="第${i+1}爻第${n+1}枚銅錢">未記</button>`).join('')}</span><b class="cast-result">尚未完成</b><small>點銅錢切換正／反</small></label>`).join('');
+  function updateCast(line){const coins=[...line.querySelectorAll('.coin')];const values=coins.map(x=>Number(x.dataset.value));const complete=values.every(x=>x===2||x===3);line.querySelector('.cast-result').textContent=complete?`${coins.map(x=>x.dataset.value==='3'?'正':'反').join('')} → ${values.reduce((a,b)=>a+b,0)} ${castName[values.reduce((a,b)=>a+b,0)]}`:'尚未完成';}
+  function setCoin(button,value){button.dataset.value=String(value);button.textContent=value===3?'正':'反';updateCast(button.closest('.cast-line'));}
+  document.querySelectorAll('.coin').forEach(button=>button.addEventListener('click',()=>setCoin(button,button.dataset.value==='3'?2:3)));
+  function randomFace(){const bag=new Uint8Array(1);crypto.getRandomValues(bag);return bag[0]%2?3:2;}
+  $('tossAll').addEventListener('click',()=>document.querySelectorAll('.coin').forEach(button=>setCoin(button,randomFace())));
+  $('clearCasts').addEventListener('click',()=>document.querySelectorAll('.coin').forEach(button=>{button.dataset.value='';button.textContent='未記';updateCast(button.closest('.cast-line'));}));
   const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());$('askedAt').value=now.toISOString().slice(0,16);
 
   /* 官司／靈異怪事屬於需要更多現實脈絡才容易判讀清楚的類型：
@@ -230,7 +238,9 @@
   $('analyze').addEventListener('click',()=>{
     $('error').classList.add('hidden');
     const topic=$('topic').value;const local=$('askedAt').value;
-    const input={question:$('question').value,category:topicLabels[topic],topic,timeHorizon:document.querySelector('input[name="horizon"]:checked')?.value||'一個月內',askedAt:local?new Date(local).toISOString():'',timezone:$('timezone').value,eventContext:{attempt:$('eventAttempt').value,eventDate:$('eventDate').value,successDefinition:$('successDefinition').value.trim(),knownObstacle:$('knownObstacle').value.trim(),strongestEvidence:$('strongestEvidence').value.trim(),priorResult:$('priorResult').value.trim(),preparation:$('preparation').value.trim(),specific:{oneLabel:$('specificOneLabel').textContent,one:$('specificOne').value.trim(),twoLabel:$('specificTwoLabel').textContent,two:$('specificTwo').value.trim()},examMetrics:{priorScore:$('priorScore').value,passScore:$('passScore').value,mockScore:$('mockScore').value}},casts:[...document.querySelectorAll('.cast')].map(x=>Number(x.value)),calendar:{monthZhi:$('monthZhi').value,dayGan:$('dayGan').value,dayZhi:$('dayZhi').value,source:$('calendarSource').value,timezone:$('timezone').value}};
+    const casts=[...document.querySelectorAll('.cast-line')].map(line=>[...line.querySelectorAll('.coin')].map(x=>Number(x.dataset.value)));
+    if(casts.some(row=>row.some(x=>x!==2&&x!==3))){$('error').textContent='請先完成六爻的三枚銅錢正反面紀錄，或按「替我連擲六次」。';$('error').classList.remove('hidden');$('result').classList.add('hidden');return;}
+    const input={question:$('question').value,category:topicLabels[topic],topic,timeHorizon:document.querySelector('input[name="horizon"]:checked')?.value||'一個月內',askedAt:local?new Date(local).toISOString():'',timezone:$('timezone').value,eventContext:{attempt:$('eventAttempt').value,eventDate:$('eventDate').value,successDefinition:$('successDefinition').value.trim(),knownObstacle:$('knownObstacle').value.trim(),strongestEvidence:$('strongestEvidence').value.trim(),priorResult:$('priorResult').value.trim(),preparation:$('preparation').value.trim(),specific:{oneLabel:$('specificOneLabel').textContent,one:$('specificOne').value.trim(),twoLabel:$('specificTwoLabel').textContent,two:$('specificTwo').value.trim()},examMetrics:{priorScore:$('priorScore').value,passScore:$('passScore').value,mockScore:$('mockScore').value}},casts,calendar:{monthZhi:$('monthZhi').value,dayGan:$('dayGan').value,dayZhi:$('dayZhi').value,source:$('calendarSource').value,timezone:$('timezone').value}};
     const analyzed=window.TianhengWenshiEngine.safeAnalyze(input);
     if(!analyzed.ok){$('error').textContent=analyzed.error;$('error').classList.remove('hidden');$('result').classList.add('hidden');return;}
     lastResult={caseId:$('caseId').value||null,generatedAt:new Date().toISOString(),input,analysis:analyzed.result};render(analyzed.result);

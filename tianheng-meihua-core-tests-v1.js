@@ -32,6 +32,10 @@ assert('兩數法分開保存原數種子與取餘結果', () => {
   const r = Core.analyze(base({ method: 'two_numbers', numbers: { first: 17, second: 18 } }));
   return r.casting.original.first === 17 && r.casting.seeds.moving === 35 && r.casting.derived.upperNumber === 1 && r.casting.derived.lowerNumber === 2 && r.movingLine === 5;
 });
+assert('圖片取象保留視覺證據並可重現同一卦',()=>{
+  const x=base({method:'image_observation',objectNote:'媽祖廟加持香水',imageObservation:{fileName:'gift.jpg',fileSize:321,width:800,height:600,averageRGB:{r:120,g:80,b:60},brightness:88,contrast:24,upperBrightness:91,lowerBrightness:85,dominantTone:'偏暖',pixelHash:9988,upperSeed:101,lowerSeed:202,movingSeed:303,source:'測試像素取象'}});
+  const a=Core.analyze(x),b=Core.analyze(x);return a.primary.number===b.primary.number&&a.movingLine===b.movingLine&&a.casting.original.objectNote==='媽祖廟加持香水'&&a.casting.original.pixelHash===9988;
+});
 assert('下卦動則下卦為用上卦為體', () => {
   const r = Core.analyze(base({ method: 'manual_verified', manual: { upper: '乾', lower: '坤', movingLine: 2 } }));
   return r.bodyUse.body.name === '乾' && r.bodyUse.use.name === '坤';
