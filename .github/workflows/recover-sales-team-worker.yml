@@ -1,0 +1,68 @@
+name: Recover Sales Team Worker Source
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/recover-sales-team-worker.yml
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_ACCOUNT_ID: 22bd6a71b50e9eeaa0daa802615a3459
+      WORKER_NAME: sales-team
+    steps:
+      - name: Remove previous recovery artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api --paginate "repos/$GITHUB_REPOSITORY/actions/artifacts" \
+            --jq '.artifacts[] | select(.name == "sales-team-worker-source") | .id' \
+            | while read -r artifact_id; do
+                test -n "$artifact_id" || continue
+                gh api --method DELETE "repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact_id"
+              done
+
+      - name: Download deployed Worker source
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN"
+          mkdir -p recovered-worker
+          curl --fail-with-body --silent --show-error \
+            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            --dump-header recovered-worker/response-headers.txt \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$WORKER_NAME" \
+            --output recovered-worker/worker-response.bin
+          curl --fail-with-body --silent --show-error \
+            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$WORKER_NAME/settings" \
+            --output recovered-worker/settings.json
+          curl --silent --show-error \
+            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$WORKER_NAME/schedules" \
+            --output recovered-worker/schedules.json
+          test -s recovered-worker/worker-response.bin
+          test -s recovered-worker/settings.json
+          jq '(.result.bindings[]? | select(.type == "plain_text") | .text) = "[REDACTED]"' \
+            recovered-worker/settings.json > recovered-worker/settings-redacted.json
+          mv recovered-worker/settings-redacted.json recovered-worker/settings.json
+          sha256sum recovered-worker/worker-response.bin > recovered-worker/sha256.txt
+          sed -i '/^set-cookie:/Id;/^cf-ray:/Id' recovered-worker/response-headers.txt
+
+      - name: Preserve recovery artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-team-worker-source
+          path: recovered-worker/
+          if-no-files-found: error
+          retention-days: 7
